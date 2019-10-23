@@ -1,0 +1,27 @@
+.info-form{
+    padding: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+fieldset{
+    border: 1px solid #95B8E7;
+    padding: 10px;
+}
+
+fieldset table tr td{
+    padding: 2px;
+}
+
+fieldset table tr td:nth-child(2){
+    margin-left: 30px;
+}
+
+
+legend{
+    font-weight: bold;
+}
+
+fieldset input{
+    width: 180px;
+}

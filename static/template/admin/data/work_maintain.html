@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>保养工作分析</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <link href="../../res/admin/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <style>
+        .bar-legend li {
+            float: left;
+            margin-left: 5px;
+        }
+
+        .bar-legend li span {
+            width: 1em;
+            height: 1em;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .bar-legend {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <h3 style="padding: 20px">新增对比</h3>
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-content ">
+                            <h4>对比选取</h4>
+                            <div id="search-form" style="margin-bottom: 10px;">
+                                <div class="form-inline" style="margin-bottom: 5px;">
+                                    <div class="form-group">
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="type" value="1">小组
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="group1" class="sr-only">选择小组</label>
+                                        <select class="combobox form-control" id="group1">
+                                            <option value="" selected="selected">选择小组</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select class="combobox form-control" id="group_type">
+                                            <option value="1" selected="selected">总量</option>
+                                            <option value="3">平均</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="type" value="2">员工
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="group2" class="sr-only">选择小组</label>
+                                        <select class="combobox form-control" id="group2" onchange="doGroupChange()">
+                                            <option value="" selected="selected">选择小组</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="person2" class="sr-only">选择人员</label>
+                                        <select class="combobox form-control" id="person2">
+                                            <option value="" selected="selected">选择人员</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <h4>颜色</h4>
+                            <div style="margin-bottom: 10px;">
+                                <div class="form-inline" style="vertical-align: middle" id="color">
+                                    <div class="form-group green">
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="color" value="green">
+                                        </label>
+                                    </div>
+                                    <div class="form-group green">
+                                        <span style="display:inline-block;background-color: green;width: 80px;height: 30px;"></span>
+                                    </div>
+
+                                    <div class="form-group red" style="margin-left: 10px;">
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="color" value="red">
+                                        </label>
+                                    </div>
+                                    <div class="form-group red">
+                                        <span style="display:inline-block;background-color: red;width: 80px;height: 30px;"></span>
+                                    </div>
+
+                                    <div class="form-group blue" style="margin-left: 10px;">
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="color" value="blue">
+                                        </label>
+                                    </div>
+                                    <div class="form-group blue">
+                                        <span style="display:inline-block;background-color: blue;width: 80px;height: 30px;"></span>
+                                    </div>
+
+                                    <div class="form-group yellow" style="margin-left: 10px;">
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="color" value="yellow">
+                                        </label>
+                                    </div>
+                                    <div class="form-group yellow">
+                                        <span style="display:inline-block;background-color: yellow;width: 80px;height: 30px;"></span>
+                                    </div>
+
+                                    <div class="form-group gray" style="margin-left: 10px;">
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="color" value="gray">
+                                        </label>
+                                    </div>
+                                    <div class="form-group gray">
+                                        <span style="display:inline-block;background-color: gray;width: 80px;height: 30px;"></span>
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary" style="margin-left: 10px;" onclick="doAddType()">新增
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <h3 style="padding: 20px">对比维度</h3>
+                <div class="col-lg-12">
+                    <div class="ibox">
+                        <div class="ibox-content ">
+                            <div class="type-selected">
+
+                            </div>
+
+                            <div class="form-inline" style="vertical-align: middle">
+                                <div class="form-group">
+                                    <div class="input-daterange input-group" id="datepicker">
+                                        <span class="input-group-addon">对比时间:从</span>
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="start" value="">
+                                        <span class="input-group-addon">到</span>
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="end" value="">
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-primary" style="margin-left: 10px;" onclick="doDegreeDataSearch()">查询
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="padding: 20px">对比结果</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>维保电梯数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-a" height="140"></canvas>
+                                </div>
+                                <div id="legend-a"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>维保任务数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-b" height="140"></canvas>
+                                </div>
+                                <div id="legend-b"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>超时工单数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-c" height="140"></canvas>
+                                </div>
+                                <div id="legend-c"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>超时工单比例</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-d" height="140"></canvas>
+                                </div>
+                                <div id="legend-d"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>异常关闭工单数量</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-e" height="140"></canvas>
+                                </div>
+                            </div>
+                            <div id="legend-e"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>异常关闭工单比例</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-f" height="140"></canvas>
+                                </div>
+                                <div id="legend-f"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>自检电梯数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-g" height="140"></canvas>
+                                </div>
+                                <div id="legend-g"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>自检不合格电梯数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-h" height="140"></canvas>
+                                </div>
+                                <div id="legend-h"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>整改项</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-i" height="140"></canvas>
+                                </div>
+                                <div id="legend-i"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>平均整改项</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-j" height="140"></canvas>
+                                </div>
+                                <div id="legend-j"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>发现问题数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-k" height="140"></canvas>
+                                </div>
+                                <div id="legend-k"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>确认问题数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-l" height="140"></canvas>
+                                </div>
+                                <div id="legend-l"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>操作地点异常工单数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-m" height="140"></canvas>
+                                </div>
+                                <div id="legend-m"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>操作地点异常比例数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-n" height="140"></canvas>
+                                </div>
+                                <div id="legend-n"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>其他维保任务数</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <canvas id="lineChart-o" height="140"></canvas>
+                                </div>
+                                <div id="legend-o"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- iCheck -->
+    <script src="../../res/admin/js/plugins/iCheck/icheck.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <!-- ChartJS-->
+    <script src="../../res/admin/js/plugins/chartJs/Chart.min.js"></script>
+
+    <script src="../../res/admin/js/plugins/fullcalendar/moment.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >数据分析 >保养工作分析");
+
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+
+            app.initCombobox({
+                url: 'GetTeamInfoWithType',
+                data: {
+                    Type: '维保',
+                },
+                callback_params: {
+                    id: 'group1'
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetTeamInfoWithType',
+                data: {
+                    Type: '维保',
+                },
+                callback_params: {
+                    id: 'group2'
+                }
+            });
+
+            $("#person2").combobox({});
+
+            $("#datepicker").datepicker({
+                language: 'zh-CN',
+                keyboardNavigation: false,
+                todayBtn: "linked",
+                forceParse: true,
+                autoclose: true,
+                startView: 1,
+                maxViewMode: 1,
+                minViewMode: 1,
+                format: "yyyy-mm"
+            });
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        function doGroupChange() {
+            var group = $("#group2").val();
+            $("#person2").html('<option value="" selected="selected">选择人员</option>');
+            if (group == "") {
+                $("#person2").combobox("clearTarget");
+                $("#person2").combobox("clearElement");
+                $("#person2").combobox("refresh");
+            } else {
+                app.initCombobox({
+                    url: 'FindTeamMemberInfoWithKey',
+                    data: {
+                        TeamName: group,
+                        UserName: "",
+                    },
+                    callback_params: {
+                        id: 'person2',
+                        refresh: true,
+                    }
+                });
+            }
+        }
+
+        function doAddType() {
+            var degree = $(".type-selected").find("div.degree-row");
+            if (degree && degree.length >= 5) {
+                app.info("暂时只支持5个对比维度，您已经选择了5个对比维度！");
+                return;
+            }
+
+            var degree_type = $("input[name='type']:checked").val();
+            if (degree_type == null) {
+                app.info("请先选择员工或者小组作为对比维度");
+                return;
+            }
+
+            var UserName = "";
+            var Type = 0;
+            if (degree_type == 1) {
+                UserName = $("#group1").val();
+                if (UserName == "") {
+                    app.info("请选择一个小组");
+                    return;
+                }
+                Type = $("#group_type").val();
+            }
+            else if (degree_type == 2) {
+                UserName = $("#person2").val();
+                if (UserName == "") {
+                    app.info("请选择一个人员");
+                    return;
+                }
+                Type = 2;
+            }
+
+            //判断是否已经添加了该维度
+            var flag = true
+            if (degree) {
+                degree.each(function () {
+                    var add_user_name = $(this).find("input.user-name").val();
+                    var add_type = $(this).find("input.type").val();
+                    if (add_user_name == UserName && Type == add_type) {
+                        flag = false;
+                    }
+                })
+            }
+            if (!flag) {
+                app.warning("已经添加过该维度了，请选择其他维度！");
+                return;
+            }
+
+            //选择对应颜色
+            var color = $("input[name='color']:checked").val();
+            if (color == null) {
+                app.info("请选择一个颜色，作为维度标识！");
+                return;
+            }
+
+            var name_tip = "";
+            var Name = UserName;
+            if (Type == 1) {
+                name_tip = UserName + " 小组 总量";
+            } else if (Type == 3) {
+                name_tip = UserName + " 小组 平均";
+            } else if (Type == 2) {
+                name_tip = $("#person2").find("option[value='" + UserName + "']").html() + " 员工";
+                Name = $("#person2").find("option[value='" + UserName + "']").html();
+            }
+
+            //添加维度
+            var html = '<div class="row degree-row" style="margin-bottom: 10px;">'
+                + '<input type="hidden" class="user-name" value="' + UserName + '">'
+                + '<input type="hidden" class="name" value="' + Name + '">'
+                + '<input type="hidden" class="type" value="' + Type + '">'
+                + '<input type="hidden" class="color" value="' + color + '">'
+                + '<div class="col-sm-4">' + name_tip + '</div>'
+                + '<div class="col-sm-2">'
+                + '<span style="display:inline-block;background-color: ' + color + ';width: 80px;height: 30px;"></span>'
+                + '</div>'
+                + '<div class="col-sm-2">'
+                + '<button onclick="doRemoveDegree(this)" type="button" class="btn btn-danger">删除</button>'
+                + '</div>'
+                + '</div>';
+            $(".type-selected").append(html);
+
+            //删除已经选择的颜色
+            $("div." + color).remove();
+        }
+
+        function doRemoveDegree(obj) {
+            var color = $(obj).parents("div.degree-row").find("input.color").val();
+            var html = '<div class="form-group ' + color + '">'
+                + '<label class="radio-inline i-checks new-checks">'
+                + ' <input type="radio" name="color" value="' + color + '">'
+                + '</label>'
+                + '</div>'
+                + ' <div class="form-group ' + color + '">'
+                + ' <span style="display:inline-block;background-color: ' + color + ';width: 80px;height: 30px;"></span>'
+                + '</div>';
+            $("#color").prepend(html);
+            $(obj).parents("div.degree-row").remove();
+
+            $('.new-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        }
+
+        var lineOptions = {
+            scaleShowGridLines: true,
+            scaleGridLineColor: "rgba(0,0,0,.05)",
+            scaleGridLineWidth: 1,
+            bezierCurve: true,
+            bezierCurveTension: 0.4,
+            pointDot: true,
+            pointDotRadius: 4,
+            pointDotStrokeWidth: 1,
+            pointHitDetectionRadius: 20,
+            datasetStroke: true,
+            datasetStrokeWidth: 2,
+            datasetFill: true,
+            responsive: true,
+            legendTemplate: '<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+        };
+
+        function doDegreeDataSearch() {
+            var degree = $(".type-selected").find("div.degree-row");
+            if (degree == null || degree.length == 0) {
+                app.info("请先添加对比维度！");
+                return;
+            }
+            var degreeList = [];
+            var colorList = [];
+            degree.each(function () {
+                var add_user_name = $(this).find("input.user-name").val();
+                var add_name = $(this).find("input.name").val();
+                var add_type = $(this).find("input.type").val();
+                var add_color = $(this).find("input.color").val();
+                degreeList.push({
+                    UserName: add_user_name,
+                    Name: add_name,
+                    Type: parseInt(add_type)
+                });
+                colorList.push(add_color);
+            })
+
+            var start = $("#start").val();
+            if (start == "") {
+                app.info("请选择对比开始时间！");
+                return;
+            }
+            var end = $("#end").val();
+            if (end == "") {
+                app.info("请选择对比结束时间！");
+                return;
+            }
+            if (start > end) {
+                app.info("对比开始时间不能大于对比结束时间！");
+                return;
+            }
+
+            var options = {
+                url: 'GetDetailGeneralMaintain',
+                data: {
+                    MinMonthTime: new Date(start + "-01").getTime() / 1000,
+                    MaxMonthTime: new Date(end + "-01").getTime() / 1000,
+                    List: degreeList,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        //设置初始值
+                        var start = $("#start").val();
+                        var end = $("#end").val();
+                        var labels = [];
+                        labels.push(start);
+                        while (start < end) {
+                            var label = moment(start + "-01").add(1, 'months');
+                            label = app.formatDateFromUnix(new Date(label).getTime() / 1000).substr(0, 7);
+                            labels.push(label);
+                            start = label;
+                        }
+                        var List = res.data.List;
+
+                        setBarPicture('a', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('b', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('c', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('d', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('e', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('f', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('g', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('h', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('i', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('j', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('k', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('l', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('m', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('n', labels, params.degreeList, params.colorList, List);
+                        setBarPicture('o', labels, params.degreeList, params.colorList, List);
+                    } else {
+                        app.error(res.msg);
+                    }
+                },
+                callback_params: {
+                    degreeList: degreeList,
+                    colorList: colorList,
+                }
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function setBarPicture(index, labels, degreeList, colorList, List) {
+            var chartData = {
+                labels: labels,
+                datasets: [],
+            };
+
+            for (var i = 0; i < degreeList.length; i++) {
+                var label = "";
+                if (degreeList[i].Type == 1) {
+                    label = degreeList[i].Name + "[总量]"
+                } else if (degreeList[i].Type == 2) {
+                    label = degreeList[i].Name + ""
+                } else if (degreeList[i].Type == 3) {
+                    label = degreeList[i].Name + "[平均]"
+                }
+                var datasets = new Object({
+                    label: label,
+                    fillColor: colorList[i],
+                    strokeColor: colorList[i],
+                    pointColor: colorList[i],
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: colorList[i],
+                });
+
+                chartData.datasets.push(datasets);
+            }
+
+            if (List && List.length > 0) {
+                //每一个纬度的数据
+                List.forEach(function (v, i, a) {
+                    var data = new Array();
+                    for (var i = 0; i < labels.length; i++) {
+                        data.push(0);
+                    }
+
+                    var MonthList = v.MonthList;
+                    if (MonthList && MonthList.length > 0) {
+                        //每一个月的数据
+                        MonthList.forEach(function (vv, ii, aa) {
+                            //判断label是哪个月
+                            var DateLabel = app.formatDateFromUnix(vv.DateNum).substr(0, 7);
+                            var j = 0;
+                            for (var l = 0; l < labels.length; l++) {
+                                if (DateLabel == labels[l]) {
+                                    j = l;
+                                }
+                            }
+                            //判断维度
+                            var UserName = vv.UserName;
+                            var Type = vv.Type;
+                            for (var k = 0; k < degreeList.length; k++) {
+                                if (UserName == degreeList[k].UserName && Type == degreeList[k].Type) {
+                                    if (index == 'a') {
+                                        data[j] = vv.ElevatorCount;
+                                    } else if (index == 'b') {
+                                        data[j] = vv.TicketCount;
+                                    } else if (index == 'c') {
+                                        data[j] = vv.ExpireCount;
+                                    } else if (index == 'd') {
+                                        data[j] = vv.TicketCount == 0 ? 0 : (vv.ExpireCount / vv.TicketCount).toFixed(2);
+                                    } else if (index == 'e') {
+                                        data[j] = vv.UnusualCloseCount;
+                                    } else if (index == 'f') {
+                                        data[j] = vv.TicketCount == 0 ? 0 : (vv.UnusualCloseCount / vv.TicketCount).toFixed(2);
+                                    } else if (index == 'g') {
+                                        data[j] = vv.SelfCheckCount;
+                                    } else if (index == 'h') {
+                                        data[j] = vv.SelfCheckFailCount;
+                                    } else if (index == 'i') {
+                                        data[j] = vv.SelfCheckToBigCount;
+                                    } else if (index == 'j') {
+                                        data[j] = vv.TicketCount == 0 ? 0 : (vv.SelfCheckToBigCount / vv.TicketCount).toFixed(2);
+                                    } else if (index == 'k') {
+                                        data[j] = vv.FindCount;
+                                    } else if (index == 'l') {
+                                        data[j] = vv.ConfirmCount;
+                                    } else if (index == 'm') {
+                                        data[j] = vv.UnusualAddressCount;
+                                    } else if (index == 'n') {
+                                        data[j] = vv.TicketCount == 0 ? 0 : (vv.UnusualAddressCount / vv.TicketCount).toFixed(2);
+                                    } else if (index == 'o') {
+                                        data[j] = vv.OtherMaintainCount;
+                                    }
+
+                                    if (vv.Type == 3) {
+                                        data[j] = vv.TeamMember == 0 ? 0 : (data[j] / vv.TeamMember).toFixed(2);
+                                    }
+                                    chartData['datasets'][k]['data'] = data;
+                                }
+                            }
+                        })
+                    }
+                })
+            }
+
+            var div = $("#lineChart-" + index).parent();
+            $(div).empty();
+            $(div).html('<canvas id="lineChart-' + index + '" height="140"></canvas>');
+
+            var chart_2d = document.getElementById("lineChart-" + index).getContext("2d");
+            var bar = new Chart(chart_2d).Bar(chartData, lineOptions);
+
+            var legend = document.getElementById('legend-' + index);
+            // 图例
+            legend.innerHTML = bar.generateLegend();
+        }
+    </script>
+</body>
+
+</html>

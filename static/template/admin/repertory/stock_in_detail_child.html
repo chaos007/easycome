@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>入库信息</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <!-- TouchSpin -->
+    <link href="../../res/admin/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="ibox">
+        <div class="ibox-content">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    入库单号：
+                </label>
+
+                <div class="col-sm-10">
+                    <span id="ww_id"></span>
+                </div>
+            </div>
+        </div>
+        <div class="ibox-title">
+            <h5>商品选择</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="form-horizontal">
+                <div class="form-inline" style="margin-bottom: 10px;">
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <label for="ww_type" class="sr-only">类别</label>
+                            <select class="combobox form-control" id="ww_type" onchange="doTypeChange()">
+                                <option value="" selected="selected">类别</option>
+                                <option value="工具">工具</option>
+                                <option value="易耗品">易耗品</option>
+                                <option value="配件">配件</option>
+                                <option value="检验仪器">检验仪器</option>
+                                <option value="调试设备">调试设备</option>
+                                <option value="设备">设备</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <label for="ww_part_name" class="sr-only">商品名称</label>
+                            <select class="combobox form-control" id="ww_part_name" onchange="doPartNameChange()">
+                                <option value="" selected="selected">商品名称</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <label for="ww_part_num" class="sr-only">商品编号</label>
+                            <select class="combobox form-control" id="ww_part_num" onchange="doPartNumChange()">
+                                <option value="" selected="selected">商品编号</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        商品编号
+                    </label>
+
+                    <div class="col-sm-10 control-label" style="text-align: left">
+                        <span id="ww_part_num_label"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        规格/型号
+                    </label>
+
+                    <div class="col-sm-10 control-label" style="text-align: left">
+                        <span id="ww_size_label"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        品牌
+                    </label>
+
+                    <div class="col-sm-10 control-label" style="text-align: left">
+                        <span id="ww_brand_label"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ibox-title">
+            <h5>供应商选择</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-10">
+                        <label for="ww_support" class="sr-only">供应商选择</label>
+                        <select class="combobox form-control" id="ww_support">
+                            <option value="" selected="selected">供应商选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ibox-title">
+            <h5>入库信息</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span class="input-required">*</span>入库到
+                    </label>
+
+                    <div class="col-sm-10">
+                        <label for="ww_repertory" class="sr-only">入库选择</label>
+                        <select class="combobox form-control" id="ww_repertory">
+                            <option value="" selected="selected">入库选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span class="input-required">*</span>入库类型
+                    </label>
+
+                    <div class="col-sm-10">
+                        <label for="ww_repertory_type" class="sr-only">入库类型</label>
+                        <select class="combobox form-control" id="ww_repertory_type">
+                            <option value="" selected="selected">入库类型</option>
+                            <option value="采购入库">采购入库</option>
+                            <option value="现场拆回">现场拆回</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        备注
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input type="text" id="ww_remark" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span class="input-required">*</span>入库数量
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input type="text" id="ww_num" class="form-control" onchange="doPriceChange()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span class="input-required">*</span>采购单价
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input type="text" id="ww_price" class="form-control" onchange="doPriceChange()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        采购人
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input type="text" id="ww_buy_person" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        制单人
+                    </label>
+
+                    <div class="col-sm-10 control-label" style="text-align: left">
+                        <span id="ww_make_person"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        总价
+                    </label>
+
+                    <div class="col-sm-10 control-label" style="text-align: left">
+                        <span id="ww_all_price"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ibox-title">
+            <h5>发票信息</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        发票类型
+                    </label>
+                    <div class="col-sm-10">
+                        <label for="ww_invoice_type" class="sr-only">发票类型</label>
+                        <select class="combobox form-control" id="ww_invoice_type">
+                            <option value="" selected="selected">发票类型</option>
+                            <option value="增值发票">增值发票</option>
+                            <option value="普票">普票</option>
+                            <option value="收据">收据</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        发票信息备注
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input type="text" id="ww_invoice_remark" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        是否收到发票
+                    </label>
+
+                    <div class="col-sm-10">
+                        <label for="ww_has_invoice" class="sr-only">是否收到发票</label>
+                        <select class="combobox form-control" id="ww_has_invoice">
+                            <option value="" selected="selected">是否收到发票</option>
+                            <option value="是">是</option>
+                            <option value="否">否</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        发票上物品名
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input type="text" id="ww_invoice_part_name" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <!-- TouchSpin -->
+    <script src="../../res/admin/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+    <script>
+        $(function () {
+            $('.input-group.date').datepicker({
+                language: 'zh-CN',
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+            });
+
+            $("#ww_price").TouchSpin({
+                max: 1000000,
+                min: 0,
+                buttondown_class: 'btn btn-white',
+                buttonup_class: 'btn btn-white'
+            });
+
+            $("#ww_num").TouchSpin({
+                max: 1000000,
+                min: 0,
+                buttondown_class: 'btn btn-white',
+                buttonup_class: 'btn btn-white'
+            });
+
+
+
+            // $("#ww_type").combobox();
+            // $("#ww_invoice_type").combobox();
+            // $("#ww_has_invoice").combobox();
+            // $("#ww_repertory_type").combobox();
+            $("#ww_make_person").html(app.getLoginUserName());
+
+            var url = window.location.href;
+
+            if (url.indexOf("?key=") > 0) {
+                var key = decodeURIComponent(url.split("?key=")[1]);
+                var options = {
+                    url: 'GetStockInWithKey',
+                    data: {
+                        ID: parseInt(key),
+                    },
+                    callback: initStockInInfo,
+                    callback_params: {}
+                };
+
+                app.execPostRequest(options);
+            }
+        });
+
+        function initStockInInfo(res, param) {
+            res = eval("(" + res + ")");
+            if (res.code == 10000) {
+                if (res.data == null) {
+                    return;
+                }
+                var info = res.data;
+                $("#ww_id").html(info.ID);
+
+                app.initCombobox({
+                    url: 'GetPartNameList',
+                    callback_params: {
+                        id: 'ww_part_name',
+                        value: info.PartName,
+                    }
+                });
+
+                app.initCombobox({
+                    url: 'GetPartNumList',
+                    callback_params: {
+                        id: 'ww_part_num',
+                        value: info.PartID,
+                    }
+                });
+
+                app.initCombobox({
+                    url: 'GetSupportInfo',
+                    callback_params: {
+                        id: 'ww_support',
+                        value: info.SupportID,
+                    }
+                });
+
+                app.initCombobox({
+                    url: 'GetRepertoryInfo',
+                    callback_params: {
+                        id: 'ww_repertory',
+                        value: info.RepertoryID,
+                    }
+                });
+                $("#ww_type").val(info.PartType);
+                $("#ww_type").combobox();
+                if (info.PartID != 0) {
+                    var options = {
+                        url: 'GetPartWithKey',
+                        data: {
+                            ID: info.PartID,
+                        },
+                        callback: function (res, params) {
+                            res = eval("(" + res + ")");
+                            if (res.code == 10000) {
+                                $("#ww_part_num_label").html(res.data.PartNum);
+                                $("#ww_size_label").html(res.data.Size);
+                                $("#ww_brand_label").html(res.data.Brand);
+                            }
+                        },
+                        callback_params: {}
+                    };
+
+                    app.execPostRequest(options);
+                }
+
+                $("#ww_repertory_type").val(info.Type);
+                $("#ww_repertory_type").combobox();
+                $("#ww_remark").val(info.Remark);
+                $("#ww_num").val(info.Number);
+                $("#ww_price").val(info.Price);
+                $("#ww_buy_person").val(info.BuyPerson);
+                $("#ww_make_person").html(info.MakePerson);
+                $("#ww_all_price").html(info.Number * info.Price);
+                $("#ww_invoice_type").val(info.InvoiceType);
+                $("#ww_invoice_type").combobox();
+                $("#ww_invoice_remark").val(info.InvoiceRemark);
+                $("#ww_has_invoice").val(info.ReceiveInvoice ? "是" : "否");
+                $("#ww_has_invoice").combobox();
+                $("#ww_invoice_part_name").val(info.InvoicePartName);
+            }
+        }
+
+        function doTypeChange() {
+            var wType = $("#ww_type").val();
+            $("#ww_part_name").html('<option value="" selected="selected">商品名称</option>');
+            $("#ww_part_num").html('<option value="" selected="selected">商品编号</option>');
+            app.initCombobox({
+                url: 'GetPartNameList',
+                data: {
+                    Type: wType.trim(),
+                },
+                callback_params: {
+                    id: 'ww_part_name',
+                    refresh: true,
+                }
+            });
+            app.initCombobox({
+                url: 'GetPartNumList',
+                data: {
+                    Type: wType.trim(),
+                },
+                callback_params: {
+                    id: 'ww_part_num',
+                    refresh: true,
+                }
+            });
+        }
+
+
+        function doPartNameChange() {
+            var name = $("#ww_part_name").val();
+            $("#ww_part_num").html('<option value="" selected="selected">商品编号</option>');
+
+            app.initCombobox({
+                url: 'GetPartNumList',
+                data: {
+                    PartName: name.trim(),
+                },
+                callback_params: {
+                    id: 'ww_part_num',
+                    refresh: true,
+                }
+            });
+        }
+
+        function doPartNumChange() {
+            var key = $("#ww_part_num").val();
+
+            var options = {
+                url: 'GetPartWithKey',
+                data: {
+                    ID: parseInt(key),
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        $("#ww_part_num_label").html(res.data.PartNum);
+                        $("#ww_size_label").html(res.data.Size);
+                        $("#ww_brand_label").html(res.data.Brand);
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+        }
+
+        function doPriceChange() {
+            var num = $("#ww_num").val();
+            if (num.trim() == "") {
+                return;
+            }
+
+            var price = $("#ww_price").val();
+            if (price.trim() == "") {
+                return;
+            }
+
+            $("#ww_all_price").html(parseInt(num) * parseInt(price));
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">导出检修</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>请选择导出时间</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="input-daterange input-group" id="e_datepicker">
+                                <span class="input-group-addon">从</span>
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" class="form-control" name="e_start" value="" />
+                                <span class="input-group-addon">到</span>
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" class="form-control" name="e_end" value="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="exportCheckAndFixTicketFile()">导出</button>
+</div>
+<script>
+    $(function () {
+        $("#e_datepicker").datepicker({
+            language: 'zh-CN',
+            keyboardNavigation: false,
+            todayBtn: "linked",
+            forceParse: true,
+            autoclose: true,
+        });
+    })
+
+    function exportCheckAndFixTicketFile() {
+        var Start = $("input[name='e_start']").val();
+        var End = $("input[name='e_end']").val();
+
+        if (Start.trim() == "") {
+            Start = 0;
+        } else {
+            Start = new Date(Start).getTime() / 1000;
+        }
+
+        if (End.trim() == "") {
+            End = 0;
+        } else {
+            End = new Date(End).getTime() / 1000;
+        }
+
+        var options = {
+            url: 'ExportCheckAndFixTicketFile',
+            filename: '检修导出结果.xlsx',
+            data: {
+                StartTime: Start,
+                EndTime: End,
+            },
+            method: 'post',
+        };
+        app.execGetRequest(options);
+    }
+
+</script>

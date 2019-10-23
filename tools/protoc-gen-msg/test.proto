@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package test;
+
+// mergepb工具
+message TestStruct
+{
+	string FieldA = 1;				// FieldA comment
+	bool FieldB = 2;				// FieldB comment
+}
+
+message HeartBeat
+{
+
+}
+
+message HeartBeatTest111{
+	HeartBeat FieldA = 1;
+}
+

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>维保其他任务</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <link href="../../res/admin/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox " style="border: none;">
+                        <div class="ibox-content ">
+                            <div id="search-form" style="margin-bottom: 10px;">
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <label for="team" class="sr-only">选择小组</label>
+                                        <select class="combobox form-control" id="team" onchange="doGroupChange()">
+                                            <option value="" selected="selected">选择小组</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="person" class="sr-only">选择人员</label>
+                                        <select class="combobox form-control" id="person">
+                                            <option value="" selected="selected">选择人员</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-daterange input-group" id="datepicker">
+                                            <span class="input-group-addon">时间:从</span>
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" class="form-control" name="start" value="" />
+                                            <span class="input-group-addon">到</span>
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" class="form-control" name="end" value="" />
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="getLiftMaintainList()">查询</button>
+                                </div>
+                            </div>
+                            <div class="jqGrid_wrapper">
+                                <table id="table"></table>
+                                <div id="pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <!-- iCheck -->
+    <script src="../../res/admin/js/plugins/iCheck/icheck.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <script src="../../res/js/layer/layer-min.js"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >维保管理 >其他维保任务");
+
+            app.initCombobox({
+                url: 'GetTeamInfo',
+                callback_params: {
+                    id: 'team',
+                }
+            })
+
+            $("#person").combobox({});
+
+
+            $("#datepicker").datepicker({
+                language: 'zh-CN',
+                keyboardNavigation: false,
+                todayBtn: "linked",
+                forceParse: true,
+                autoclose: true,
+            });
+
+            initGrid();
+
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        var gridOptions = {
+            getParam: function () {
+                var start = $("input[name='start']").val();
+                if (start == "") {
+                    start = 0;
+                } else {
+                    start = new Date(start).getTime() / 1000;
+                }
+                var end = $("input[name='end']").val();
+                if (end == "") {
+                    end = 0;
+                } else {
+                    end = new Date(end).getTime() / 1000;
+                }
+
+                var postData = $("#table").jqGrid('getGridParam', 'postData');
+                var rowNum = 10;
+                var page = 1;
+                if (postData) {
+                    rowNum = postData.rows;
+                    page = postData.page;
+                }
+
+                var team = $("#team").val();
+                var person = $("#person").val();
+
+                var data = {
+                    TeamName: team,
+                    UserName: person,
+                    StartTime: start,
+                    EndTime: end,
+                    Start: (page - 1) * rowNum,
+                    Num: parseInt(rowNum),
+                }
+
+                data = JSON.stringify(data);
+                var syn = md5(data + app.key)
+                return {
+                    data: data,
+                    syn: syn,
+                };
+            }
+        }
+
+        function getLiftMaintainList() {
+            $("#table").setGridParam({
+                page: 1,
+                url: app.serverName + 'GetMaintainOtherJobInfo'
+            }).trigger("reloadGrid");
+
+        };
+
+        function doGroupChange() {
+            var group = $("#team").val();
+            $("#person").html('<option value="" selected="selected">选择人员</option>');
+            if (group == "") {
+                $("#person").combobox("clearTarget");
+                $("#person").combobox("clearElement");
+                $("#person").combobox("refresh");
+            } else {
+                app.initCombobox({
+                    url: 'FindTeamMemberInfoWithKey',
+                    data: {
+                        TeamName: group,
+                        UserName: "",
+                    },
+                    callback_params: {
+                        id: 'person',
+                        refresh: true,
+                    }
+                });
+            }
+        }
+
+        function initGrid() {
+            $("#table").jqGrid({
+                url: app.serverName + 'GetMaintainOtherJobInfo',
+                datatype: 'json',
+                colNames: ['', '电梯编号', '工作描述', '人员', '时间', '操作'],
+                colModel: [
+                    {
+                        name: 'my_id',
+                        index: 'my_id',
+                        sortable: false,
+                        hidden: true,
+                        fixed: true,
+                        jsonmap: "ID",
+                        align: "left",
+                    },
+                    {
+                        name: 'ElevatorNum',
+                        key: true,
+                        sortable: false,
+                        formatter: function (value, options, rowObject) {
+                            return value == "" ? "不涉及" : value;
+                        }
+                    },
+                    {
+                        name: 'JobDesc',
+                        sortable: false,
+                    },
+                    {
+                        name: 'Person',
+                        sortable: false,
+                    },
+                    {
+                        name: 'ShouldDealTime',
+                        sortable: false,
+                        fixed: true,
+                        width: "100px",
+                        formatter: function (value, options, rowObject) {
+                            return app.formatDateFromUnix(value);
+                        }
+                    },
+                    {
+                        name: 'Opts',
+                        sortable: false,
+                        width: "100px",
+                        fixed: true,
+                        jsonmap: "ID",
+                        formatter: function (value, options, rowObject) {
+                            var url_tip = "maintain_other_tip.html?key=" + encodeURIComponent(value);
+                            return "<a style='color:#134da5;' href='" + url_tip + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-info'></i>&nbsp;更多信息</a>";
+                        }
+                    }
+                ],
+                rowNum: 10,
+                rowList: app.rowList,
+                viewrecords: true,
+                pager: "#pager",
+                height: 'auto',
+                autowidth: false,
+                shrinkToFit: true,
+                forceFit: true,
+                altRows: true,
+                altclass: 'table-alt',
+                repeatitems: false,
+                jsonReader: {
+                    root: "data.Result.List",
+                    total: "data.TotalPage",
+                    records: "data.Number",
+                    page: "data.CurPage",
+                },
+                serializeGridData: function (postData) {
+                    return gridOptions.getParam(postData);
+                },
+                gridComplete:function(){
+                },
+            });
+
+            // Add responsive to jqGrid
+            app.fitGrid();
+            $(window).bind('resize', function () {
+                app.fitGrid();
+            });
+        }
+    </script>
+</body>
+
+</html>

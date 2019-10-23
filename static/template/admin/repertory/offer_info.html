@@ -1,0 +1,680 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">新增报价单</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>商品选择</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-inline" style="margin-bottom: 10px;">
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_type" class="sr-only">类别</label>
+                                    <select class="combobox form-control" id="w_type" onchange="doTypeChange()">
+                                        <option value="" selected="selected">类别</option>
+                                        <option value="工具">工具</option>
+                                        <option value="易耗品">易耗品</option>
+                                        <option value="配件">配件</option>
+                                        <option value="检验仪器">检验仪器</option>
+                                        <option value="调试设备">调试设备</option>
+                                        <option value="设备">设备</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_part_name" class="sr-only">商品名称</label>
+                                    <select class="combobox form-control" id="w_part_name" onchange="doPartNameChange()">
+                                        <option value="" selected="selected">商品名称</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_part_num" class="sr-only">商品编号</label>
+                                    <select class="combobox form-control" id="w_part_num" onchange="doPartNumChange()">
+                                        <option value="" selected="selected">商品编号</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="getPartList()">查询</button>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="jqGrid_wrapper" id="w_wrapper">
+                                <table id="w_table"></table>
+                                <div id="w_pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>更换配件</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal" id="w_part_list">
+
+
+                    </div>
+                    <label class="control-label" id="w_price_lable">
+                        总配件成本：
+                    </label>
+                </div>
+                <div class="ibox-title">
+                    <h5>预报价信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>报价单号
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_offer_num" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>报价日期
+                            </label>
+
+                            <div class="col-sm-10">
+                                <div class="input-group date">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input id="w_date" type="text" class="form-control" value="" placeholder="选择日期">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>报价原因
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_offer_reason" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>报价内容
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_offer_content" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>报价金额
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_offer_money" class="form-control">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="saveInfo()">确认</button>
+</div>
+<script>
+
+    var idMap = new Map();
+    var idPrice = new Map();
+
+    var idIndex = 0;
+
+    var gridOptions = {
+        getParam: function () {
+            var partNum = $("#w_part_num").val();
+
+            if (partNum.trim() == "") {
+                partNum = 0;
+            } else {
+                partNum = parseInt(partNum);
+            }
+
+            var partName = $("#w_part_name").val();
+            var partType = $("#w_type").val();
+
+            var postData = $("#w_table").jqGrid('getGridParam', 'postData');
+            var rowNum = 3;
+            var page = 1;
+            if (postData) {
+                rowNum = postData.rows;
+                page = postData.page;
+            }
+
+            var url = $("#w_table").jqGrid('getGridParam', 'url');
+            var data = {
+                PartID: partNum,
+                PartName: partName,
+                PartType: partType,
+                Start: (page - 1) * rowNum,
+                Num: parseInt(rowNum),
+            }
+
+            data = JSON.stringify(data);
+            var syn = md5(data + app.key)
+            return {
+                data: data,
+                syn: syn,
+            };
+        }
+    }
+
+    $(function () {
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = decodeURIComponent(app.win_url.split("?key=")[1]);
+        }
+        if (app.win_action == 'edit') {
+            //编辑页面
+            $(".modal-title").html("编辑报价")
+            //获取info
+            var options = {
+                url: 'GetOfferWithKey',
+                data: {
+                    ID: parseInt(app.win_key),
+                },
+                callback: initOfferInfo,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        $('.input-group.date').datepicker({
+            language: 'zh-CN',
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true,
+        });
+
+        $("#w_offer_money").TouchSpin({
+            max: 1000000,
+            min: 0,
+            buttondown_class: 'btn btn-white',
+            buttonup_class: 'btn btn-white'
+        });
+
+        $("#w_type").combobox();
+
+        app.initCombobox({
+            url: 'GetPartNameList',
+            callback_params: {
+                id: 'w_part_name',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetPartNumList',
+            callback_params: {
+                id: 'w_part_num',
+            }
+        });
+
+        initGrid();
+
+    });
+
+    function initOfferInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+            var info = res.data;
+
+            $("#w_offer_num").val(info.OfferNum);
+            $("#w_date").val(app.formatDateFromUnix(info.Date));
+            $("#w_offer_reason").val(info.Reason);
+            $("#w_offer_content").val(info.Content);
+            $("#w_offer_money").val(info.OfferMoney);
+            if (info.PartList && info.PartList.length > 0) {
+                info.PartList.forEach(function (v, i, a) {
+                    initPartItemHtmlWithItem(v.StockInID, v);
+                });
+            }
+        } else {
+            app.error(res.msg);
+        }
+    }
+
+    function doTypeChange() {
+        var wType = $("#w_type").val();
+        $("#w_part_name").html('<option value="" selected="selected">商品名称</option>');
+        $("#w_part_num").html('<option value="" selected="selected">商品编号</option>');
+        app.initCombobox({
+            url: 'GetPartNameList',
+            data: {
+                Type: wType.trim(),
+            },
+            callback_params: {
+                id: 'w_part_name',
+                refresh: true,
+            }
+        });
+        app.initCombobox({
+            url: 'GetPartNumList',
+            data: {
+                Type: wType.trim(),
+            },
+            callback_params: {
+                id: 'w_part_num',
+                refresh: true,
+            }
+        });
+    }
+
+    function getPartList() {
+        $("#w_table").jqGrid('setGridParam', {  // 重新加载数据
+            page: 1,
+            url: app.serverName + 'GetStockInInfo',
+        }).trigger("reloadGrid");
+    }
+
+    function initGrid() {
+        $("#w_table").jqGrid({
+            colNames: ['入库单号', '入库时间', '商品编号', '名称', '供应商名称', '单价', '数量', '发票类型', '是否收到发票', '操作'],
+            colModel: [
+                {
+                    name: 'id',
+                    fixed: true,
+                    jsonmap: "ID",
+                },
+                {
+                    name: 'Date',
+                    fixed: true,
+                    formatter: function (value, options, rowObject) {
+                        return app.formatDateFromUnix(value);
+                    }
+                },
+                {
+                    name: 'PartNum',
+                },
+                {
+                    name: 'PartName',
+                },
+                {
+                    name: 'SupportName',
+                },
+                {
+                    name: 'Price',
+                },
+                {
+                    name: 'Number',
+                },
+                {
+                    name: 'InvoiceType',
+                },
+                {
+                    name: 'ReceiveInvoice',
+                    formatter: function (value, options, rowObject) {
+                        return value ? "是" : "否";
+                    }
+                },
+                {
+                    name: 'Opts',
+                    sortable: false,
+                    jsonmap: "ID",
+                    fixed: true,
+                    formatter: function (value, options, rowObject) {
+                        return "<a style='color:#134da5;' onclick='initPartItemHtml(" + value + ")'><i class='fa fa-edit'></i>&nbsp;选取</a>";
+                    }
+                }
+            ],
+            url: app.serverName + 'GetStockInInfo',
+            rowNum: 3,
+            rowList: [3],
+            datatype: 'json',
+            data: [],
+            viewrecords: true,
+            pager: "#w_pager",
+            height: 'auto',
+            autowidth: true,
+            shrinkToFit: true,
+            forceFit: true,
+            altRows: true,
+            altclass: 'table-alt',
+            jsonReader: {
+                root: "data.Result",
+                total: "data.TotalPage",
+                records: "data.Number",
+                page: "data.CurPage",
+            },
+            serializeGridData: function (postData) {
+                return gridOptions.getParam(postData);
+            },
+        });
+
+        // Add responsive to jqGrid
+        var width = $('#w_wrapper').width();
+        $('#w_table').setGridWidth(width);
+        $(window).bind('resize', function () {
+            var width = $('#w_wrapper').width();
+            $('#w_table').setGridWidth(width);
+        });
+    }
+
+    function initPartItemHtml(id) {
+        var text = "";
+        var options = {
+            url: 'GetStockInWithKey',
+            data: {
+                ID: parseInt(id),
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    idIndex++;
+                    idMap.set(idIndex, id);
+                    text += res.data.PartNum + "  " + res.data.PartName + "  进货单号：" + res.data.ID;
+                    var html = getPartHtml(idIndex, text);
+                    idPrice.set(idIndex, res.data.Price);
+
+                    $("#w_part_list").append(html);
+
+                    app.initCombobox({
+                        url: 'GetProjectName',
+                        callback_params: {
+                            id: 'w_project_' + idIndex,
+                        }
+                    });
+
+                    app.initCombobox({
+                        url: 'GetElevatorNumByProject',
+                        callback_params: {
+                            id: 'w_elevator_' + idIndex,
+                        }
+                    });
+                    $("#w_num_" + idIndex).TouchSpin({
+                        max: 1000000,
+                        min: 0,
+                        buttondown_class: 'btn btn-white',
+                        buttonup_class: 'btn btn-white'
+                    });
+                }
+            },
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+
+    }
+
+    function initPartItemHtmlWithItem(id, info) {
+
+        var text = "";
+        var options = {
+            url: 'GetStockInWithKey',
+            data: {
+                ID: parseInt(id),
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    idIndex++;
+                    idMap.set(idIndex, id);
+                    text += res.data.PartNum + "&nbsp;&nbsp;&nbsp;" + res.data.PartName + "&nbsp;&nbsp;&nbsp;进货单号：" + res.data.ID;
+                    var html = getPartHtml(idIndex, text);
+                    idPrice.set(idIndex, res.data.Price);
+
+                    $("#w_part_list").append(html);
+
+                    app.initCombobox({
+                        url: 'GetProjectName',
+                        callback_params: {
+                            id: 'w_project_' + idIndex,
+                            value: info.ProjectName,
+                        }
+                    });
+
+                    app.initCombobox({
+                        url: 'GetElevatorNumByProject',
+                        callback_params: {
+                            id: 'w_elevator_' + idIndex,
+                            value: info.ElevatorNum,
+                        }
+                    });
+                    $("#w_num_" + idIndex).TouchSpin({
+                        max: 1000000,
+                        min: 0,
+                        buttondown_class: 'btn btn-white',
+                        buttonup_class: 'btn btn-white'
+                    });
+                    $("#w_num_" + idIndex).val(info.Number);
+                    doPriceChange();
+                }
+            },
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+
+    }
+
+    function getPartHtml(id, text, price) {
+        return "<div class='form-inline' style='margin-bottom: 10px;' id = 'part_item_" + id + "'>"
+            + "<div class='form-group'>"
+            + "<div class='col-sm-4'>"
+            + "<label class='control-label'>" + text + "</label></div>"
+            + "<div class='col-sm-2'>"
+            + " <label for='w_project_" + id + "' class='sr-only'>项目</label>"
+            + "<select class='combobox form-control' id='w_project_" + id + "' onchange='doProjectChange(" + id + ")'>"
+            + "    <option value='' selected='selected'>项目</option>"
+            + "    </select>"
+            + "</div>"
+            + "<div class='col-sm-2'>"
+            + " <label for='w_elevator_" + id + "' class='sr-only'>电梯</label>"
+            + "<select class='combobox form-control' id='w_elevator_" + id + "' >"
+            + "   <option value='' selected='selected'>电梯</option>"
+            + " </select>"
+            + "</div>"
+            + "                               <div class='col-sm-1'>"
+            + "<label class='control-label'>数量：</label>"
+            + "</div>"
+            + "<div class='col-sm-2'>"
+            + "<input type='text' id='w_num_" + id + "' class='form-control' onchange='doPriceChange()'>"
+            + "</div>"
+            + "  <div class='col-sm-1'>"
+            + "   <label class='control-label'>"
+            + "     <a style='color:#134da5;' onclick='doDeletePart(" + id + ")'>"
+            + "<i class='fa fa-info'></i>&nbsp;删除</a>"
+            + "</label>"
+            + "</div>"
+            + "</div>"
+            + "</div>";
+    }
+
+    function doProjectChange(id) {
+        var project = $("#w_project_" + id).val();
+        if (project.trim() == "") {
+            return
+        }
+        $("#w_elevator_" + id).html('<option value="" selected="selected">电梯号</option>');
+        app.initCombobox({
+            url: 'GetElevatorNumByProject',
+            data: {
+                ProjectName: project.trim(),
+            },
+            callback_params: {
+                id: 'w_elevator_' + id,
+                refresh: true,
+            }
+        });
+    }
+
+    function doDeletePart(id) {
+        idMap.delete(parseInt(id));
+        idPrice.delete(parseInt(id));
+        // console.log($("#part_item_"+id));
+        $("#part_item_" + id).remove();
+        doPriceChange();
+    }
+
+    function doPriceChange() {
+        var totalPrice = 0;
+        idPrice.forEach(function (v, key, map) {
+            var itemNum = $("#w_num_" + key).val();
+            totalPrice += parseInt(itemNum) * parseInt(v);
+        })
+        $("#w_price_lable").html("总配件成本：" + totalPrice + "元");
+    }
+
+
+    function doPartNameChange() {
+        var name = $("#w_part_name").val();
+        $("#w_part_num").html('<option value="" selected="selected">商品编号</option>');
+
+        app.initCombobox({
+            url: 'GetPartNumList',
+            data: {
+                PartName: name.trim(),
+            },
+            callback_params: {
+                id: 'w_part_num',
+                refresh: true,
+            }
+        });
+    }
+
+    function doPartNumChange() {
+        var key = $("#w_part_num").val();
+
+        var options = {
+            url: 'GetPartWithKey',
+            data: {
+                ID: parseInt(key),
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    $("#w_part_num_label").html(res.data.PartNum);
+                    $("#w_size_label").html(res.data.Size);
+                    $("#w_brand_label").html(res.data.Brand);
+                }
+            },
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+
+    }
+
+    function saveInfo() {
+
+        var list = [];
+
+        idMap.forEach(function (v, key, map) {
+            var elevator = $("#w_elevator_" + key).val();
+            if (elevator.trim() == "") {
+                app.warning("有入库单号未选择电梯");
+                return;
+            }
+            var itemNum = $("#w_num_" + key).val();
+            if (itemNum.trim() == "") {
+                app.warning("有入库单号未选择配件数量");
+                return;
+            }
+            var item = {
+                ElevatorNum: elevator.trim(),
+                StockInID: parseInt(v),
+                Number: parseInt(itemNum),
+            };
+
+            list.push(item);
+        });
+        var offerNum = $("#w_offer_num").val();
+        if (offerNum.trim() == "") {
+            app.warning("请输入报价单号");
+            return;
+        }
+        var date = $("#w_date").val();
+        if (date.trim() == "") {
+            app.warning("请输入报价日期");
+            return;
+        }
+        var offerReason = $("#w_offer_reason").val();
+        if (offerReason.trim() == "") {
+            app.warning("请输入报价原因");
+            return;
+        }
+
+        var offerContent = $("#w_offer_content").val();
+        if (offerContent.trim() == "") {
+            app.warning("请输入报价内容");
+            return;
+        }
+
+        var offerMoney = $("#w_offer_money").val();
+        if (offerMoney.trim() == "") {
+            app.warning("请选择报价金额");
+            return;
+        }
+
+        if (app.win_action == 'add') {
+            var options = {
+                url: 'AddNewOffer',
+                data: {
+                    OfferNum: offerNum,
+                    Date: parseInt(new Date(date).getTime() / 1000),
+                    List: list,
+                    MakePerson:app.getLoginUserName(),
+                    OfferMoney: parseInt(offerMoney),
+                    Reason: offerReason,
+                    Content: offerContent,
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "add",
+                    refresh: offer_refresh,
+                    key: 'new_key',
+                }
+            };
+        } else {
+            var options = {
+                url: 'ChangeOffer',
+                data: {
+                    ID: parseInt(app.win_key),
+                    OfferNum: offerNum,
+                    Date: parseInt(new Date(date).getTime() / 1000),
+                    List: list,
+                    OfferMoney: parseInt(offerMoney),
+                    Reason: offerReason,
+                    Content: offerContent,
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: offer_refresh,
+                    key: parseInt(app.win_key),
+                }
+            };
+        }
+
+        app.execPostRequest(options);
+    }
+
+</script>

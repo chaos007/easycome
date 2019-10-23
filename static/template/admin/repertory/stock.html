@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>库存管理</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <link href="../../res/admin/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <!-- TouchSpin -->
+    <link href="../../res/admin/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox gray-bg" style="border: none;">
+                        <div class="ibox-content gray-bg">
+                            <div id="search-form" class="form-inline" style="margin-bottom: 34px;">
+                                <div class="form-group" style="float: right;">
+                                    <a onclick="exportFile()" class="btn btn-default">
+                                        <i class="fa fa-reply"></i>&nbsp;导出</a>
+                                    <a class="btn btn-default" data-toggle="modal" href="change_stock_lots.html" data-target="#win">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;批量调拨</a>
+                                    <a class="btn btn-default" data-toggle="modal" href="out_stock_lots.html" data-target="#win">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;批量出库</a>
+                                </div>
+                            </div>
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="part_num" class="sr-only">商品编号</label>
+                                    <select class="combobox form-control" id="part_num">
+                                        <option value="" selected="selected">商品编号</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="type" class="sr-only">类别</label>
+                                    <select class="combobox form-control" id="type">
+                                        <option value="" selected="selected">类别</option>
+                                        <option value="工具">工具</option>
+                                        <option value="易耗品">易耗品</option>
+                                        <option value="配件">配件</option>
+                                        <option value="检验仪器">检验仪器</option>
+                                        <option value="调试设备">调试设备</option>
+                                        <option value="设备">设备</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="part_name" class="sr-only">商品名称</label>
+                                    <select class="combobox form-control" id="part_name">
+                                        <option value="" selected="selected">商品名称</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="size" class="sr-only">规格/型号</label>
+                                    <select class="combobox form-control" id="size">
+                                        <option value="" selected="selected">规格/型号</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="support" class="sr-only">供应商</label>
+                                    <select class="combobox form-control" id="support">
+                                        <option value="" selected="selected">供应商</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="repertory" class="sr-only">所有(仓库选择)</label>
+                                    <select class="combobox form-control" id="repertory">
+                                        <option value="" selected="selected">所有(仓库选择)</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="getStockList()">查询</button>
+                            </div>
+                            <div class="jqGrid_wrapper">
+                                <table id="table"></table>
+                                <div id="pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- TouchSpin -->
+    <script src="../../res/admin/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <!-- iCheck -->
+    <script src="../../res/admin/js/plugins/iCheck/icheck.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >仓库存管理 >库存管理");
+
+            app.initCombobox({
+                url: 'GetPartNumList',
+                callback_params: {
+                    id: 'part_num',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetPartNameList',
+                callback_params: {
+                    id: 'part_name',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetPartSizeList',
+                callback_params: {
+                    id: 'size',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetSupportInfo',
+                callback_params: {
+                    id: 'support',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetRepertoryInfo',
+                callback_params: {
+                    id: 'repertory',
+                }
+            });
+
+            $("#type").combobox();
+
+            // $("#datepicker").datepicker({
+            //     language: 'zh-CN',
+            //     keyboardNavigation: false,
+            //     todayBtn: "linked",
+            //     forceParse: true,
+            //     autoclose: true,
+            // });
+
+            initGrid();
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        function getStockList() {
+            $("#table").jqGrid('setGridParam', {  // 重新加载数据
+                // datatype: 'local',
+                // data: dataSource,
+                page: 1,
+                url: app.serverName + 'GetStockInfo',
+            }).trigger("reloadGrid");
+        }
+
+        var gridOptions = {
+            getParam: function () {
+                var partNum = $("#part_num").val();
+
+                if (partNum.trim() == "") {
+                    partNum = 0;
+                } else {
+                    partNum = parseInt(partNum);
+                }
+
+                var partName = $("#part_name").val();
+                var partSize = $("#size").val();
+                var partType = $("#type").val();
+                var support = $("#support").val();
+                if (support.trim() == "") {
+                    support = 0;
+                } else {
+                    support = parseInt(support.trim());
+                }
+
+                var repertory = $("#repertory").val();
+                if (repertory.trim() == "") {
+                    repertory = 0;
+                } else {
+                    repertory = parseInt(repertory.trim());
+                }
+
+                var postData = $("#table").jqGrid('getGridParam', 'postData');
+                var rowNum = 10;
+                var page = 1;
+                if (postData) {
+                    rowNum = postData.rows;
+                    page = postData.page;
+                }
+
+                var url = $("#table").jqGrid('getGridParam', 'url');
+                var data = {
+                    PartID: partNum,
+                    PartName: partName,
+                    PartType: partType,
+                    PartSize: partSize,
+                    SupportID: support,
+                    RepertoryID: repertory,
+                    Start: (page - 1) * rowNum,
+                    Num: parseInt(rowNum),
+                }
+
+                data = JSON.stringify(data);
+                var syn = md5(data + app.key)
+                return {
+                    data: data,
+                    syn: syn,
+                };
+            }
+        }
+
+        function initGrid() {
+            $("#table").jqGrid({
+                colNames: ['', '商品编号', '名称', '规格/型号', '供应商名称', '单位', '数量', '所属仓库', '入库单号', '操作'],
+                colModel: [
+                    {
+                        name: 'ID',
+                        key: true,
+                        hidden: true,
+                    },
+                    { name: 'PartNum' },
+                    { name: 'PartName' },
+                    { name: 'Size' },
+                    { name: 'SupportName' },
+                    { name: 'Measurement' },
+                    { name: 'Number' },
+                    { name: 'RepertoryName' },
+                    {
+                        name: 'StockInID',
+                        fixed: true,
+                    },
+                    {
+                        name: 'Opts',
+                        sortable: false,
+                        jsonmap: "ID",
+                        width: "250px",
+                        fixed: true,
+                        formatter: function (value, options, rowObject) {
+                            var url = "change_stock.html?key=" + encodeURIComponent(value);
+                            var other_url = "out_stock.html?key=" + encodeURIComponent(value);
+                            return "<a style='color:#134da5;' href='" + url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-edit'></i>&nbsp;调拨</a>"
+                                + "&nbsp;|&nbsp;"
+                                + "<a style='color:#134da5;' href='" + other_url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-edit'></i>&nbsp;其他出库</a>";
+
+                        }
+                    }
+                ],
+                url: app.serverName + 'GetStockInfo',
+                datatype: 'json',
+                rowNum: 10,
+                rowList: app.rowList,
+                data: [],
+                viewrecords: true,
+                pager: "#pager",
+                height: 'auto',
+                autowidth: true,
+                shrinkToFit: true,
+                forceFit: true,
+                altRows: true,
+                altclass: 'table-alt',
+                jsonReader: {
+                    root: "data.Result",
+                    total: "data.TotalPage",
+                    records: "data.Number",
+                    page: "data.CurPage",
+                },
+                serializeGridData: function (postData) {
+                    return gridOptions.getParam(postData);
+                },
+            });
+
+            // Add responsive to jqGrid
+            app.fitGrid();
+            $(window).bind('resize', function () {
+                app.fitGrid();
+            });
+        }
+
+        function stock_refresh(key, oldKey, action) {
+            var options = {
+                url: 'GetStockWithKey',
+                data: {
+                    ID: key,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var recode = {
+                            ID: res.data.ID,
+                            PartNum: res.data.PartNum,
+                            PartName: res.data.PartName,
+                            Size: res.data.Size,
+                            SupportName: res.data.SupportName,
+                            Measurement: res.data.Measurement,
+                            Number: res.data.Number,
+                            RepertoryName: res.data.RepertoryName,
+                            StockInID: res.data.StockInID,
+                            Opts: res.data.ID,
+                        };
+
+                        $("#table").jqGrid("addRowData", recode.id, recode, "first");
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+            var options = {
+                url: 'GetStockWithKey',
+                data: {
+                    ID: oldKey,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var recode = {
+                            ID: res.data.ID,
+                            PartNum: res.data.PartNum,
+                            PartName: res.data.PartName,
+                            Size: res.data.Size,
+                            Support: res.data.Support,
+                            Measurement: res.data.Measurement,
+                            Number: res.data.Number,
+                            RepertoryName: res.data.RepertoryName,
+                            StockInID: res.data.StockInID,
+                            Opts: res.data.ID,
+                        };
+
+                        $('#table').setRowData(recode.id, recode, '');
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function out_stock_refresh(key, action) {
+
+            var options = {
+                url: 'GetStockWithKey',
+                data: {
+                    ID: key,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var recode = {
+                            id: res.data.ID,
+                            PartNum: res.data.PartNum,
+                            PartName: res.data.PartName,
+                            Size: res.data.Size,
+                            Support: res.data.Support,
+                            Measurement: res.data.Measurement,
+                            Number: res.data.Number,
+                            RepertoryName: res.data.RepertoryName,
+                            StockInID: res.data.StockInID,
+                            Opts: res.data.ID,
+                        };
+
+                        $('#table').setRowData(recode.id, recode, '');
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function stock_list_refresh(key, action) {
+            getStockList();
+        }
+
+        function exportFile() {
+            var options = {
+                url: 'ExportStockFile',
+                filename: '库存导出结果.xlsx',
+            };
+            app.execGetRequest(options);
+        }
+
+    </script>
+</body>
+
+</html>

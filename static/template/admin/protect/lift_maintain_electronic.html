@@ -1,0 +1,304 @@
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>电梯维保</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <link href="../../res/admin/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+</head>
+
+<!-- <button type="button" class="close" data-dismiss="modal">
+    <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+    <span class="sr-only">Close</span>
+</button> -->
+<!-- <div class="container"> -->
+
+<body class="gray-bg">
+
+    <div id="pdfcontent">
+        <!-- <div class="modal-body"> -->
+        <h1 style="font-weight:blod">电梯维保工单</h1>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: left">
+                                电梯号
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_elevator_num"></span>
+                            </div>
+                            <label class="col-sm-2" style="text-align: left">
+                                项目名称
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_project_name"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: left">
+                                地址
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_address"></span>
+                            </div>
+                            <label class="col-sm-2" style="text-align: left">
+                                维保人员
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_leader_name"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: left">
+                                维保人员
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_member_name"></span>
+                            </div>
+                            <label class="col-sm-2" style="text-align: left">
+                                维保人员
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_member_name2"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: left">
+                                维保类型
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_maintain_type"></span>
+                            </div>
+                            <label class="col-sm-2" style="text-align: left">
+                                维保项目
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_maintain_project"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <table class="table" border="1" cellspacing="0" cellpadding="0">
+                                    <thead>
+                                        <tr>
+                                            <th>区域</th>
+                                            <th>自检单项</th>
+                                            <th>自检标注</th>
+                                            <th>状态</th>
+                                            <th>整改意见</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="item_info">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: left">
+                                维保结果
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_maintain_result"></span>
+                            </div>
+                            <label class="col-sm-2" style="text-align: left">
+                                通知整改
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_notice_person"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: left">
+                                维保其他信息
+                            </label>
+
+                            <div class="col-sm-4">
+                                <span id="w_deal_words"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- </div> -->
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-white" data-dismiss="modal">返回</button> -->
+        <button type="button" class="btn btn-primary" onclick="printToPDF()">下载PDF</button>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <!-- iCheck -->
+    <script src="../../res/admin/js/plugins/iCheck/icheck.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <script src="../../res/js/layer/layer-min.js"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp"></script>
+
+
+    <script src="../../res/admin/js/jspdf.debug.js"></script>
+    <script src="../../res/admin/js/html2canvas.js"></script>
+
+    <script>
+        $(function () {
+            var ticket_id = 0;
+            if (location.href.indexOf("?key=") > 0) {
+                ticket_id = parseInt(decodeURIComponent(location.href.split("?key=")[1]));
+            } else {
+                return;
+            }
+            var options = {
+                url: 'GetMaintainElectronicTicketWithKey',
+                data: {
+                    TicketID: parseInt(ticket_id),
+                },
+                callback: initInfo,
+                callback_params: {}
+            };
+
+
+            app.execPostRequest(options);
+
+        });
+
+        function initInfo(res, param) {
+            res = eval("(" + res + ")");
+            if (res.code == 10000) {
+                if (res.data == null) {
+                    return;
+                }
+
+                var info = res.data;
+                var html = ""
+                if (info.ElevatorNum && info.ElevatorNum.trim() != "") {
+                    $("#w_elevator_num").html(info.ElevatorNum);
+                }
+                $("#w_project_name").html(info.ProjectName);
+                $("#w_address").html(info.Address);
+                $("#w_leader_name").html(info.LeaderName);
+                $("#w_member_name").html(info.MemberName);
+                $("#w_member_name2").html(info.MemberName2);
+                $("#w_maintain_type").html(info.MaintainType);
+                $("#w_maintain_project").html(info.MaintainProjectName);
+                $("#w_maintain_result").html(info.MaintainResult);
+                $("#w_notice_person").html(info.NoticePerson);
+                $("#w_deal_words").html(info.ResultDealWords);
+                if (res.data.ItemList) {
+                    res.data.ItemList.forEach(function (v, i, a) {
+                        var tr = "<tr>"
+                            + "<td>" + v.ElevatorZone + "</td>"
+                            + "<td>" + v.Name + "</td>"
+                            + "<td>" + v.Demand + "</td>"
+                            + "<td>" + v.State + "</td>"
+                            + "<td>" + v.UnusualWords + "</td>"
+                            + "</tr>";
+                        $("#item_info").append(tr);
+                    })
+                }
+            } else {
+                app.error(res.msg);
+            }
+        }
+        function printToPDF() {
+            // 将 id 为 pdfcontent 的 div 渲染成 canvas
+            html2canvas(document.getElementById("pdfcontent"), {
+                // async: false,
+                // // width:$("#pdfcontent").width(),
+                // logging: true,
+                background:"white",
+                // 渲染完成时调用，获得 canvas
+                onrendered: function (canvas) {
+                    // document.body.appendChild(canvas);
+                    var contentWidth = canvas.width;
+                    var contentHeight = canvas.height;
+
+                    //一页pdf显示html页面生成的canvas高度;
+                    var pageHeight = contentWidth / 595.28 * 841.89;
+                    //未生成pdf的html页面高度
+                    var leftHeight = contentHeight;
+
+                    //pdf页面偏移
+                    var position = 0;
+                    //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+                    var imgWidth = 555.28;
+                    var imgHeight = 555.28 / contentWidth * contentHeight;
+
+                    var pageData = canvas.toDataURL('image/jpeg', 1.0);
+
+                    var pdf = new jsPDF('', 'pt', 'a4');
+                    //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+                    //当内容未超过pdf一页显示的范围，无需分页
+                    if (leftHeight < pageHeight) {
+                        pdf.addImage(pageData, 'JPEG', 20, 0, imgWidth, imgHeight);
+                    } else {
+                        while (leftHeight > 0) {
+                            pdf.addImage(pageData, 'JPEG', 20, position, imgWidth, imgHeight)
+                            leftHeight -= pageHeight;
+                            position -= 841.89;
+                            //避免添加空白页
+                            if (leftHeight > 0) {
+                                pdf.addPage();
+                            }
+                        }
+                    }
+
+                    pdf.save('content.pdf');
+                }
+            });
+        }
+    </script>
+</body>

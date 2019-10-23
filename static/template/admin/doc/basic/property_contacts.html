@@ -1,0 +1,216 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">新增物业</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>物业联系人</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-inline" style="margin-bottom: 10px;">
+                        <div class="form-group">
+                            <label for="w_property_person" class="sr-only">物业人员</label>
+                            <select class="combobox form-control" id="w_property_person">
+                                <option value="" selected="selected">物业人员</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="doAddContactsMember()">新增联系人</button>
+                        &nbsp;找不到人员？<a onclick="app.openRightFrameFromWin('../../staff/person.html')">物业人员</a>
+                    </div>
+
+                    <div class="ibox">
+                        <div class="ibox-title" style="padding-left: 0;">
+                            <h5>已有联系人</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="dd" id="nestable">
+                                <ol class="dd-list">
+
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="doPropertyContactsOk()">确认</button>
+</div>
+<script>
+    $(function () {
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            var params = app.win_url.split("?key=")[1];
+            app.win_key = decodeURIComponent(params.split("&")[0]);
+            app.win_action = decodeURIComponent(params.split("&")[1]);
+        }
+
+        app.initCombobox({
+            url: 'FindPropertyPerson',
+            data: {
+                PropertyName: app.win_key,
+                SearchName: "",
+            },
+            callback_params: {
+                id: 'w_property_person',
+            }
+        });
+
+        $(".modal-title").html(app.win_key + "——联系人管理")
+
+        //获取联系人列表
+        var options = {
+            url: 'FindPropertyWithKey',
+            data: {
+                PropertyName: app.win_key,
+            },
+            callback: initPropertyContacts,
+            callback_params: {}
+        };
+        app.execPostRequest(options);
+    });
+
+    function initPropertyContacts(res, params) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+            var contacts_list = res.data.ContactsName;
+            if (contacts_list != null && contacts_list.length > 0) {
+                contacts_list.forEach(function (value, index, arr) {
+                    var options = {
+                        url: 'FindPersonWithKey',
+                        data: {
+                            UserName: value.UserName,
+                            IsProperty: true,
+                        },
+                        callback: addContactsLi,
+                        callback_params: {}
+                    };
+
+                    app.execPostRequest(options);
+                });
+            }
+        }
+    }
+
+    function addContactsLi(res, params) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            var info = res.data;
+            var html = '<li class="dd-item" data-value="' + info.UserName + '">'
+                + '<div class="dd-handle">'
+                + '<a style="color: #ed5565;"  href="javascript:;" onclick="doRemoveContactsMember(this)">删除</a>'
+                + '&nbsp;&nbsp;<i class="fa fa-user"></i>&nbsp;姓名：' + info.Name
+                + '&nbsp;&nbsp;角色：' + info.Remark
+                + '&nbsp;&nbsp;联系电话:' + info.Phone
+                + '</div>'
+                + '</li>';
+            $(".dd-list").append(html);
+
+        }
+    }
+
+    function doRemoveContactsMember(obj) {
+        app.delete(function () {
+            var li = $(obj).parents("li");
+            var value = $(li).data("value");
+            var options = {
+                url: 'DelPropertyContact',
+                data: {
+                    PropertyName: app.win_key.trim(),
+                    UserName: value,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        $(params.li).remove();
+                    } else {
+                        app.error(res.msg);
+                    }
+                },
+                callback_params: {
+                    li: li,
+                }
+            };
+            app.execPostRequest(options);
+        });
+    }
+
+    function doPropertyContactsOk() {
+        app.success("操作成功", function () {
+            $('#win').modal('hide');
+            property_refresh(app.win_key, app.win_action);
+        });
+    }
+
+    function doAddContactsMember() {
+        var user_name = $("#w_property_person").val();
+        if (user_name == "") {
+            app.info("请选择物业人员");
+            return;
+        }
+
+        var flag = false;
+        $(".dd-item").each(function () {
+            if (user_name == $(this).data("value")) {
+                flag = true;
+            }
+        });
+        if (flag) {
+            app.error("已经添加过该联系人");
+            return;
+        }
+
+        //获取info
+        var options = {
+            url: 'FindPersonWithKey',
+            data: {
+                UserName: user_name,
+                IsProperty: true,
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    //人员存在，保存为联系人
+                    var options = {
+                        url: 'AddPropertyContact',
+                        data: {
+                            PropertyName: app.win_key,
+                            UserName: params.user_name,
+                        },
+                        callback: function (res, params) {
+                            res = eval("(" + res + ")");
+                            if (res.code == 10000) {
+                                addContactsLi(JSON.stringify(params.res), {});
+                            } else {
+                                app.error(res.msg);
+                            }
+                        },
+                        callback_params: {
+                            res: res,
+                        }
+                    };
+                    app.execPostRequest(options);
+                } else {
+                    app.error(res.msg);
+                }
+            },
+            callback_params: {
+                user_name: user_name,
+            }
+        };
+
+        app.execPostRequest(options);
+    }
+</script>

@@ -1,0 +1,724 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">大修整改工单流程管理</h6>
+</div>
+<div class="modal-body">
+    <style type="text/css">
+        .popover {
+            z-index: 3000;
+        }
+    </style>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>工单信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                工单单号
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_TicketID"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                地址
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_address"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                问题描述
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_problem"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>异常关闭</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="radio-inline i-checks">
+                                <input type="radio" name="w_operation" value="2">异常关闭
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>关闭原因
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_lift_maintain_closeReason" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>反馈补充</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="radio-inline i-checks">
+                                <input type="radio" name="w_operation" value="3">添加反馈信息
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>反馈人员
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_lift_maintain_BackPerson" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>反馈事项
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_lift_maintain_BackItem" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>工作派单</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="radio-inline i-checks">
+                                <input type="radio" name="w_operation" value="4">工作派单
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>主负责人
+                            </label>
+
+                            <div class="col-sm-6">
+                                <label for="w_person1" class="sr-only">主负责人</label>
+                                <select class="combobox form-control" id="w_person1">
+                                    <option value="" selected="selected">主负责人</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(1)">已有工作计划</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>维修时间
+                            </label>
+
+                            <div class="col-sm-10">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input id="w_plan_time" type="text" class="form-control" value=""
+                                           placeholder="维修时间">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                备注说明
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input id="w_remark" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                配合人员
+                            </label>
+
+                            <div class="col-sm-6">
+                                <label for="w_person_selector" class="sr-only">配合人员</label>
+                                <select class="combobox form-control" id="w_person_selector">
+                                    <option value="" selected="selected">配合人员</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <button class="btn btn-primary" onclick="doAddLiMember()">添加配合人员</button>
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(2)">已有工作计划</button>
+                            </div>
+                        </div>
+                        <div class="form-group" style="padding-left: 60px;">
+                            <div class="ibox">
+                                <div class="ibox-title" style="padding-left: 0;">
+                                    <h5>已有配合人员</h5>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="dd" id="nestable">
+                                        <ol class="dd-list">
+
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>特检所报备</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="radio-inline i-checks">
+                                <input type="radio" name="w_operation" value="6">特检所报备
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                特检所报备
+                            </label>
+
+                            <div class="col-sm-10">
+                                <div class="form-group">
+                                    <label class="radio-inline i-checks ">
+                                        <input type="radio" name="w_baobei" value="1">是:
+                                    </label>
+                                    <label class="radio-inline i-checks ">
+                                        <input type="radio" name="w_type" value="大修">大修
+                                    </label>
+                                    <label class="radio-inline i-checks ">
+                                        <input type="radio" name="w_type" value="整改">整改
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="radio-inline i-checks">
+                                        <input type="radio" name="w_baobei" value="0">否
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>添加进展</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="radio-inline i-checks">
+                                <input type="radio" name="w_operation" value="7">添加进展
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>进展
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_progress" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>停复梯</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="radio-inline i-checks">
+                                <input type="radio" name="w_operation" value="9">停复梯
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>电梯状态
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" name="w_State" value="1">停用
+                                </label>
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" name="w_State" value="0">正常
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                停梯时间
+                            </label>
+
+                            <div class="col-sm-5">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input id="w_stop_date" type="text" class="form-control" value=""
+                                           placeholder="选择日期">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-5">
+                                <div class="input-group clockpicker" data-autoclose="true" data-placement="top">
+                                    <input type="text" id="w_stop_time" class="form-control" value=""
+                                           placeholder="选择时间">
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-clock-o"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                复梯时间
+                            </label>
+
+                            <div class="col-sm-5">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input id="w_reset_date" type="text" class="form-control" value="" placeholder="选择日期">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-5">
+                                <div class="input-group clockpicker" data-autoclose="true" data-placement="top">
+                                    <input type="text" id="w_reset_time" class="form-control" value="" placeholder="选择时间">
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-clock-o"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="saveLiftMaintainOperation()">确认</button>
+</div>
+<script>
+    var person2_list = [];
+    $(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+
+        $('.clockpicker').clockpicker();
+
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = parseInt(decodeURIComponent(app.win_url.split("?key=")[1]));
+            $("#w_TicketID").html(app.win_key);
+        }
+
+        if (app.win_action == 'edit') {
+            var options = {
+                url: 'GetBigCheckAndFixTicketWithKey',
+                data: {
+                    TicketID: app.win_key,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var info = res.data;
+                        $("#w_problem").html(info.ProblemDesc);
+                        $("#w_address").html(info.Address);
+
+                        var Leader = "";
+                        if (res.data.DealPersonList) {
+                            res.data.DealPersonList.forEach(function (v, i, a) {
+                                if (v.IsLeader) {
+                                    Leader = v.UserName;
+                                } else {
+                                    person2_list.push(v.UserName);
+                                    addLi(v);
+                                }
+                            });
+                        }
+
+                        app.initCombobox({
+                            url: 'GetDealMemberNameWithElevatorNum',
+                            data: {
+                                ElevatorNum: info.ElevatorNum,
+                                SmallTeamType: "大修整改",
+                            },
+                            callback_params: {
+                                id: 'w_person1',
+                                value: Leader,
+                            }
+                        });
+
+                        app.initCombobox({
+                            url: 'GetDealMemberNameWithElevatorNum',
+                            data: {
+                                ElevatorNum: info.ElevatorNum,
+                                SmallTeamType: "大修整改",
+                            },
+                            callback_params: {
+                                id: 'w_person_selector',
+                            }
+                        });
+
+                        $("#w_plan_time").val(app.formatDateFromUnix(res.data.ShouldDealTime));
+                        $('.input-group.date').datepicker({
+                            language: 'zh-CN',
+                            todayBtn: "linked",
+                            keyboardNavigation: false,
+                            forceParse: false,
+                            autoclose: true,
+                        });
+                    } else {
+                        app.error(res.msg);
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+    });
+
+    function doAddLiMember() {
+        var leader = $("#w_person1").val();
+        if (leader == "") {
+            app.info("请先选择主负责人");
+            return;
+        }
+
+        var user_name = $("#w_person_selector").val();
+        if (user_name == "") {
+            app.info("请先选择配合人员");
+            return;
+        }
+
+        if (leader == user_name) {
+            app.warning("此人已经是主负责人");
+            return;
+        }
+
+        var flag = false;
+        $(".dd-item").each(function () {
+            if (user_name == $(this).data("value")) {
+                flag = true;
+            }
+        });
+        if (flag) {
+            app.error("已经添加过该联系人");
+            return;
+        }
+        var options = {
+            url: 'FindPersonWithKey',
+            data: {
+                UserName: user_name,
+                IsProperty: false,
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    person2_list.push(res.data.UserName);
+                    addLi(res.data);
+                }
+            },
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+    }
+
+    function addLi(obj) {
+        var html = '<li class="dd-item" data-value="' + obj.UserName + '">'
+            + '<div class="dd-handle">'
+            + '<a style="color: #ed5565;"  href="javascript:;" onclick="doRemoveLiMember(this)">删除</a>'
+            + '&nbsp;&nbsp;<i class="fa fa-user"></i>&nbsp;姓名：' + obj.Name
+            + '&nbsp;&nbsp;联系电话:' + obj.Phone
+            + '</div>'
+            + '</li>';
+        $(".dd-list").append(html);
+    }
+
+    function doRemoveLiMember(obj) {
+        var li = $(obj).parents("li");
+        var value = $(li).data("value");
+        person2_list.splice(jQuery.inArray(value, person2_list), 1);
+        $(li).remove();
+    }
+
+    function saveLiftMaintainOperation() {
+        var type = $("input[name='w_operation']:checked").val();
+
+        if (type == null) {
+            app.info("请选择要处理的选项");
+            return;
+        }
+
+        //异常关闭
+        if (type == 2) {
+            var reason = $("#w_lift_maintain_closeReason").val().trim();
+            if (reason == "") {
+                app.warning("请输入异常关闭的原因");
+                return;
+            }
+            var options = {
+                url: 'BigCheckAndFixTicketUnusualClose',
+                data: {
+                    TicketID: app.win_key,
+                    UnusualCloseReason: reason,
+                    UserName: app.getLoginUserName(),
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: lift_big_refresh,
+                    key: app.win_key,
+                }
+            };
+
+            app.execPostRequest(options);
+            return;
+        }
+
+        //反馈补充
+        if (type == 3) {
+            var person = $("#w_lift_maintain_BackPerson").val().trim();
+            if (person == "") {
+                app.warning("请输入反馈人员");
+                return;
+            }
+            var item = $("#w_lift_maintain_BackItem").val().trim();
+            if (item == "") {
+                app.warning("请输入反馈事项");
+                return;
+            }
+
+            var options = {
+                url: 'AddBigCheckAndFixResultMessage',
+                data: {
+                    TicketID: app.win_key,
+                    Person: person,
+                    Message: item,
+                    UserName: app.getLoginUserName(),
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: lift_big_refresh,
+                    key: app.win_key,
+                }
+            };
+
+            app.execPostRequest(options);
+            return;
+        }
+
+        //工作派单
+        if (type == 4) {
+            var Leader = $("#w_person1").val();
+            if (Leader == "") {
+                app.warning("请选择主维修人");
+                return;
+            }
+
+            var DealTime = $("#w_plan_time").val();
+            if (DealTime == "") {
+                app.warning("请选择维修时间");
+                return;
+            }
+            var Reason = $("#w_remark").val();
+
+            var options = {
+                url: 'ChangeBigCheckAndFixTicketDealPerson',
+                data: {
+                    TicketID: app.win_key,
+                    UserName: app.getLoginUserName(),
+                    ShouldDealTime: new Date(DealTime).getTime() / 1000,
+                    LeaderUserName: Leader,
+                    MemberUserName: person2_list,
+                    Reason: Reason,
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: lift_big_refresh,
+                    key: app.win_key,
+                }
+            };
+
+            app.execPostRequest(options);
+            return;
+        }
+
+        //特检所报备
+        if (type == 6) {
+            var isBaoBei = $("input[name='w_baobei']:checked").val();
+            if (isBaoBei == null) {
+                app.warning("请选择是否报备");
+                return;
+            }
+            var FixType = "";
+            if (isBaoBei == 1) {
+                FixType = $("input[name='w_type']:checked").val();
+                if (FixType == null) {
+                    app.warning("请选择大修或整改");
+                    return;
+                }
+            }
+
+            var options = {
+                url: 'AddBigCheckAndFixTicketReport',
+                data: {
+                    TicketID: app.win_key,
+                    UserName: app.getLoginUserName(),
+                    Report: FixType,
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: lift_big_refresh,
+                    key: app.win_key,
+                }
+            };
+
+            app.execPostRequest(options);
+            return;
+        }
+
+        //添加进展
+        if (type == 7) {
+            var reason = $("#w_progress").val().trim();
+            if (reason == "") {
+                app.warning("请输入进展");
+                return;
+            }
+
+            var options = {
+                url: 'AddBigCheckAndFixTicketProgress',
+                data: {
+                    TicketID: app.win_key,
+                    Progress: reason,
+                    UserName: app.getLoginUserName(),
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: lift_big_refresh,
+                    key: app.win_key,
+                }
+            };
+
+            app.execPostRequest(options);
+            return;
+        }
+
+
+        //停复梯
+        if (type == 9) {
+            var IsStop = $("input[name='w_State']:checked").val();
+            if (IsStop == null) {
+                app.warning("请选择电梯状态");
+                return;
+            }
+            if (IsStop == 1) {
+                IsStop = true;
+            } else {
+                IsStop = false;
+            }
+
+            var StopDate = $("#w_stop_date").val();
+            var StopTime = $("#w_stop_time").val();
+            var ResetDate = $("#w_reset_date").val();
+            var ResetTime = $("#w_reset_time").val();
+
+            var StartTime = "";
+            if (StopDate.trim() != "") {
+                StartTime += StopDate;
+                if (StopTime.trim() != "") {
+                    StartTime += " " + StopTime + ":00";
+                } else {
+                    StartTime += " 00:00:00"
+                }
+            }
+
+            var EndTime = "";
+            if (ResetDate.trim() != "") {
+                EndTime += ResetDate;
+                if (ResetTime.trim() != "") {
+                    EndTime += " " + ResetTime + ":00";
+                }else{
+                    EndTime += " 00:00:00"
+                }
+            }
+
+            if (StartTime == "" && EndTime == "") {
+                app.warning("停梯时间、复梯时间至少选择一个");
+                return;
+            }
+
+            var options = {
+                url: 'FixBigCheckAndFixTicketElevatorState',
+                data: {
+                    TicketID: app.win_key,
+                    UserName: app.getLoginUserName(),
+                    StartTime: new Date(StartTime).getTime() / 1000,
+                    EndTime: new Date(StartTime).getTime() / 1000,
+                    IsStop: IsStop,
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: lift_big_refresh,
+                    key: app.win_key,
+                }
+            };
+
+            app.execPostRequest(options);
+            return;
+        }
+    }
+
+    function doSearchPersonPlan(index) {
+        var person;
+        if (index == 1) {
+            var person = $("#w_person1").val();
+            if (person == "" || person == null) {
+                app.info("请选择主负责人");
+                return;
+            }
+        }
+        else if (index == 2) {
+            var person = $("#w_person_selector").val();
+            if (person == "" || person == null) {
+                app.info("请先选择配合人员");
+                return;
+            }
+        }
+
+        layer.open({
+            type: 2,
+            title: '已有工作计划',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['90%', '90%'],
+            content: '../data/work_plan_win.html?key=' + encodeURIComponent(person)
+        });
+    }
+</script>

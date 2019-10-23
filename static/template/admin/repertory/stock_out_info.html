@@ -1,0 +1,503 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">新增入库</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            入库单号：
+                        </label>
+
+                        <div class="col-sm-10">
+                            <span id="w_id"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>商品选择</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-inline" style="margin-bottom: 10px;">
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_type" class="sr-only">类别</label>
+                                    <select class="combobox form-control" id="w_type" onchange="doTypeChange()">
+                                        <option value="" selected="selected">类别</option>
+                                        <option value="工具">工具</option>
+                                        <option value="易耗品">易耗品</option>
+                                        <option value="配件">配件</option>
+                                        <option value="检验仪器">检验仪器</option>
+                                        <option value="调试设备">调试设备</option>
+                                        <option value="设备">设备</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_part_name" class="sr-only">商品名称</label>
+                                    <select class="combobox form-control" id="w_part_name">
+                                        <option value="" selected="selected">商品名称</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_part_num" class="sr-only">商品编号</label>
+                                    <select class="combobox form-control" id="w_part_num">
+                                        <option value="" selected="selected">商品编号</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                商品编号
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_part_num_label"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                规格/型号
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_size_label"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                品牌
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_brand_label"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>供应商选择</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <label for="w_support" class="sr-only">供应商选择</label>
+                                <select class="combobox form-control" id="w_support">
+                                    <option value="" selected="selected">供应商选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>入库信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>入库到
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label for="w_repertory" class="sr-only">入库选择</label>
+                                <select class="combobox form-control" id="w_repertory">
+                                    <option value="" selected="selected">入库选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>入库类型
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label for="w_repertory_type" class="sr-only">入库类型</label>
+                                <select class="combobox form-control" id="w_repertory_type">
+                                    <option value="" selected="selected">入库类型</option>
+                                    <option value="采购入库" >采购入库</option>
+                                    <option value="现场拆回" >现场拆回</option>
+                                    <option value="其他" >其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                备注
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_remark" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>入库数量
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_num" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>采购单价
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_price" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" >
+                                制单人
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_make_person"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                总价
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_all_price"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>发票信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                发票类型
+                            </label>
+                            <div class="col-sm-10">
+                                <label for="w_invoice_type" class="sr-only">发票类型</label>
+                                <select class="combobox form-control" id="w_invoice_type">
+                                    <option value="" selected="selected">发票类型</option>
+                                    <option value="增值发票">增值发票</option>
+                                    <option value="普票">普票</option>
+                                    <option value="收据">收据</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                发票信息备注
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_invoice_remark" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                是否收到发票
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label for="w_has_invoice" class="sr-only">是否收到发票</label>
+                                <select class="combobox form-control" id="w_has_invoice">
+                                    <option value="" selected="selected">是否收到发票</option>
+                                    <option value="是">是</option>
+                                    <option value="否">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                发票上物品名
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_invoice_part_name" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="saveLiftCheckInfo()">确认</button>
+</div>
+<script>
+    $(function () {
+        app.win_action = 'add';
+
+        $('.input-group.date').datepicker({
+            language: 'zh-CN',
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true,
+        });
+
+        $("#w_type").combobox();
+        $("#w_invoice_type").combobox();
+        $("#w_has_invoice").combobox();
+        $("#w_repertory_type").combobox();
+        $("#w_make_person").html(app.getLoginUserName());
+        
+        app.initCombobox({
+            url: 'GetPartNameList',
+            callback_params: {
+                id: 'w_part_name',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetPartNumList',
+            callback_params: {
+                id: 'w_part_num',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetSupportInfo',
+            callback_params: {
+                id: 'w_support',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetRepertoryInfo',
+            callback_params: {
+                id: 'w_repertory',
+            }
+        });
+
+    });
+
+    function doTypeChange() {
+        var wType = $("#w_type").val();
+        $("#w_part_name").html('<option value="" selected="selected">商品名称</option>');
+        $("#w_part_num").html('<option value="" selected="selected">商品编号</option>');
+        app.initCombobox({
+            url: 'GetPartNameList',
+            data: {
+                Type: wType.trim(),
+            },
+            callback_params: {
+                id: 'w_part_name',
+                refresh: true,
+            }
+        });
+        app.initCombobox({
+            url: 'GetPartNumList',
+            data: {
+                Type: wType.trim(),
+            },
+            callback_params: {
+                id: 'w_part_num',
+                refresh: true,
+            }
+        });
+    }
+
+    function doProjectChange() {
+        var project = $("#w_project").val();
+        var property = $("#w_property").val();
+        $("#w_elevator").html('<option value="" selected="selected">电梯号</option>');
+        app.initCombobox({
+            url: 'GetElevatorNumByProject',
+            data: {
+                ProjectName: project.trim(),
+                PropertyName: property.trim(),
+            },
+            callback_params: {
+                id: 'w_elevator',
+                refresh: true,
+            }
+        });
+
+        $("#w_person1").html('<option value="" selected="selected">自检组长</option>');
+        $("#w_person2").html('<option value="" selected="selected">自检组员</option>');
+        $("#w_person1").combobox("clearTarget");
+        $("#w_person1").combobox("clearElement");
+        $("#w_person1").combobox("refresh");
+
+        $("#w_person2").combobox("clearTarget");
+        $("#w_person2").combobox("clearElement");
+        $("#w_person2").combobox("refresh");
+
+        $("#w_lift_maintain_address").html("");
+        $("#w_lift_maintain_info").html("");
+    }
+
+    function doElevatorChange() {
+        var elevator = $("#w_elevator").val();
+        $("#w_person1").html('<option value="" selected="selected">自检组长</option>');
+        $("#w_person2").html('<option value="" selected="selected">自检组员</option>');
+        if (elevator == "") {
+            $("#w_lift_maintain_address").html("");
+            $("#w_lift_maintain_info").html("");
+
+            $("#w_person1").combobox("clearTarget");
+            $("#w_person1").combobox("clearElement");
+            $("#w_person1").combobox("refresh");
+
+            $("#w_person2").combobox("clearTarget");
+            $("#w_person2").combobox("clearElement");
+            $("#w_person2").combobox("refresh");
+        } else {
+            var options = {
+                url: 'GetElevatorInfoByNum',
+                data: {
+                    ElevatorNum: elevator,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var info = res.data;
+                        var Contracts = "";
+                        if (info.BuildingInfo) {
+                            info.BuildingInfo.forEach(function (value, index, arr) {
+                                Contracts += value.Remark + " " + value.PersonName + " " + value.Phone + ";<br/>";
+                            });
+                        }
+                        $("#w_lift_maintain_address").html(info.Address);
+                        $("#w_lift_maintain_info").html(Contracts);
+
+                        app.initCombobox({
+                            url: 'GetDealMemberNameWithElevatorNum',
+                            data: {
+                                ElevatorNum: $("#w_elevator").val(),
+                                SmallTeamType: "自检",
+                            },
+                            callback_params: {
+                                id: 'w_person1',
+                                refresh: true,
+                            }
+                        })
+
+                        app.initCombobox({
+                            url: 'GetDealMemberNameWithElevatorNum',
+                            data: {
+                                ElevatorNum: $("#w_elevator").val(),
+                                SmallTeamType: "自检",
+                            },
+                            callback_params: {
+                                id: 'w_person2',
+                                refresh: true,
+                            }
+                        })
+                    } else {
+                        $("#w_lift_maintain_address").html("");
+                        $("#w_lift_maintain_info").html("");
+
+                        $("#w_person1").combobox("clearTarget");
+                        $("#w_person1").combobox("clearElement");
+                        $("#w_person1").combobox("refresh");
+
+                        $("#w_person2").combobox("clearTarget");
+                        $("#w_person2").combobox("clearElement");
+                        $("#w_person2").combobox("refresh");
+                        app.error(res.msg);
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+    }
+
+    function saveLiftCheckInfo() {
+        var ElevatorNum = $("#w_elevator").val();
+        if (ElevatorNum == "") {
+            app.warning("请先选择电梯");
+            return;
+        }
+        var SelfCheckProjectID = $("#w_ProjectName").val();
+        if (SelfCheckProjectID == "") {
+            app.warning("请选择自检项目");
+            return;
+        }
+
+        var StartTime = $("#w_time").val();
+        if (StartTime.trim() == "") {
+            app.warning("请选择自检时间");
+            return;
+        }
+        StartTime = new Date(StartTime).getTime() / 1000;
+
+        var Person1 = $("#w_person1").val();
+        var Person2 = $("#w_person2").val();
+        if (Person1 == "") {
+            app.warning("请选择自检组长");
+            return;
+        }
+
+        var options = {
+            url: 'AddSelfCheckTicket',
+            data: {
+                UserName: app.getLoginUserName(),
+                ElevatorNum: ElevatorNum,
+                StartTime: StartTime,
+                LeaderUserName: Person1,
+                MemberUserName: Person2,
+                SelfCheckProjectID: parseInt(SelfCheckProjectID),
+            },
+            callback: app.saveCallbackWindow,
+            callback_params: {
+                action: "add",
+                refresh: lift_filter_refresh,
+                key: 'new_key',
+            }
+        };
+
+        app.execPostRequest(options);
+    }
+
+    function doSearchPersonPlan(index) {
+        var person;
+        if (index == 1) {
+            var person = $("#w_person1").val();
+            if (person == "" || person == null) {
+                app.info("请先选择自检组长");
+                return;
+            }
+        }
+        else if (index == 2) {
+            var person = $("#w_person2").val();
+            if (person == "" || person == null) {
+                app.info("请先选择自检组员");
+                return;
+            }
+        }
+
+        layer.open({
+            type: 2,
+            title: '已有工作计划',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['90%', '90%'],
+            content: '../data/work_plan_win.html?key=' + encodeURIComponent(person)
+        });
+    }
+
+</script>

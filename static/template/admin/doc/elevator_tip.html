@@ -1,0 +1,461 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">电梯详情</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>电梯信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>电梯梯号
+                            </label>
+
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_elevator_num" class="form-control">
+                            </div>
+                            <label class="col-sm-2 control-label">电梯状态</label>
+
+                            <div class="col-sm-4">
+                                <label class="radio-inline i-checks">
+                                    <input disabled type="radio" name="w_state" value="true" checked="checked">正常</label>
+                                <label class="radio-inline i-checks">
+                                    <input disabled type="radio" name="w_state" value="false">停用</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">出厂日期</label>
+                            <div class="col-sm-4">
+                                <div class="input-daterange input-group" id="o_datepicker" style="width: 100%">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input disabled type="text" class="form-control" name="w_outdata" value="" />
+                                </div>
+                            </div>
+
+                            <label class="col-sm-2 control-label">出厂编码</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_brand_num" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">开始使用日期</label>
+                            <div class="col-sm-4">
+                                <div class="input-daterange input-group" id="s_datepicker" style="width: 100%">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input disabled type="text" class="form-control" name="w_startdata" value="" />
+                                </div>
+                            </div>
+
+                            <label class="col-sm-2 control-label">安装单位</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_install_unit" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电梯类型</label>
+                            <div class="col-sm-4">
+                                <label class="radio-inline i-checks">
+                                    <input disabled type="radio" name="w_type" value="直梯" checked="checked">直梯</label>
+                                <label class="radio-inline i-checks">
+                                    <input disabled type="radio" name="w_type" value="扶梯">扶梯</label>
+                                <label class="radio-inline i-checks">
+                                    <input disabled type="radio" name="w_type" value="杂物梯">杂物梯</label>
+                            </div>
+
+                            <label class="col-sm-2 control-label">电梯类别</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_detail_type" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">额定载重(Kg)</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_load" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">额定速度(m/s)</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_speed" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">层/站/门</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_landing" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">额定速度(m/s)</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_stop_num" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">控制方式</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_control_way" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">曳引机型号</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_tractor_type_num" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">曳引绳规格</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_tractor_rope_spec" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">曳引绳总长及根数</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_tractor_rope_number" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电机型号</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_motor_type_num" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">电机功率</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_motor_type_power" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">控制柜型号</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_controller_type_num" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">安全钳类型</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_safety_tongs_type" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">限速器型号</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_governor_type_num" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">缓冲器型号</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_buffer_type_num" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门锁型号</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_door_lock_type_num" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">注册代码</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_registration_code" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">年检有效期</label>
+                            <div class="col-sm-4">
+                                <div class="input-daterange input-group" id="y_datepicker" style="width: 100%">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input disabled type="text" class="form-control" name="w_year_effective" value="" />
+                                </div>
+                            </div>
+
+                            <label class="col-sm-2 control-label">改造后类型</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_reform_type" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">改造单位</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_reform_place" class="form-control">
+                            </div>
+
+                            <label class="col-sm-2 control-label">设备编号</label>
+                            <div class="col-sm-4">
+                                <input disabled type="text" id="w_serial_number" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>关联信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">物业</label>
+
+                            <div class="col-sm-11">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin:0;">
+                                        <label for="w_property" class="sr-only">所属物业</label>
+                                        <select disabled class="combobox form-control" id="w_property">
+                                            <option value="" selected="selected">所属物业</option>
+                                        </select>
+                                    </div>
+                                    &nbsp
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">楼号</label>
+
+                            <div class="col-sm-11">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin:0;">
+                                        <label for="w_building" class="sr-only">所属楼号</label>
+                                        <select disabled class="combobox form-control" id="w_building">
+                                            <option value="" selected="selected">所属楼号</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">项目</label>
+
+                            <div class="col-sm-11">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin:0;">
+                                        <label for="w_building" class="sr-only">所属项目</label>
+                                        <select disabled class="combobox form-control" id="w_project">
+                                            <option value="" selected="selected">所属项目</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">品牌</label>
+
+                            <div class="col-sm-11">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin:0;">
+                                        <label for="w_brand" class="sr-only">所属品牌</label>
+                                        <select disabled class="combobox form-control" id="w_brand">
+                                            <option value="" selected="selected">所属品牌</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">型号</label>
+
+                            <div class="col-sm-11">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin:0;">
+                                        <label for="w_type_num" class="sr-only">所属型号</label>
+                                        <select disabled class="combobox form-control" id="w_type_num">
+                                            <option value="" selected="selected">所属型号</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>楼号地址地图</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" id="address_name"></label>
+                            <div class="col-sm-8" id="map_canvas" style="min-width:603px; min-height:767px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+</div>
+<script>
+    var searchService, map, markers = [];
+    $(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = decodeURIComponent(app.win_url.split("?key=")[1]);
+        }
+
+
+        if (app.win_action == 'edit') {
+            //获取info
+            var options = {
+                url: 'GetElevatorWithKey',
+                data: {
+                    ElevatorNum: app.win_key,
+                },
+                callback: initElevatorInfo,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+        }
+    });
+
+    function initElevatorInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+            var info = res.data;
+            $("#w_elevator_num").val(info.ElevatorNum);
+            $("#w_brand_num").val(info.ManufacturerNum);
+            $("#w_install_unit").val(info.InstallationUnit);
+            $("#w_detail_type").val(info.DetailType);
+            $("#w_load").val(info.Load);
+            $("#w_speed").val(info.Speed);
+            $("#w_landing").val(info.Landing);
+            $("#w_stop_num").val(info.StopNum);
+            $("#w_control_way").val(info.ControlWay);
+            $("#w_tractor_type_num").val(info.TractorTypeNum);
+            $("#w_tractor_rope_spec").val(info.TractorRopeSpec);
+            $("#w_tractor_rope_number").val(info.TractorRopeNumber);
+            $("#w_motor_type_num").val(info.MotorTypeNum);
+            $("#w_motor_type_power").val(info.MotorTypePower);
+            $("#w_controller_type_num").val(info.ControllerTypeNum);
+            $("#w_safety_tongs_type").val(info.SafetyTongsType);
+            $("#w_governor_type_num").val(info.GovernorTypeNum);
+            $("#w_buffer_type_num").val(info.BufferTypeNum);
+            $("#w_door_lock_type_num").val(info.DoorLockTypeNum);
+            $("#w_registration_code").val(info.RegistrationCode);
+            $("#w_reform_type").val(info.ReformType);
+            $("#w_reform_place").val(info.ReformPlace);
+            $("#w_serial_number").val(info.SerialNumber);
+
+            $(":radio[name='w_state'][value='" + info.IsStop + "']").iCheck('check');
+            $(":radio[name='w_type'][value='" + info.Type + "']").iCheck('check');
+
+            $("input[name='w_outdata']").val(info.ManufacturerDate);
+            $("input[name='w_startdata']").val(info.StartUseDate);
+            $("input[name='w_year_effective']").val(app.formatDateFromUnix(info.YearInspectionEffective));
+
+            app.initCombobox({
+                url: 'GetPropertyName',
+                callback_params: {
+                    id: 'w_property',
+                    value: info.PropertyName,
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetBuildingName',
+                data: {
+                    PropertyName: info.PropertyName,
+                },
+                callback_params: {
+                    id: 'w_building',
+                    value: info.BuildingName
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetProjectName',
+                data: {
+                    PropertyName: info.PropertyName,
+                },
+                callback_params: {
+                    id: 'w_project',
+                    value: info.ProjectName
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetManufacturerName',
+                callback_params: {
+                    id: 'w_brand',
+                    value: info.ManufacturerName
+                }
+            });
+
+            app.initCombobox({
+                url: "GetManufacturerType",
+                data: {
+                    ManufacturerName: info.ManufacturerName,
+                },
+                callback_params: {
+                    id: 'w_type_num',
+                    value: info.ElevatorTypeNum
+                }
+            });
+
+            if (info.BuildingName != "") {
+                var options = {
+                    url: 'FindBuildingWithKey',
+                    data: {
+                        BuildingName: info.BuildingName,
+                    },
+                    callback: function (res, param) {
+                        res = eval("(" + res + ")");
+                        if (res.code == 10000) {
+                            var addressName = res.data.Address;
+                            var result;
+                            if (res.data.Longitude === 0 && res.data.Latitude === 0) {
+                                addressName += "(暂未定位)";
+                                result = app.initMap({
+                                    ID: "map_canvas",
+                                    Latitude: 24.46,
+                                    Longitude: 118.10,
+                                    IsInit: true,
+                                });
+                            } else {
+                                result = app.initMap({
+                                    ID: "map_canvas",
+                                    Latitude: res.data.Latitude / 1000000,
+                                    Longitude: res.data.Longitude / 1000000,
+                                    IsInit: false,
+                                });
+                            }
+                            markers = result.Markers;
+                            searchService = result.SearchService;
+                            map = result.Map;
+                            $("#address_name").html(addressName);
+                        } else {
+                            app.error(res.msg)
+                        }
+                    },
+                    callback_params: {
+                    }
+                };
+
+                app.execPostRequest(options);
+            }
+        }
+    }
+
+</script>

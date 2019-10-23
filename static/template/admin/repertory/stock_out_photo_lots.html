@@ -1,0 +1,241 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">添加更换单图片</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                出库单编号
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_id"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>更换单号
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_change_num" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">图片详情</label>
+                            <div class="col-sm-10">
+                                <div class="weui-form-preview__bd">
+                                    <div class="weui-gallery" id="gallery">
+                                        <span class="weui-gallery__img" id="galleryImg"></span>
+                                        <div class="weui-gallery__opr">
+                                        </div>
+                                    </div>
+                                    <div class="weui-uploader__bd">
+                                        <ul class="weui-uploader__files" id="uploaderFiles" style="margin:0px">
+                                            <div class="weui-uploader__file-content">
+                                                <i class="weui-icon-warn"></i>
+                                            </div>
+                                        </ul>
+                                        <div class="weui-uploader__input-box">
+                                            <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+        <button type="button" class="btn btn-primary" onclick="saveInfo()">确认</button>
+    </div>
+    <script>
+        var list = [];
+
+        var appid = '1253610260';
+        var path;
+        var Authorization;
+        var imagesMap = new Map();
+
+        var ticket_id;
+        var photoIndex = 0;
+
+        var options = {
+            url: 'GetSecretID',
+            data: {
+                appid: appid,
+                bucket: 'qx'
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    Authorization = res.data.Authorization;
+                } else {
+                    alert(res.msg);
+                }
+
+            },
+            callback_params: {}
+        };
+        app.execPostRequest(options);
+
+        var bucketPath = "";
+
+        var options = {
+            url: 'GetBucketPath',
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    bucketPath = res.data.Path
+                } else {
+                    alert(res.msg);
+                }
+            },
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+
+        $(function () {
+
+            var templist = localStorage.getItem("list").split(",");
+            templist.forEach(function (v, index, arr) {
+                list.push(parseInt(v));
+            })
+            var html = ""
+            list.forEach(function (v, index, arr) {
+                if (html == "") {
+                    html = v;
+                } else {
+                    html += "," + v;
+                }
+            })
+            $("#w_id").html(html);
+
+            photoInit();
+        });
+
+        function photoInit() {
+            var $gallery = $("#gallery"), $galleryImg = $("#galleryImg"),
+                $uploaderInput = $("#uploaderInput"),
+                $uploaderFiles = $("#uploaderFiles");
+
+            $uploaderInput.on("change", function (e) {
+                var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+                for (var i = 0, len = files.length; i < len; ++i) {
+                    var file = files[i];
+
+                    this.value = "";
+
+                    path = '/' + bucketPath + '/' + parseInt(new Date().getTime() / 1000) + '-' + parseInt(Math.random() * 1000) + '.' + file.name.split(".")[1];
+
+                    if (url) {
+                        var cos = new CosCloud({
+                            appid: 1253610260,// APPID 必填参数
+                            bucket: 'qx',//bucketName 必填参数
+                            region: 'tj',//地域信息 必填参数 华南地区填gz 华东填sh 华北填tj
+                            getAppSign: function (callback) {//获取签名 必填参数
+                                callback(Authorization);
+                            },
+
+                        });
+                        var successCallBack = function (result) {
+                            var source_url = result.data.source_url;
+                            src = url.createObjectURL(file);
+
+                            var tmpl = '<li class="weui-uploader__file" style="background-image:url(\'#url#\')" data-value="' + photoIndex + '">' +
+                                '<a style="color: #ed5565;"  href="javascript:;" onclick="doRemovePhoto(this)">删除</a>' +
+                                '</li>';
+                            imagesMap.set(photoIndex, source_url);
+                            var newTmpl = $(tmpl.replace('#url#', src));
+                            $uploaderFiles.append(newTmpl);
+
+                            photoIndex++;
+
+                            $uploaderFiles.on("click", "li", function () {
+                                $galleryImg.attr("style", this.getAttribute("style"));
+                                $gallery.fadeIn(100);
+                            });
+                            $gallery.on("click", function () {
+                                $gallery.fadeOut(100);
+                            });
+                        };
+
+                        var errorCallBack = function (result) {
+                            alert(result.responseText)
+                            // console.log(result.responseText);
+
+                        };
+
+                        var progressCallBack = function (curr) {
+                            $("#upload_progress").html(curr * 100 + "%");
+                        };
+
+                        // console.log(path);
+                        cos.uploadFile(successCallBack, errorCallBack, progressCallBack, 'qx', path, file, 0);
+                    } else {
+                        src = e.target.result;
+                    }
+
+                }
+
+
+            });
+        }
+
+        function doRemovePhoto(obj) {
+            app.delete(function () {
+                var li = $(obj).parents("li");
+                var value = $(li).data("value");
+
+                imagesMap.delete(parseInt(value));
+                $(li).remove();
+            });
+        }
+
+        function saveInfo() {
+            var changeNum = $("#w_change_num").val();
+            if (changeNum.trim() == "") {
+                app.warning("请输入采购单号");
+                return;
+            }
+            var images = "";
+
+            imagesMap.forEach(function (value, key, map) {
+                if (images == "") {
+                    images += value;
+                } else {
+                    images += "," + value;
+                }
+            });
+
+            var options = {
+                url: 'ChangeStockOutPhotoLots',
+                data: {
+                    IDList: list,
+                    PhotoPlace: images,
+                    ChangeTicketNum: changeNum.trim(),
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: stock_out_list_refresh,
+                }
+            };
+
+            app.execPostRequest(options);
+        }
+
+    </script>
