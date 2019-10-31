@@ -1,0 +1,157 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">楼号信息</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>楼号信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>楼号名称
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" disabled id="w_building" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>所属物业
+                            </label>
+
+                            <div class="col-sm-10">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin:0;">
+                                        <label for="w_property" class="sr-only">所属物业</label>
+                                        <select disabled class="combobox form-control" id="w_property">
+                                            <option value="" selected="selected">所属物业</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">地址</label>
+                            <div class="col-sm-10">
+                                <input disabled type="text" id="w_address" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">性质</label>
+
+                            <div class="col-sm-10">
+                                <input disabled type="text" class="form-control" id="w_occasion">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>联系人</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="ibox-content">
+                        <div class="dd" id="nestable">
+                            <ol class="dd-list">
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+</div>
+<script>
+    $(function () {
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = decodeURIComponent(app.win_url.split("?key=")[1]);
+        }
+
+        if (app.win_action == 'edit') {
+            //编辑页面
+
+            //获取info
+            var options = {
+                url: 'FindBuildingWithKey',
+                data: {
+                    BuildingName: app.win_key,
+                },
+                callback: initBuildingInfo,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+        }
+    });
+
+    function initBuildingInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+            var info = res.data;
+            $("#w_building").val(info.BuildingName);
+
+            app.initCombobox({
+                url: 'GetPropertyName',
+                callback_params: {
+                    id: 'w_property',
+                    value: info.PropertyName
+                }
+            });
+
+            $("#w_address").val(info.Address);
+            $("#w_occasion").val(info.Occasion);
+            var contacts_list = res.data.ContactsName;
+            if (contacts_list != null && contacts_list.length > 0) {
+                contacts_list.forEach(function (value, index, arr) {
+                    var options = {
+                        url: 'FindPersonWithKey',
+                        data: {
+                            UserName: value.UserName,
+                            IsProperty: true,
+                        },
+                        callback: addContactsLi,
+                        callback_params: {}
+                    };
+
+                    app.execPostRequest(options);
+                });
+            }
+        }
+    }
+
+
+    function addContactsLi(res, params) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            var info = res.data;
+            var html = '<li class="dd-item" data-value="' + info.UserName + '">'
+                + '<div class="dd-handle">'
+                + '<i class="fa fa-user"></i>&nbsp;姓名：' + info.Name
+                + '&nbsp;&nbsp;角色：' + info.Remark
+                + '&nbsp;&nbsp;联系电话:' + info.Phone
+                + '&nbsp;&nbsp;所属物业:' + info.PropertyCompany
+                + '</div>'
+                + '</li>';
+            $(".dd-list").append(html);
+        }
+    }
+</script>

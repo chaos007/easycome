@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+// game definition
+// Service Service
+service Service {
+	rpc Stream(stream Frame) returns (stream Frame);  // 透传消息, 双向流
+}
+
+
+// Frame Frame
+message Frame {
+	bytes Message=1;
+}

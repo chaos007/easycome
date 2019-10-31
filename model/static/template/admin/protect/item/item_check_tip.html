@@ -1,0 +1,394 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">自检项目详情</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>自检项目信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>项目名称
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" disabled id="w_item" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                项目类型
+                            </label>
+                            <div class="col-sm-10">
+                                <select class="form-control" disabled id="w_sub_type">
+                                    <option value="自检">自检</option>
+                                    <option value="年检自检">年检自检</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电梯类型</label>
+                            <div class="col-sm-10">
+                                <label class="radio-inline i-checks"> <input type="radio" checked="checked" disabled
+                                                                             name="w_type" value="直梯">直梯</label>
+                                <label class="radio-inline i-checks"> <input type="radio" name="w_type" disabled
+                                                                             value="扶梯">扶梯</label>
+                                <label class="radio-inline i-checks"> <input type="radio" disabled name="w_type"
+                                                                             value="杂物梯">杂物梯</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                备注
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_remark" disabled class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>自检标准</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                签到
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" checked="checked" name="w_sign" value="终端点击签到">终端点击签到</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                反馈
+                            </label>
+
+                            <div class="col-sm-2">
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" checked="checked" name="w_back" value="照片反馈">照片反馈
+                                </label>
+                            </div>
+                            <div class="col-sm-4 flex">
+                                照片不少于:
+                                <div style="width: 120px;"><input disabled id="w_back_num" value="0"></div>
+                                张
+                            </div>
+                            <div class="col-sm-4 flex">
+                                反馈说明:<input id="w_back_remark" disabled style="width: 180px" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                其他
+                            </label>
+
+                            <div class="col-sm-2">
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" checked="checked" name="w_other" value="超期时间">超期时间
+                                </label>
+                            </div>
+                            <div class="col-sm-8 flex">
+                                <div style="width: 120px;"><input id="w_other_day" disabled value="3"></div>
+                                天
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>自检单项</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>机房</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <ul class="todo-list m-t small-list" id="w_jf_list">
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>井道</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <ul class="todo-list m-t small-list" id="w_jd_list">
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>厅门</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <ul class="todo-list m-t small-list" id="w_tm_list">
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>轿门</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <ul class="todo-list m-t small-list" id="w_jm_list">
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>轿厢</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <ul class="todo-list m-t small-list" id="w_jx_list">
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>坑底</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <ul class="todo-list m-t small-list" id="w_kd_list">
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>其他</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <ul class="todo-list m-t small-list" id="w_qt_list">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+</div>
+<script>
+    var ElevatorType = "直梯";
+    $(function () {
+        $('.collapse-link').click(function () {
+            var ibox = $(this).closest('div.ibox');
+            var button = $(this).find('i');
+            var content = ibox.find('div.ibox-content');
+            content.slideToggle(200);
+            button.toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
+            ibox.toggleClass('').toggleClass('border-bottom');
+            setTimeout(function () {
+                ibox.resize();
+                ibox.find('[id^=map-]').resize();
+            }, 50);
+        });
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = parseInt(app.win_url.split("?key=")[1]);
+        }
+
+        if (app.win_action == 'edit') {
+            //获取info
+            var options = {
+                url: 'GetMaintainProjectWithKey',
+                data: {
+                    ID: app.win_key,
+                },
+                callback: initItemCheckInfo,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+        }
+    });
+
+    function initItemCheckInfo(res, params) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+
+            var info = res.data;
+            $("#w_item").val(info.ProjectName);
+            $("#w_sub_type").val(info.IntervalType);
+            $(":radio[name='w_type'][value='" + info.ElevatorType + "']").iCheck('check');
+            ElevatorType = info.ElevatorType;
+            $("#w_remark").val(info.Remark);
+
+            $("#w_back_num").val(info.PhotoNum);
+            $("#w_back_num").TouchSpin({
+                max: 1000000,
+                min: 0,
+                buttondown_class: 'btn btn-white',
+                buttonup_class: 'btn btn-white'
+            });
+            $("#w_back_remark").val(info.Instruction);
+
+            $("#w_other_day").val(info.ExpireAlertDay);
+            $("#w_other_day").TouchSpin({
+                max: 1000000,
+                min: 0,
+                buttondown_class: 'btn btn-white',
+                buttonup_class: 'btn btn-white'
+            });
+            getCheckItems(info.ItemList);
+        } else {
+            app.error(res.msg)
+        }
+    }
+
+    function getCheckItems(select_items) {
+        var options = {
+            url: 'GetItemSelfCheckInfo',
+            data: {
+                ItemSelfCheckName: "",
+                ElevatorZone: "",
+                ElevatorType: ElevatorType
+            },
+            callback: initCheckItems,
+            callback_params: {
+                select_items: select_items,
+            }
+        };
+
+        app.execPostRequest(options);
+    }
+
+    function initCheckItems(res, params) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            $("#w_jf_list").empty();
+            $("#w_jd_list").empty();
+            $("#w_tm_list").empty();
+            $("#w_jm_list").empty();
+            $("#w_jx_list").empty();
+            $("#w_kd_list").empty();
+            $("#w_qt_list").empty();
+            var items = res.data;
+            if (items && items.length > 0) {
+                items.forEach(function (value, index, arr) {
+                    var flag = false;
+                    if (params.select_items) {
+                        params.select_items.forEach(function (v, i, a) {
+                            if (v.ID == value.ID) {
+                                flag = true;
+                            }
+                        });
+                    }
+                    if (!flag) {
+                        return;
+                    }
+
+                    var html = '<li>'
+                        + ' <label class="check-inline i-checks checkbox-more"> <input type="checkbox" checked disabled name="w_check_item"  value="' + value.ID + '">&nbsp;' + value.Name + '</label>'
+                        + ' </li>';
+                    switch (value.ElevatorZone) {
+                        case "机房": {
+                            $("#w_jf_list").append(html);
+                            break;
+                        }
+                        case "井道": {
+                            $("#w_jd_list").append(html);
+                            break;
+                        }
+                        case "厅门": {
+                            $("#w_tm_list").append(html);
+                            break;
+                        }
+                        case "轿门": {
+                            $("#w_jm_list").append(html);
+                            break;
+                        }
+                        case "轿厢": {
+                            $("#w_jx_list").append(html);
+                            break;
+                        }
+                        case "坑底": {
+                            $("#w_kd_list").append(html);
+                            break;
+                        }
+                        case "其他": {
+                            $("#w_qt_list").append(html);
+                            break;
+                        }
+                    }
+                });
+            }
+
+            $('.checkbox-more').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        }
+    }
+</script>

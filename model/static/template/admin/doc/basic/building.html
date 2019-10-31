@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>楼号管理</title>
+    <link href="../../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../../res/admin/css/style.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox gray-bg" style="border: none;">
+                        <div class="ibox-content gray-bg">
+                            <div id="search-form" class="form-inline" style="margin-bottom: 10px;">
+                                <div class="form-group">
+                                    <label for="building" class="sr-only">楼号名称</label>
+                                    <input class="form-control" id="building" placeholder="楼号名称" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="property" class="sr-only">物业名称</label>
+                                    <select class="combobox form-control" id="property">
+                                    <option value="" selected="selected">物业名称</option>
+                                </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="is_location" class="sr-only">是否定位</label>
+                                    <select class="combobox form-control" id="is_location">
+                                    <option value="" selected="selected">是否定位</option>
+                                    <option value="是" >是</option>
+                                    <option value="否" >否</option>
+                                </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="getBuildingList()">查询</button>
+
+                                <div class="form-group" style="float: right;">
+                                    <a onclick="javascript:app.setWinUrl(this)" class="btn btn-default" data-toggle="modal" href="building_info.html" data-target="#win"><i
+                                        class="fa fa-plus"></i>&nbsp;新增</a>
+                                    <a class="btn btn-default" data-toggle="modal" href="building_import.html" data-target="#win"><i class="fa fa-file-excel-o"></i>&nbsp;导入</a>
+                                    <a onclick="exportBuildingFile()" class="btn btn-default"><i class="fa fa-reply"></i>&nbsp;导出</a>
+                                    <a onclick="templateDownload()" class="btn btn-default"><i class="fa fa-download"></i>&nbsp;模板下载</a>
+                                </div>
+                            </div>
+                            <div class="jqGrid_wrapper">
+                                <table id="table"></table>
+                                <div id="pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../../res/admin/js/app.js"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp"></script>
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >档案管理 >基础管理 >楼号管理");
+
+            app.initCombobox({
+                url: 'GetPropertyName',
+                callback_params: {
+                    id: 'property',
+                }
+            });
+
+            initGrid();
+            getBuildingList();
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        function getBuildingList() {
+            var PropertyName = $("#property").val();
+            var BuildingName = $("#building").val();
+            var IsLocation = $("#is_location").val();
+
+            var options = {
+                url: 'GetBuildingInfo',
+                data: {
+                    PropertyName: PropertyName.trim(),
+                    BuildingName: BuildingName.trim(),
+                    IsLocation: IsLocation.trim(),
+                },
+                callback: setBuildingGrid,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function setBuildingGrid(res, params) {
+            res = eval("(" + res + ")");
+            if (res.code == 10000) {
+                var dataSource = [];
+                if (res.data && res.data.length > 0) {
+                    res.data.forEach(function (value, index, arr) {
+                        var charge_list = "";
+                        var charges = value.ContactsName;
+                        if (charges && charges.length > 0) {
+                            charges.forEach(function (v, i, a) {
+                                var remark = v.Remark;
+                                var name = v.PersonName;
+                                var phone = v.Phone;
+                                var item = "";
+                                //有可能没有备注
+                                if (remark.trim() != "") {
+                                    item += remark + "/";
+                                }
+                                item += name + "/" + phone + "<br>";
+                                charge_list += item;
+                            });
+                        }
+                        var isLocation = "否"
+                        if (value.IsLocation){
+                            isLocation = "是"
+                        }
+                        
+                        dataSource.push({
+                            id: value.BuildingName,
+                            Property: value.PropertyName,
+                            Contact: charge_list,
+                            Address: value.Address,
+                            Occasion: value.Occasion,
+                            IsLocation: isLocation,
+                            Opts: value.BuildingName,
+                        });
+                    });
+                }
+                $("#table").jqGrid('clearGridData');  //清空表格
+                $("#table").jqGrid('setGridParam', {  // 重新加载数据
+                    datatype: 'local',
+                    data: dataSource,
+                    page: 1
+                }).trigger("reloadGrid");
+            } else {
+                app.error(res.msg);
+            }
+        }
+
+        function initGrid() {
+            $("#table").jqGrid({
+                colNames: ['楼号名称', '所属物业', '地址', '联系人', '性质','是否定位', '操作'],
+                colModel: [
+                    { name: 'id' },
+                    { name: 'Property' },
+                    { name: 'Address' },
+                    { name: 'Contact' },
+                    { name: 'Occasion' },
+                    { name: 'IsLocation' },
+                    {
+                        name: 'Opts',
+                        sortable: false,
+                        width: "250px",
+                        fixed: true,
+                        formatter: function (value, options, rowObject) {
+                            var url = "building_info.html?key=" + encodeURIComponent(value);
+                            return "<a style='color:#134da5;' href='" + url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-edit'></i>&nbsp;编辑</a>"
+                                + "&nbsp;|&nbsp;"
+                                + "<a style='color:#ed5565;' onclick='doDeleteBuilding(this)'  href='javascript:void(0);' data-key='" + value + "'><i class='fa fa-trash'></i>&nbsp;删除</a>";
+
+                        }
+                    }
+                ],
+                rowNum: 10,
+                rowList: app.rowList,
+                data: [],
+                datatype: "local",
+                viewrecords: true,
+                pager: "#pager",
+                height: 'auto',
+                autowidth: true,
+                shrinkToFit: true,
+                forceFit: true,
+                altRows: true,
+                altclass: 'table-alt',
+            });
+
+            // Add responsive to jqGrid
+            app.fitGrid();
+            $(window).bind('resize', function () {
+                app.fitGrid();
+            });
+        }
+
+        function building_refresh(key, action) {
+            var options = {
+                url: 'FindBuildingWithKey',
+                data: {
+                    BuildingName: key,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var charge_list = "";
+                        var charges = res.data.ContactsName;
+                        if (charges && charges.length > 0) {
+                            charges.forEach(function (v, i, a) {
+                                var remark = v.Remark;
+                                var name = v.PersonName;
+                                var phone = v.Phone;
+                                var item = "";
+                                //有可能没有备注
+                                if (remark.trim() != "") {
+                                    item += remark + "/";
+                                }
+                                item += name + "/" + phone + "<br>";
+                                charge_list += item;
+                            });
+                        }
+                        var isLocation = "否"
+                        if (res.data.IsLocation){
+                            isLocation = "是"
+                        }
+                        var recode = {
+                            id: res.data.BuildingName,
+                            Property: res.data.PropertyName,
+                            Contact: charge_list,
+                            Address: res.data.Address,
+                            Occasion: res.data.Occasion,
+                            IsLocation: isLocation,
+                            Opts: res.data.BuildingName,
+                        };
+
+                        if (action == "add") {
+                            $("#table").jqGrid("addRowData", recode.id, recode, "first");
+                        } else {
+                            $('#table').setRowData(recode.id, recode, '');
+                        }
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function exportBuildingFile() {
+            var options = {
+                url: 'ExportBuildingFile',
+                filename: '楼号导出结果.xlsx',
+            };
+            app.execGetRequest(options);
+
+        }
+
+        function templateDownload() {
+            var options = {
+                url: 'Building.xlsx',
+                filename: '楼号模板.xlsx',
+            };
+            app.templateFileDownload(options);
+        }
+
+        function doDeleteBuilding(obj) {
+            var key = $(obj).data("key");
+            app.deleteByKey(key, app.deleteBuilding);
+        }
+
+    </script>
+</body>
+
+</html>

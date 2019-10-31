@@ -1,0 +1,540 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">新增电梯检修工单</h6>
+</div>
+<div class="modal-body">
+    <style type="text/css">
+        .popover {
+            z-index: 3000;
+        }
+    </style>
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>电梯选择</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-inline" style="margin-bottom: 10px;">
+                            <div class="form-group" style="margin: 0">
+                                <div class="col-sm-10">
+                                    <label for="w_property" class="sr-only">物业</label>
+                                    <select class="combobox form-control" id="w_property" onchange="doPropertyChange()">
+                                        <option value="" selected="selected">物业</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin: 0">
+                                <div class="col-sm-10">
+                                    <label for="w_project" class="sr-only">项目</label>
+                                    <select class="combobox form-control" id="w_project" onchange="doProjectChange()">
+                                        <option value="" selected="selected">项目</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin: 0">
+                                <div class="col-sm-10">
+                                    <label for="w_elevator" class="sr-only">电梯号</label>
+                                    <select class="combobox form-control" id="w_elevator" onchange="doElevatorChange()">
+                                        <option value="" selected="selected">电梯号</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                地址
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_address"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                联系人及电话
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_info"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>问题描述</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                <span class="input-required">*</span> 问题描述
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input class="form-control" id="w_problem">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                <span class="input-required">*</span>是否急修
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" name="w_IsRush" value="true">是
+                                </label>
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" name="w_IsRush" value="false">否
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                <span class="input-required">*</span>是否困人
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" name="w_IsTrap" value="true">是
+                                </label>
+                                <label class="radio-inline i-checks">
+                                    <input type="radio" name="w_IsTrap" value="false">否
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>报修时间
+                            </label>
+                            <div class="col-sm-5">
+                                <div class="input-group date" id="c_calendar">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input id="w_create_date" type="text" class="form-control" value="" placeholder="选择日期">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-5">
+                                <div class="input-group clockpicker" data-autoclose="true">
+                                    <input type="text" id="w_create_time" class="form-control" value="" placeholder="选择时间">
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-clock-o"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                困人描述
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input class="form-control" id="w_trap_desc">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>问题反馈人</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                反馈人
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input id="w_BackName" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                角色
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label for="w_BackRole" class="sr-only">角色</label>
+                                <select class="combobox form-control" id="w_BackRole">
+                                    <option value="" selected="selected">角色</option>
+                                    <option value="物业">物业</option>
+                                    <option value="住户">住户</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                电话
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input id="w_BackPhone" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>工作派单</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>主维修人
+                            </label>
+
+                            <div class="col-sm-6">
+                                <div class="form-group" style="margin:0;">
+                                    <label for="w_person1" class="sr-only">选择主维修人</label>
+                                    <select class="combobox form-control" id="w_person1">
+                                        <option value="" selected="selected">选择主维修人</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(1)">已有工作计划</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                协助维修
+                            </label>
+
+                            <div class="col-sm-6">
+                                <div class="form-group" style="margin: 0">
+                                    <label for="w_person2" class="sr-only">选择协助维修</label>
+                                    <select class="combobox form-control" id="w_person2">
+                                        <option value="" selected="selected">选择协助维修</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(2)">已有工作计划</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>维修时间
+                            </label>
+
+                            <div class="col-sm-10">
+                                <div class="input-group date">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input id="w_plan_time" type="text" class="form-control" value="" placeholder="维修时间">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                备注说明
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input id="w_remark" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="saveLiftCheckInfo()">确认</button>
+</div>
+<script>
+    $(function () {
+        app.win_action = 'add';
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+
+        $('.input-group.date').datepicker({
+            language: 'zh-CN',
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true,
+        });
+
+        $('.clockpicker').clockpicker();
+
+        app.initCombobox({
+            url: 'GetPropertyName',
+            callback_params: {
+                id: 'w_property',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetProjectName',
+            callback_params: {
+                id: 'w_project',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetElevatorNumByProject',
+            callback_params: {
+                id: 'w_elevator',
+            }
+        });
+    });
+
+    function doPropertyChange() {
+        var property = $("#w_property").val();
+        $("#w_project").html('<option value="" selected="selected">项目</option>');
+        $("#w_elevator").html('<option value="" selected="selected">电梯号</option>');
+
+        app.initCombobox({
+            url: 'GetProjectName',
+            data: {
+                PropertyName: property.trim(),
+            },
+            callback_params: {
+                id: 'w_project',
+                refresh: true,
+            }
+        });
+        app.initCombobox({
+            url: 'GetElevatorNumByProject',
+            data: {
+                PropertyName: property.trim(),
+            },
+            callback_params: {
+                id: 'w_elevator',
+                refresh: true,
+            }
+        });
+
+        $("#w_lift_maintain_address").html("");
+        $("#w_lift_maintain_info").html("");
+    }
+
+    function doProjectChange() {
+        var project = $("#w_project").val();
+        var property = $("#w_property").val();
+        if (project.trim() == ""){
+            return
+        }
+        $("#w_elevator").html('<option value="" selected="selected">电梯号</option>');
+        app.initCombobox({
+            url: 'GetElevatorNumByProject',
+            data: {
+                PropertyName: property.trim(),
+                ProjectName: project.trim(),
+            },
+            callback_params: {
+                id: 'w_elevator',
+                refresh: true,
+            }
+        });
+
+        $("#w_lift_maintain_address").html("");
+        $("#w_lift_maintain_info").html("");
+    }
+
+    function doElevatorChange() {
+        var elevator = $("#w_elevator").val();
+        if (elevator == "") {
+            $("#w_lift_maintain_address").html("");
+            $("#w_lift_maintain_info").html("");
+        } else {
+            var options = {
+                url: 'GetElevatorInfoByNum',
+                data: {
+                    ElevatorNum: elevator,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var info = res.data;
+                        var Contracts = "";
+                        if (info.BuildingInfo) {
+                            info.BuildingInfo.forEach(function (value, index, arr) {
+                                Contracts += value.Remark + " " + value.PersonName + " " + value.Phone + ";<br/>";
+                            });
+                        }
+                        $("#w_lift_maintain_address").html(info.Address);
+                        $("#w_lift_maintain_info").html(Contracts);
+                        if (info.BigDutyTeamName != "") {
+                            app.initCombobox({
+                                url: 'GetDealMemberNameWithElevatorNum',
+                                data: {
+                                    ElevatorNum: elevator,
+                                    SmallTeamType: "检修",
+                                },
+                                callback_params: {
+                                    id: 'w_person1',
+                                    refresh: true,
+                                }
+                            });
+                            app.initCombobox({
+                                url: 'GetDealMemberNameWithElevatorNum',
+                                data: {
+                                    ElevatorNum: elevator,
+                                    SmallTeamType: "检修",
+                                },
+                                callback_params: {
+                                    id: 'w_person2',
+                                    refresh: true,
+                                }
+                            });
+                        }
+                    } else {
+                        $("#w_lift_maintain_address").html("");
+                        $("#w_lift_maintain_info").html("");
+                        app.error(res.msg);
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+    }
+
+    function saveLiftCheckInfo() {
+        var ElevatorNum = $("#w_elevator").val();
+        if (ElevatorNum == "") {
+            app.warning("请先选择电梯");
+            return;
+        }
+
+        var ProblemDesc = $("#w_problem").val();
+        if (ProblemDesc == "") {
+            app.warning("请输入问题描述");
+            return;
+        }
+
+        var CreateDate = $("#w_create_date").val();
+        var CreateTime = $("#w_create_time").val();
+        var StartTime = "";
+        if (CreateDate.trim() != "") {
+            StartTime += CreateDate;
+            if (CreateTime.trim() != "") {
+                StartTime += " " + CreateTime + ":00";
+            } else {
+                app.warning("请输入报修详细日期");
+                return;
+            }
+        } else {
+            app.warning("请输入报修日期");
+            return;
+        }
+
+        var TrapDesc = $("#w_trap_desc").val();
+        var IsRush = $("input[name='w_IsRush']:checked").val();
+        if (IsRush == null) {
+            app.warning("请确定是否急修");
+            return;
+        }
+        if (IsRush == "true" || IsRush == true) {
+            IsRush = true;
+        } else {
+            IsRush = false;
+        }
+
+        var IsTrap = $("input[name='w_IsTrap']:checked").val();
+        if (IsTrap == null) {
+            app.warning("请确定是否困人");
+            return;
+        }
+        if (IsTrap == "true" || IsTrap == true) {
+            IsTrap = true;
+        } else {
+            IsTrap = false;
+        }
+
+        var Phone = $("#w_BackPhone").val();
+        var Role = $("#w_BackRole").val();
+        var CreatePerson = $("#w_BackName").val();
+
+        var Leader = $("#w_person1").val();
+        if (Leader == "") {
+            app.warning("请选择主维修人");
+            return;
+        }
+        var Member = $("#w_person2").val();
+        if (Leader.trim() == Member.trim()){
+            app.warning("主维修人和协助维修人不能一致");
+            return;
+        }
+        var DealTime = $("#w_plan_time").val();
+        if (DealTime == "") {
+            app.warning("请选择维修时间");
+            return;
+        }
+
+        var Reason = $("#w_remark").val();
+
+        var options = {
+            url: 'AddCheckAndFixTicket',
+            data: {
+                UserName: app.getLoginUserName(),
+                ElevatorNum: ElevatorNum,
+                ProblemDesc: ProblemDesc,
+                IsTrap: IsTrap,
+                IsRush: IsRush,
+                Role: Role,
+                Phone: Phone,
+                CreatePerson: CreatePerson,
+                CreateTime: new Date(StartTime).getTime() / 1000,
+                TrapDesc: TrapDesc,
+                ShouldDealTime: new Date(DealTime).getTime() / 1000,
+                LeaderUserName: Leader,
+                MemberUserName: Member,
+                Reason: Reason,
+            },
+            callback: app.saveCallbackWindow,
+            callback_params: {
+                action: "add",
+                refresh: lift_check_refresh,
+                key: 'new_key',
+            }
+        };
+
+        app.execPostRequest(options);
+    }
+
+    function doSearchPersonPlan(index) {
+        var person;
+        if (index == 1) {
+            var person = $("#w_person1").val();
+            if (person == "" || person == null) {
+                app.info("请先选择检修组长");
+                return;
+            }
+        }
+        else if (index == 2) {
+            var person = $("#w_person2").val();
+            if (person == "" || person == null) {
+                app.info("请先选择检修组员");
+                return;
+            }
+        }
+
+        layer.open({
+            type: 2,
+            title: '已有工作计划',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['90%', '90%'],
+            content: '../data/work_plan_win.html?key=' + encodeURIComponent(person)
+        });
+    }
+</script>

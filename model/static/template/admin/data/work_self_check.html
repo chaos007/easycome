@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>自检工作分析</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+    <!-- TouchSpin -->
+    <link href="../../res/admin/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+
+    <style>
+        h2 {
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div id="search-form" style="margin: 10px 0;">
+
+            <div class="form-inline">
+                <div class="form-group">
+                    <div class="input-group date">
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                        <input id="year_month" type="text" class="form-control" value="" placeholder="选择月份">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="doGlobalViewSearch()">查询</button>
+            </div>
+        </div>
+
+        <h2>项目自检统计</h2>
+        <div class="form-inline">
+            <div class="form-group" style="float: right;margin-bottom: 20px;">
+                <a onclick="exportElevatorCountFile()" class="btn btn-default">
+                    <i class="fa fa-reply"></i>&nbsp;项目自检导出</a>
+            </div>
+            <div class="form-group" style="float: right;margin-bottom: 20px;">
+                <a onclick="exportElevatorItemFile()" class="btn btn-default">
+                    <i class="fa fa-reply"></i>&nbsp;自检问题导出</a>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <table class="table  table-hover">
+                            <thead class="gray-bg">
+                                <tr>
+                                    <th>检查项目</th>
+                                    <th>自检台数</th>
+                                    <th>不合格台数</th>
+                                    <th>不合格项</th>
+                                </tr>
+                            </thead>
+                            <tbody id="project_info">
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <table class="table  table-hover">
+                            <thead class="gray-bg">
+                                <tr>
+                                    <th>电梯号</th>
+                                    <th>自检项目</th>
+                                    <th>自检结果</th>
+                                    <th>检查人</th>
+                                    <th>责任人</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail_ticket">
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>问题统计</h2>
+        <div class="row">
+            <div class="ibox ">
+                <div class="ibox-content ">
+
+                    <div class="col-md-12">
+                        <table class="table  table-hover">
+                            <thead class="gray-bg">
+                                <tr>
+                                    <th>自检项目</th>
+                                    <th>自检单项</th>
+                                    <th>本月自检台数</th>
+                                    <th>该项不合格台数</th>
+                                    <th>详细梯号</th>
+                                </tr>
+                            </thead>
+                            <tbody id="problem_info">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <!-- TouchSpin -->
+    <script src="../../res/admin/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
+
+    <!-- ChartJS-->
+    <script src="../../res/admin/js/plugins/chartJs/Chart.min.js"></script>
+
+    <script src="../../res/admin/js/plugins/fullcalendar/moment.min.js"></script>
+    <script>
+        var lineOptions = {
+            scaleShowGridLines: true,
+            scaleGridLineColor: "rgba(0,0,0,.05)",
+            scaleGridLineWidth: 1,
+            bezierCurve: true,
+            bezierCurveTension: 0.4,
+            pointDot: true,
+            pointDotRadius: 4,
+            pointDotStrokeWidth: 1,
+            pointHitDetectionRadius: 20,
+            datasetStroke: true,
+            datasetStrokeWidth: 2,
+            datasetFill: true,
+            responsive: true,
+        };
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >数据分析 >自检工作分析");
+
+            var date = new Date();
+            var m = date.getMonth() + 1;
+            var y = date.getFullYear();
+            var year_month = y;
+            if (m < 10) {
+                m = '0' + m;
+            }
+            $("#year_month").val(y + '-' + m);
+            $('.input-group.date').datepicker({
+                language: 'zh-CN',
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                startView: 1,
+                maxViewMode: 1,
+                minViewMode: 1,
+                format: "yyyy-mm"
+            });
+
+            doGlobalViewSearch();
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        function doGlobalViewSearch() {
+            var MonthTime = $("#year_month").val();
+            if (MonthTime == "") {
+                var date = new Date();
+                var m = date.getMonth() + 1;
+                var y = date.getFullYear();
+                var year_month = y;
+                if (m < 10) {
+                    m = '0' + m;
+                }
+                MonthTime = y + '-' + m
+            }
+            MonthTime += '-01';
+            MonthTime = new Date(MonthTime).getTime() / 1000;
+
+            var options = {
+                url: 'GetDetailGeneralSelf',
+                data: {
+                    MonthTime: parseInt(MonthTime),
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var pList = res.data.ProjectInfoList;
+                        var tList = res.data.TicketInfoList;
+                        var problemList = res.data.ProblemItemInfoList;
+                        $("#project_info").empty();
+                        if (pList && pList.length > 0) {
+                            var tr = "";
+                            pList.forEach(function (v, i, a) {
+                                tr += "<tr>"
+                                tr += "<td>" + v.ProjectName + "</td>";
+                                tr += "<td>" + v.SelfCheckNum + "</td>";
+                                tr += "<td>" + v.FailNum + "</td>";
+                                tr += "<td>" + v.FailItemNum + "</td>";
+                                tr += "</tr>";
+                            });
+                            $("#project_info").html(tr);
+                        }
+                        $("#detail_ticket").empty();
+                        if (tList && tList.length > 0) {
+                            var tr = "";
+                            tList.forEach(function (v, i, a) {
+                                tr += "<tr>"
+                                tr += "<td>" + v.ElevatorNum + "</td>";
+                                tr += "<td>" + v.CheckProjectName + "</td>";
+                                tr += "<td>" + v.CheckResult + "</td>";
+                                tr += "<td>" + v.CheckPerson + "</td>";
+                                tr += "<td>" + v.DutyPerson + "</td>";
+                                tr += "</tr>";
+                            });
+                            $("#detail_ticket").html(tr);
+                        }
+                        $("#problem_info").empty();
+                        if (problemList && problemList.length > 0) {
+                            var tr = "";
+                            problemList.forEach(function (v, i, a) {
+                                tr += "<tr>"
+                                tr += "<td>" + v.CheckProjectName + "</td>";
+                                tr += "<td>" + v.ItemName + "</td>";
+                                tr += "<td>" + v.SelfCheckNum + "</td>";
+                                tr += "<td>" + v.FailNum + "</td>";
+                                tr += "<td>" + v.ElevatorNumList + "</td>";
+                                tr += "</tr>";
+                            });
+                            $("#problem_info").html(tr);
+                        }
+                        
+                    } else {
+                        app.error(res.msg);
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+        }
+
+        function exportElevatorCountFile() {
+            var MonthTime = $("#year_month").val();
+            if (MonthTime == "") {
+                var date = new Date();
+                var m = date.getMonth() + 1;
+                var y = date.getFullYear();
+                var year_month = y;
+                if (m < 10) {
+                    m = '0' + m;
+                }
+                MonthTime = y + '-' + m
+            }
+            MonthTime += '-01';
+            MonthTime = new Date(MonthTime).getTime() / 1000;
+            var options = {
+                url: 'ExportElevatorSelfCountFile',
+                filename: '项目自检导出.xlsx',
+                data: {
+                    MonthTime: MonthTime,
+                },
+            };
+            app.execGetRequest(options);
+        }
+
+        function exportElevatorItemFile() {
+            var MonthTime = $("#year_month").val();
+            if (MonthTime == "") {
+                var date = new Date();
+                var m = date.getMonth() + 1;
+                var y = date.getFullYear();
+                var year_month = y;
+                if (m < 10) {
+                    m = '0' + m;
+                }
+                MonthTime = y + '-' + m
+            }
+            MonthTime += '-01';
+            MonthTime = new Date(MonthTime).getTime() / 1000;
+            var options = {
+                url: 'ExportElevatorSelfItemFile',
+                filename: '自检问题导出.xlsx',
+                data: {
+                    MonthTime: MonthTime,
+                },
+            };
+            app.execGetRequest(options);
+        }
+    </script>
+</body>
+
+</html>

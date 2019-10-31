@@ -1,0 +1,1133 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">电梯责任分配</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>电梯信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                电梯编号
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_global_elevatorNum"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">物业单位</label>
+                            <div class="col-sm-10">
+                                <span id="w_global_property"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">楼号信息</label>
+                            <div class="col-sm-10">
+                                <span id="w_global_build"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">合同信息</label>
+                            <div class="col-sm-10">
+                                <span id="w_global_project"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">电梯类型</label>
+                            <div class="col-sm-10">
+                                <span id="w_elevator_type"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">电梯类别</label>
+                            <div class="col-sm-10">
+                                <span id="w_elevator_detail_type"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>责任小组</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                找不到小组？
+                                <a onclick="app.openRightFrameFromWin('../staff/group.html')">小组管理</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2">
+
+                            </label>
+                            <div class="col-sm-3">
+                                当前小组
+                            </div>
+                            <div class="col-sm-4">
+                                新小组
+                            </div>
+                            <div class="col-sm4">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                维保
+                            </label>
+
+                            <label class="col-sm-3 control-label" style="text-align: left" id="w_global_info_team1_old">
+
+                            </label>
+
+                            <div class="col-sm-4">
+                                <label for="w_global_info_team1" class="sr-only">选择小组</label>
+                                <select class="combobox form-control" id="w_global_info_team1" onchange="doTeamChange(this,1)">
+                                    <option value="" selected="selected">选择小组</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary" onclick="doWorkChange(1)">工作交接</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                检修
+                            </label>
+
+                            <label class="col-sm-3 control-label" style="text-align: left" id="w_global_info_team2_old">
+
+                            </label>
+
+                            <div class="col-sm-4">
+                                <label for="w_global_info_team1" class="sr-only">选择小组</label>
+                                <select class="combobox form-control" id="w_global_info_team2" onchange="doTeamChange(this,2)">
+                                    <option value="" selected="selected">选择小组</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary" onclick="doWorkChange(2)">工作交接</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                大修/整改
+                            </label>
+
+                            <label class="col-sm-3 control-label" style="text-align: left" id="w_global_info_team3_old">
+
+                            </label>
+
+                            <div class="col-sm-4">
+                                <label for="w_global_info_team1" class="sr-only">选择小组</label>
+                                <select class="combobox form-control" id="w_global_info_team3" onchange="doTeamChange(this,3)">
+                                    <option value="" selected="selected">选择小组</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary" onclick="doWorkChange(3)">工作交接</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                年检自检
+                            </label>
+
+                            <label class="col-sm-3 control-label" style="text-align: left" id="w_global_info_team4_old">
+
+                            </label>
+
+                            <div class="col-sm-4">
+                                <label for="w_global_info_team1" class="sr-only">选择小组</label>
+                                <select class="combobox form-control" id="w_global_info_team4" onchange="doTeamChange(this,4)">
+                                    <option value="" selected="selected">选择小组</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary" onclick="doWorkChange(4)">工作交接</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                自检
+                            </label>
+
+                            <label class="col-sm-3 control-label" style="text-align: left" id="w_global_info_team5_old">
+
+                            </label>
+
+                            <div class="col-sm-4">
+                                <label for="w_global_info_team1" class="sr-only">选择小组</label>
+                                <select class="combobox form-control" id="w_global_info_team5" onchange="doTeamChange(this,5)">
+                                    <option value="" selected="selected">选择小组</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary" onclick="doWorkChange(5)">工作交接</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox-title">
+                    <h5>维保员工</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-8">
+                                <label for="w_global_MaintainTeamLeader" class="sr-only">选择维保组员</label>
+                                <select class="combobox form-control" id="w_global_MaintainTeamLeader">
+                                    <option value="" selected="selected">选择维保组员</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(1)">已有工作计划</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-8">
+                                <label for="w_global_MaintainTeamMember" class="sr-only">选择维保组员</label>
+                                <select class="combobox form-control" id="w_global_MaintainTeamMember">
+                                    <option value="" selected="selected">选择维保组员</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(2)">已有工作计划</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-8">
+                                <label for="w_global_MaintainTeamMember2" class="sr-only">选择维保组员</label>
+                                <select class="combobox form-control" id="w_global_MaintainTeamMember2">
+                                    <option value="" selected="selected">选择维保组员</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(3)">已有工作计划</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>维保项目</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-inline" style="margin-bottom: 10px;">
+                        <div class="form-group">
+                            <label for="w_global_MaintainProject" class="sr-only">选择维保项目</label>
+                            <select class="combobox form-control" id="w_global_MaintainProject">
+                                <option value="" selected="selected">选择维保项目</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group date">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                                <input id="w_global_MaintainProject_Time" type="text" class="form-control" value="" placeholder="首保时间">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="doAddMaintainProject()">新增保养项目</button>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title" style="padding-left: 0;">
+                            <h5>保养项目列表</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="dd" id="nestable">
+                                <ol class="dd-list">
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>年检自检人</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-8">
+                                <label for="w_global_CheckingTeamLeader" class="sr-only">选择年检自检组长</label>
+                                <select class="combobox form-control" id="w_global_CheckingTeamLeader">
+                                    <option value="" selected="selected">选择年检自检组长</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(4)">已有工作计划</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-8">
+                                <label for="w_global_CheckingTeamMember" class="sr-only">选择年检自检组员</label>
+                                <select class="combobox form-control" id="w_global_CheckingTeamMember">
+                                    <option value="" selected="selected">选择年检自检组员</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary" onclick="doSearchPersonPlan(5)">已有工作计划</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>年检</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label for="w_global_yearCheckProject" class="sr-only">选择年检项目</label>
+                            <select class="combobox form-control" id="w_global_yearCheckProject">
+                                <option value="" selected="selected">选择年检项目</option>
+                            </select>
+                        </div>
+                        年检有效期：
+                        <span id="w_global_yearCheckLastTime"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" onclick="javascript:$('#win').modal('hide');global_refresh(app.win_key, 'edit');">返回
+    </button>
+    <button type="button" class="btn btn-primary" onclick="saveGlobalInfo()">确认</button>
+</div>
+<script>
+    //责任小组
+    var team1 = "";
+    var team2 = "";
+    var team3 = "";
+    var team4 = "";
+    var team5 = "";
+
+    var Leader = "";
+    var Member = "";
+    var Member2 = "";
+
+    var CheckLear = "";
+    var CheckMember = "";
+
+    var YearProjectId = "";
+    var projectMap = new Map();
+    
+
+    $(function () {
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = decodeURIComponent(app.win_url.split("?key=")[1]);
+        }
+
+        if (app.win_action == 'edit') {
+
+            var options = {
+                url: 'GetAllElevatorManagerInfoWityKey',
+                data: {
+                    ElevatorNum: app.win_key,
+                },
+                callback: initGlobalInfo,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+        }
+    });
+
+    function initGlobalInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+            var info = res.data;
+            var html = ""
+            if (info.ElevatorNum && info.ElevatorNum.trim() != "") {
+                var url = "../doc/elevator_tip.html?key=" + encodeURIComponent(info.ElevatorNum);
+                html = info.ElevatorNum + "&nbsp;&nbsp;<a style='color:#134da5;' data-href='" + url + "' onclick='javascript:app.openWinFromWin(this)'><i class='fa fa-info'></i>&nbsp;详情</a>";
+            }
+            $("#w_global_elevatorNum").html(html);
+
+            html = "";
+            if (info.PropertyName && info.PropertyName.trim() != "") {
+                var url = "../doc/basic/property_tip.html?key=" + encodeURIComponent(info.PropertyName);
+                html = info.PropertyName + "&nbsp;&nbsp;<a style='color:#134da5;' data-href='" + url + "' onclick='javascript:app.openWinFromWin(this)'><i class='fa fa-info'></i>&nbsp;详情</a>";
+            }
+            $("#w_global_property").html(html);
+
+            html = "";
+            if (info.BuildingName && info.BuildingName.trim() != "") {
+                var url = "../doc/basic/building_tip.html?key=" + encodeURIComponent(info.BuildingName);
+                html = info.BuildingName + "&nbsp;&nbsp;<a style='color:#134da5;' data-href='" + url + "' onclick='javascript:app.openWinFromWin(this)'><i class='fa fa-info'></i>&nbsp;详情</a>";
+            }
+            $("#w_global_build").html(html);
+
+            html = "";
+            if (info.ProjectName && info.ProjectName.trim() != "") {
+                var start = app.formatDateFromUnix(info.ContractStartTime)
+                var end = app.formatDateFromUnix(info.ContractEndTime);
+                var url = "../doc/basic/project_tip.html?key=" + encodeURIComponent(info.ProjectName);
+                html = start + " 至 " + end + "&nbsp;&nbsp;<a style='color:#134da5;' data-href='" + url + "' onclick='javascript:app.openWinFromWin(this)'><i class='fa fa-info'></i>&nbsp;详情</a>";
+            }
+            $("#w_global_project").html(html);
+
+            if (info.ElevatorType && info.ElevatorType.trim() != "") {
+                html = info.ElevatorType;
+                $("#w_elevator_type").html(html);
+            }
+
+            if (info.ElevatorDetailType && info.ElevatorDetailType.trim() != "") {
+                html = info.ElevatorDetailType;
+                $("#w_elevator_detail_type").html(html);
+            }
+
+            //责任小组
+            if (info.DutyTeams) {
+                info.DutyTeams.forEach(function (value, index, arr) {
+                    if (value.TeamType == "维保") {
+                        team1 = value.TeamName;
+                    } else if (value.TeamType == "检修") {
+                        team2 = value.TeamName;
+                    } else if (value.TeamType == "大修整改") {
+                        team3 = value.TeamName;
+                    } else if (value.TeamType == "年检自检") {
+                        team4 = value.TeamName;
+                    } else if (value.TeamType == "自检") {
+                        team5 = value.TeamName;
+                    }
+                });
+            }
+            $("#w_global_info_team1_old").html(team1);
+            $("#w_global_info_team2_old").html(team2);
+            $("#w_global_info_team3_old").html(team3);
+            $("#w_global_info_team4_old").html(team4);
+            $("#w_global_info_team5_old").html(team5);
+
+            app.initCombobox({
+                url: 'GetTeamInfoWithType',
+                data: {
+                    Type: '维保',
+                },
+                callback_params: {
+                    id: 'w_global_info_team1',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetTeamInfoWithType',
+                data: {
+                    Type: '检修',
+                },
+                callback_params: {
+                    id: 'w_global_info_team2',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetTeamInfoWithType',
+                data: {
+                    Type: '大修整改',
+                },
+                callback_params: {
+                    id: 'w_global_info_team3',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetTeamInfoWithType',
+                data: {
+                    Type: '年检自检',
+                },
+                callback_params: {
+                    id: 'w_global_info_team4',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetTeamInfoWithType',
+                data: {
+                    Type: '自检',
+                },
+                callback_params: {
+                    id: 'w_global_info_team5',
+                }
+            });
+
+            //维保员工
+            if (info.MaintainTeamLeader && info.MaintainTeamLeader.UserName) {
+                Leader = info.MaintainTeamLeader.UserName;
+            }
+            app.initCombobox({
+                url: 'GetDealMemberNameWithElevatorNum',
+                data: {
+                    ElevatorNum: app.win_key,
+                    SmallTeamType: "维保",
+                },
+                callback_params: {
+                    id: 'w_global_MaintainTeamLeader',
+                    value: Leader,
+                }
+            });
+            if (info.MaintainTeamMember && info.MaintainTeamMember.UserName) {
+                Member = info.MaintainTeamMember.UserName;
+            }
+            app.initCombobox({
+                url: 'GetDealMemberNameWithElevatorNum',
+                data: {
+                    ElevatorNum: app.win_key,
+                    SmallTeamType: "维保",
+                },
+                callback_params: {
+                    id: 'w_global_MaintainTeamMember',
+                    value: Member,
+                }
+            });
+            if (info.MaintainTeamMember2 && info.MaintainTeamMember2.UserName) {
+                Member2 = info.MaintainTeamMember2.UserName;
+            }
+            app.initCombobox({
+                url: 'GetDealMemberNameWithElevatorNum',
+                data: {
+                    ElevatorNum: app.win_key,
+                    SmallTeamType: "维保",
+                },
+                callback_params: {
+                    id: 'w_global_MaintainTeamMember2',
+                    value: Member2,
+                }
+            });
+
+            //维保项目
+            app.initCombobox({
+                url: 'GetMaintainProjectInfo',
+                data: {
+                    SearchName: "",
+                    BigType: "维保",
+                    IntervalType: "",
+                    IsAbandon: "未弃用",
+                },
+                callback_params: {
+                    id: 'w_global_MaintainProject',
+                }
+            });
+
+            $('.input-group.date').datepicker({
+                language: 'zh-CN',
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+            });
+
+            if (info.MaintainItems) {
+                info.MaintainItems.forEach(function (value, index, arr) {
+                    projectMap.set(value.ID, {
+                        ID: value.ID,
+                        StartTime: value.StartTime,
+                    })
+                    addLiOfGlobalProject({
+                        id: value.ID,
+                        name: value.Name,
+                        start: app.formatDateFromUnix(value.StartTime),
+                    });
+                });
+            }
+
+            //年检自检人
+            if (info.YearCheckTeamLeader && info.YearCheckTeamLeader.UserName) {
+                CheckLear = info.YearCheckTeamLeader.UserName;
+            }
+            app.initCombobox({
+                url: 'GetDealMemberNameWithElevatorNum',
+                data: {
+                    ElevatorNum: app.win_key,
+                    SmallTeamType: "年检自检",
+                },
+                callback_params: {
+                    id: 'w_global_CheckingTeamLeader',
+                    value: CheckLear,
+                }
+            });
+
+            if (info.YearCheckTeamMember && info.YearCheckTeamMember.UserName) {
+                CheckMember = info.YearCheckTeamMember.UserName;
+            }
+            app.initCombobox({
+                url: 'GetDealMemberNameWithElevatorNum',
+                data: {
+                    ElevatorNum: app.win_key,
+                    SmallTeamType: "年检自检",
+                },
+                callback_params: {
+                    id: 'w_global_CheckingTeamMember',
+                    value: CheckMember,
+                }
+            });
+
+            //年检
+            YearProjectId = info.YearCheckID > 0 ? info.YearCheckID : "";
+            app.initCombobox({
+                url: 'GetMaintainProjectInfo',
+                data: {
+                    SearchName: "",
+                    BigType: "自检",
+                    IntervalType: "年检自检",
+                    IsAbandon: "未弃用",
+                },
+                callback_params: {
+                    id: 'w_global_yearCheckProject',
+                    value: YearProjectId,
+                }
+            });
+            $("#w_global_yearCheckLastTime").html(app.formatDateFromUnix(info.YearCheckStartTime));
+        }
+    }
+
+    function doTeamChange(obj, index) {
+        var team = $(obj).val();
+        if (team == "") {
+            return;
+        }
+
+        //与当前小组相同
+        if (index == 1 && team == team1) {
+            return;
+        } else if (index == 2 && team == team2) {
+            return;
+        } else if (index == 3 && team == team3) {
+            return;
+        } else if (index == 4 && team == team4) {
+            return;
+        } else if (index == 5 && team == team5) {
+            return;
+        }
+
+        saveDutyTeam(team, index);
+    }
+
+    function saveDutyTeam(name, index) {
+        var DutyTeamType = "";
+        switch (index) {
+            case 1: {
+                DutyTeamType = "维保";
+                break;
+            }
+            case 2: {
+                DutyTeamType = "检修";
+                break;
+            }
+            case 3: {
+                DutyTeamType = "大修整改";
+                break;
+            }
+            case 4: {
+                DutyTeamType = "年检自检";
+                break;
+            }
+            case 5: {
+                DutyTeamType = "自检";
+                break;
+            }
+        }
+
+        var options = {
+            url: 'ChangeElevatorDutyTeam',
+            data: {
+                ElevatorNum: app.win_key,
+                DutyTeamType: DutyTeamType,
+                TeamName: name,
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    switch (params.index) {
+                        case 1: {
+                            Leader = "";
+                            Member = "";
+                            Member2 = "";
+
+                            team1 = params.name;
+                            $("#w_global_info_team1_old").html(team1);
+
+                            //刷新维保组员控件
+                            $("#w_global_MaintainTeamLeader").html('<option value="" selected="selected">选择维保组员</option>');
+                            app.initCombobox({
+                                url: 'GetDealMemberNameWithElevatorNum',
+                                data: {
+                                    ElevatorNum: app.win_key,
+                                    SmallTeamType: "维保",
+                                },
+                                callback_params: {
+                                    id: 'w_global_MaintainTeamLeader',
+                                    value: Leader,
+                                    refresh: true,
+                                }
+                            });
+
+                            $("#w_global_MaintainTeamMember").html('<option value="" selected="selected">选择维保组员</option>');
+                            app.initCombobox({
+                                url: 'GetDealMemberNameWithElevatorNum',
+                                data: {
+                                    ElevatorNum: app.win_key,
+                                    SmallTeamType: "维保",
+                                },
+                                callback_params: {
+                                    id: 'w_global_MaintainTeamMember',
+                                    value: Member,
+                                    refresh: true,
+                                }
+                            });
+
+                            $("#w_global_MaintainTeamMember2").html('<option value="" selected="selected">选择维保组员</option>');
+                            app.initCombobox({
+                                url: 'GetDealMemberNameWithElevatorNum',
+                                data: {
+                                    ElevatorNum: app.win_key,
+                                    SmallTeamType: "维保",
+                                },
+                                callback_params: {
+                                    id: 'w_global_MaintainTeamMember2',
+                                    value: Member2,
+                                    refresh: true,
+                                }
+                            });
+                            break;
+                        }
+                        case 2: {
+                            team2 = params.name;
+                            $("#w_global_info_team2_old").html(team2);
+                            break;
+                        }
+                        case 3: {
+                            team3 = params.name;
+                            $("#w_global_info_team3_old").html(team3);
+                            break;
+                        }
+                        case 4: {
+                            CheckLear = "";
+                            CheckMember = "";
+
+                            team4 = params.name;
+                            $("#w_global_info_team4_old").html(team4);
+                            //刷新年检自检人控件
+                            $("#w_global_CheckingTeamLeader").html('<option value="" selected="selected">选择年检自检组长</option>');
+                            app.initCombobox({
+                                url: 'GetDealMemberNameWithElevatorNum',
+                                data: {
+                                    ElevatorNum: app.win_key,
+                                    SmallTeamType: "年检自检",
+                                },
+                                callback_params: {
+                                    id: 'w_global_CheckingTeamLeader',
+                                    value: CheckLear,
+                                    refresh: true,
+                                }
+                            });
+
+                            $("#w_global_CheckingTeamMember").html('<option value="" selected="selected">选择年检自检组员</option>');
+                            app.initCombobox({
+                                url: 'GetDealMemberNameWithElevatorNum',
+                                data: {
+                                    ElevatorNum: app.win_key,
+                                    SmallTeamType: "年检自检",
+                                },
+                                callback_params: {
+                                    id: 'w_global_CheckingTeamMember',
+                                    value: CheckMember,
+                                    refresh: true,
+                                }
+                            });
+                            break;
+                        }
+                        case 5: {
+                            team5 = params.name;
+                            $("#w_global_info_team5_old").html(team5);
+                            break;
+                        }
+                    }
+                } else {
+                    //恢复小组状态
+                    switch (params.index) {
+                        case 1: {
+                            $("#w_global_info_team1").combobox("clearTarget");
+                            $("#w_global_info_team1").combobox("clearElement");
+                            break;
+                        }
+                        case 2: {
+                            $("#w_global_info_team2").combobox("clearTarget");
+                            $("#w_global_info_team2").combobox("clearElement");
+                            break;
+                        }
+                        case 3: {
+                            $("#w_global_info_team3").combobox("clearTarget");
+                            $("#w_global_info_team3").combobox("clearElement");
+                            break;
+                        }
+                        case 4: {
+                            $("#w_global_info_team4").combobox("clearTarget");
+                            $("#w_global_info_team4").combobox("clearElement");
+                            break;
+                        }
+                        case 5: {
+                            $("#w_global_info_team5").combobox("clearTarget");
+                            $("#w_global_info_team5").combobox("clearElement");
+                            break;
+                        }
+                    }
+                    app.error(res.msg);
+                }
+            },
+            callback_params: {
+                index: index,
+                name: name,
+            }
+        };
+
+        app.execPostRequest(options);
+    }
+
+    function doAddMaintainProject() {
+
+        var ProjectID = $("#w_global_MaintainProject").val();
+        var ProjectName = $("#w_global_MaintainProject").prev("div").find("li.active").data("value");
+        if (ProjectID == "") {
+            app.info("请先选择维保项目");
+            return;
+        }
+        if (projectMap.get(parseInt(ProjectID))) {
+            app.info("已经添加过该维保项目");
+            return;
+        }
+        Leader = $("#w_global_MaintainTeamLeader").val();
+        Member = $("#w_global_MaintainTeamMember").val();
+        Member2 = $("#w_global_MaintainTeamMember2").val();
+        if (Leader == "" && Member == "" && Member2 == "") {
+            app.info("请至少选择一个维保组员");
+            return;
+        }
+
+
+        var ProjectTime = $("#w_global_MaintainProject_Time").val();
+        if (ProjectTime == "") {
+            app.info("请先选择首保时间");
+            return;
+        }
+
+        projectMap.set(parseInt(ProjectID), {
+            ID: parseInt(ProjectID),
+            StartTime: new Date(ProjectTime).getTime() / 1000,
+        })
+
+        addLiOfGlobalProject({
+            id: ProjectID,
+            name: ProjectName,
+            start: app.formatDateFromUnix(new Date(ProjectTime).getTime() / 1000),
+        });
+
+    }
+
+    function addLiOfGlobalProject(opt) {
+        var html = '<li class="dd-item" data-value="' + opt.id + '">'
+            + '<div class="dd-handle">'
+            + '<a style="color: #ed5565;"  href="javascript:;" onclick="doRemoveGlobalProjectLi(this)">删除</a>'
+            + '&nbsp;&nbsp;' + opt.name
+            + '&nbsp;&nbsp;首保时间：' + opt.start
+            + '</div>'
+            + '</li>';
+        $(".dd-list").append(html);
+    }
+
+    function doRemoveGlobalProjectLi(obj) {
+        app.delete(function () {
+            var li = $(obj).parents("li");
+            var value = $(li).data("value");
+            console.log
+            projectMap.delete(parseInt(value));
+            $(li).remove();
+        });
+    }
+
+
+    function saveGlobalInfo() {
+        var yProject = $("#w_global_yearCheckProject").val();
+        var yearLeader = $("#w_global_CheckingTeamLeader").val();
+        var yearMember = $("#w_global_CheckingTeamMember").val();
+
+        if (yearLeader == "" && yProject != "") {
+            app.warning("请先选择年检自己组长");
+            return;
+        }
+
+        var idList = [];
+        projectMap.forEach(function (value, key, map) {
+            idList.push(value);
+        });
+
+        Leader = $("#w_global_MaintainTeamLeader").val();
+        Member = $("#w_global_MaintainTeamMember").val();
+        Member2 = $("#w_global_MaintainTeamMember2").val();
+        if (Leader == "" && Member == "" && Member2 == "" && idList.length > 0) {
+            app.info("请至少选择一个维保组员");
+            return;
+        }
+
+
+        var options = {
+            url: 'ChangeElevatorAllItem',
+            data: {
+                ElevatorNum: app.win_key,
+                MaintainProjectIDList: idList,
+                YearProjectID: parseInt(yProject),
+                MaintainDealMember1: Leader,
+                MaintainDealMember2: Member,
+                MaintainDealMember3: Member2,
+                YearDealMember1: yearLeader,
+                YearDealMember2: yearMember,
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    app.success("操作成功", function () {
+                        $("#win").modal("hide");
+                        global_refresh(app.win_key, 'edit');
+                    })
+                } else {
+                    app.error(res.msg);
+                }
+
+            },
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+
+    }
+
+    function doSearchPersonPlan(index) {
+        var person;
+        if (index == 1) {
+            var person = $("#w_global_MaintainTeamLeader").val();
+            if (person == "" || person == null) {
+                app.info("请先选择维保员工");
+                return;
+            }
+        }
+        else if (index == 2) {
+            var person = $("#w_global_MaintainTeamMember").val();
+            if (person == "" || person == null) {
+                app.info("请先选择维保员工");
+                return;
+            }
+        }
+        else if (index == 3) {
+            var person = $("#w_global_MaintainTeamMember2").val();
+            if (person == "" || person == null) {
+                app.info("请先选择维保员工");
+                return;
+            }
+        } else if (index == 4) {
+            var person = $("#w_global_CheckingTeamLeader").val();
+            if (person == "" || person == null) {
+                app.info("请先选择年检自检组长");
+                return;
+            }
+        } else if (index == 5) {
+            var person = $("#w_global_CheckingTeamMember").val();
+            if (person == "" || person == null) {
+                app.info("请先选择年检自检组员");
+                return;
+            }
+        }
+
+        layer.open({
+            type: 2,
+            title: '已有工作计划',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['90%', '90%'],
+            content: '../data/work_plan_win.html?key=' + encodeURIComponent(person)
+        });
+    }
+
+    function doWorkChange(index) {
+        var type = "";
+        var team = "";
+        if (index == 1) {
+            type = "维保";
+            team = team1;
+        } else if (index == 2) {
+            type = "检修";
+            team = team2;
+        } else if (index == 3) {
+            type = "大修整改";
+            team = team3;
+        } else if (index == 4) {
+            type = "年检自检";
+            team = team4;
+        } else if (index == 5) {
+            type = "自检";
+            team = team5;
+        }
+
+        layer.open({
+            type: 2,
+            title: type + '工作交接',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['90%', '90%'],
+            content: 'global_workreplace.html?key=' + encodeURIComponent(index) + "&ElevatorNum=" + encodeURIComponent(app.win_key) + "&Team=" + encodeURIComponent(team)
+        });
+    }
+
+    function doWorkReplaceCallback(TicketType) {
+        //交接成功，更新页面
+        var options = {
+            url: 'GetAllElevatorManagerInfoWityKey',
+            data: {
+                ElevatorNum: app.win_key,
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    if (res.data == null) {
+                        return;
+                    }
+                    var info = res.data;
+
+                    //责任小组
+                    if (info.DutyTeams) {
+                        info.DutyTeams.forEach(function (value, index, arr) {
+                            if (value.TeamType == "维保" && TicketType == "维保") {
+                                team1 = value.TeamName;
+                                $("#w_global_info_team1_old").html(team1);
+
+                                //维保员工
+                                if (info.MaintainTeamLeader && info.MaintainTeamLeader.UserName) {
+                                    Leader = info.MaintainTeamLeader.UserName;
+                                }
+                                $("#w_global_MaintainTeamLeader").html('<option value="" selected="selected">选择维保组员</option>');
+                                app.initCombobox({
+                                    url: 'GetDealMemberNameWithElevatorNum',
+                                    data: {
+                                        ElevatorNum: app.win_key,
+                                        SmallTeamType: "维保",
+                                    },
+                                    callback_params: {
+                                        id: 'w_global_MaintainTeamLeader',
+                                        value: Leader,
+                                        refresh: true,
+                                    }
+                                });
+
+                                if (info.MaintainTeamMember && info.MaintainTeamMember.UserName) {
+                                    Member = info.MaintainTeamMember.UserName;
+                                }
+                                $("#w_global_MaintainTeamMember").html('<option value="" selected="selected">选择维保组员</option>');
+                                app.initCombobox({
+                                    url: 'GetDealMemberNameWithElevatorNum',
+                                    data: {
+                                        ElevatorNum: app.win_key,
+                                        SmallTeamType: "维保",
+                                    },
+                                    callback_params: {
+                                        id: 'w_global_MaintainTeamMember',
+                                        value: Member,
+                                        refresh: true,
+                                    }
+                                });
+
+                                if (info.MaintainTeamMember2 && info.MaintainTeamMember2.UserName) {
+                                    Member2 = info.MaintainTeamMember2.UserName;
+                                }
+                                $("#w_global_MaintainTeamMember2").html('<option value="" selected="selected">选择维保组员</option>');
+                                app.initCombobox({
+                                    url: 'GetDealMemberNameWithElevatorNum',
+                                    data: {
+                                        ElevatorNum: app.win_key,
+                                        SmallTeamType: "维保",
+                                    },
+                                    callback_params: {
+                                        id: 'w_global_MaintainTeamMember2',
+                                        value: Member2,
+                                        refresh: true,
+                                    }
+                                });
+                            } else if (value.TeamType == "检修" && TicketType == "检修") {
+                                team2 = value.TeamName;
+                                $("#w_global_info_team2_old").html(team2);
+                            } else if (value.TeamType == "大修整改" && TicketType == "大修整改") {
+                                team3 = value.TeamName;
+                                $("#w_global_info_team3_old").html(team3);
+                            } else if (value.TeamType == "年检自检" && TicketType == "年检自检") {
+                                team4 = value.TeamName;
+                                $("#w_global_info_team4_old").html(team4);
+
+                                //年检自检人
+                                if (info.YearCheckTeamLeader && info.YearCheckTeamLeader.UserName) {
+                                    CheckLear = info.YearCheckTeamLeader.UserName;
+                                }
+                                $("#w_global_CheckingTeamLeader").html('<option value="" selected="selected">选择年检自检组长</option>');
+                                app.initCombobox({
+                                    url: 'GetDealMemberNameWithElevatorNum',
+                                    data: {
+                                        ElevatorNum: app.win_key,
+                                        SmallTeamType: "年检自检",
+                                    },
+                                    callback_params: {
+                                        id: 'w_global_CheckingTeamLeader',
+                                        value: CheckLear,
+                                        refresh: true,
+                                    }
+                                });
+
+                                if (info.YearCheckTeamMember && info.YearCheckTeamMember.UserName) {
+                                    CheckMember = info.YearCheckTeamMember.UserName;
+                                }
+                                $("#w_global_CheckingTeamMember").html('<option value="" selected="selected">选择年检自检组员</option>');
+                                app.initCombobox({
+                                    url: 'GetDealMemberNameWithElevatorNum',
+                                    data: {
+                                        ElevatorNum: app.win_key,
+                                        SmallTeamType: "年检自检",
+                                    },
+                                    callback_params: {
+                                        id: 'w_global_CheckingTeamMember',
+                                        value: CheckMember,
+                                        refresh: true,
+                                    }
+                                });
+
+                            } else if (value.TeamType == "自检" && TicketType == "自检") {
+                                team5 = value.TeamName;
+                                $("#w_global_info_team5_old").html(team5);
+                            }
+                        });
+                    }
+                }
+                else {
+                    app.error(res.msg);
+                }
+            },
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+    }
+</script>

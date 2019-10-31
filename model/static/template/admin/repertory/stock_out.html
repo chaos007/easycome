@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>入库管理</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../res/css/weui.css" />
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox gray-bg" style="border: none;">
+                        <div class="ibox-content gray-bg">
+                            <div id="search-form" class="form-inline" style="margin-bottom: 34px;">
+                                <div class="form-group" style="float: right;">
+                                    <a onclick="javascript:app.setWinUrl(this)" class="btn btn-default" data-toggle="modal" href="stock_out_export.html" data-target="#win">
+                                        <i class="fa fa-plus"></i>&nbsp;导出</a>
+                                    <a onclick="doChangeTickets()" class="btn btn-default" data-toggle="modal" href="stock_out_photo_lots.html" data-target="#win">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;添加更换单图片</a>
+                                </div>
+                            </div>
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="part_num" class="sr-only">商品编号</label>
+                                    <select class="combobox form-control" id="part_num">
+                                        <option value="" selected="selected">商品编号</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="type" class="sr-only">类别</label>
+                                    <select class="combobox form-control" id="type">
+                                        <option value="" selected="selected">类别</option>
+                                        <option value="工具">工具</option>
+                                        <option value="易耗品">易耗品</option>
+                                        <option value="配件">配件</option>
+                                        <option value="检验仪器">检验仪器</option>
+                                        <option value="调试设备">调试设备</option>
+                                        <option value="设备">设备</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="part_name" class="sr-only">商品名称</label>
+                                    <select class="combobox form-control" id="part_name">
+                                        <option value="" selected="selected">商品名称</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="size" class="sr-only">规格/型号</label>
+                                    <select class="combobox form-control" id="size">
+                                        <option value="" selected="selected">规格/型号</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="out_stock_type" class="sr-only">出库类型</label>
+                                    <select class="combobox form-control" id="out_stock_type">
+                                        <option value="" selected="selected">出库类型</option>
+                                        <option value="使用出库">使用出库</option>
+                                        <option value="其他出库">其他出库</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="is_connect" class="sr-only">是否关联报价</label>
+                                    <select class="combobox form-control" id="is_connect">
+                                        <option value="" selected="selected">是否关联报价</option>
+                                        <option value="是">是</option>
+                                        <option value="否">否</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="has_change_ticket" class="sr-only">是否取回更换单</label>
+                                    <select class="combobox form-control" id="has_change_ticket">
+                                        <option value="" selected="selected">是否取回更换单</option>
+                                        <option value="是">是</option>
+                                        <option value="否">否</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-daterange input-group" id="datepicker">
+                                        <span class="input-group-addon">出库时间:从</span>
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" class="form-control" name="start" value="" />
+                                        <span class="input-group-addon">到</span>
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" class="form-control" name="end" value="" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="project" class="sr-only">项目</label>
+                                    <select class="combobox form-control" id="project">
+                                        <option value="" selected="selected">项目</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="getStockOutList()">查询</button>
+                            </div>
+                            <div class="jqGrid_wrapper">
+                                <table id="table"></table>
+                                <div id="pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+    <script type="text/javascript" src="../../res/js/cos-js-sdk-v4.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >仓库存管理 >出库管理");
+
+            app.initCombobox({
+                url: 'GetPartNumList',
+                callback_params: {
+                    id: 'part_num',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetPartNameList',
+                callback_params: {
+                    id: 'part_name',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetPartSizeList',
+                callback_params: {
+                    id: 'size',
+                }
+            });
+
+            $("#datepicker").datepicker({
+                language: 'zh-CN',
+                keyboardNavigation: false,
+                todayBtn: "linked",
+                forceParse: true,
+                autoclose: true,
+            });
+
+            app.initCombobox({
+                url: 'GetProjectName',
+                callback_params: {
+                    id: 'project',
+                }
+            });
+
+            $("#type").combobox();
+            $("#out_stock_type").combobox();
+            $("#is_connect").combobox();
+            $("#has_change_ticket").combobox();
+
+
+            initGrid();
+            // getStockOutList();
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        function getStockOutList() {
+            $("#table").jqGrid('setGridParam', {  // 重新加载数据
+                // datatype: 'local',
+                // data: dataSource,
+                page: 1,
+                url: app.serverName + 'GetStockOutInfo',
+            }).trigger("reloadGrid");
+        }
+
+
+        var gridOptions = {
+            getParam: function () {
+                var partNum = $("#part_num").val();
+
+                if (partNum.trim() == "") {
+                    partNum = 0;
+                } else {
+                    partNum = parseInt(partNum);
+                }
+                var partName = $("#part_name").val();
+                var partSize = $("#size").val();
+                var partType = $("#type").val();
+                var projectName = $("#project").val();
+                var start = $("input[name='start']").val();
+                if (start == "") {
+                    start = 0;
+                } else {
+                    start = new Date(start).getTime() / 1000;
+                }
+                var end = $("input[name='end']").val();
+                if (end == "") {
+                    end = 0;
+                } else {
+                    end = new Date(end).getTime() / 1000;
+                }
+
+                var type = $("#out_stock_type").val();
+                var isConnect = $("#is_connect").val();
+                var hasChangeTicket = $("#has_change_ticket").val();
+
+                var postData = $("#table").jqGrid('getGridParam', 'postData');
+                var rowNum = 10;
+                var page = 1;
+                if (postData) {
+                    rowNum = postData.rows;
+                    page = postData.page;
+                }
+
+                var url = $("#table").jqGrid('getGridParam', 'url');
+                var data = {
+                    PartID: partNum,
+                    PartName: partName,
+                    PartType: partType,
+                    PartSize: partSize,
+                    ProjectName: projectName,
+                    MinTime: start,
+                    MaxTime: end,
+
+                    Type: type,
+                    IsConnect: isConnect,
+                    HasChangeTicket: hasChangeTicket,
+                    Start: (page - 1) * rowNum,
+                    Num: parseInt(rowNum),
+                }
+
+                data = JSON.stringify(data);
+                var syn = md5(data + app.key)
+                return {
+                    data: data,
+                    syn: syn,
+                };
+            }
+        }
+
+        function initGrid() {
+            $("#table").jqGrid({
+                colNames: ['', '出库单号', '出库类型', '物品编号', '物品名称', '物品数量', '未关联', '是否取回更换单', '项目名称', '电梯名称', '使用人', '出库说明', '操作'],
+                colModel: [
+                    {
+                        name: 'my_id',
+                        index: 'my_id',
+                        jsonmap: "ID",
+                        sortable: false,
+                        hidden: true,
+                        fixed: true,
+                        align: "left",
+                    },
+                    {
+                        name: 'ID',
+                        key: true,
+                        fixed: true,
+                    },
+                    { name: 'Type' },
+                    { name: 'PartNum' },
+                    { name: 'PartName' },
+                    { name: 'Number' },
+                    { name: 'UnConnectNumber' },
+                    {
+                        name: 'HasChangeTicket',
+                        formatter: function (value, options, rowObject) {
+                            return value ? "是" : "否";
+                        },
+                    },
+                    { name: 'ProjectName' },
+                    { name: 'ElevatorNum' },
+                    { name: 'UserPerson' },
+                    { name: 'Remark' },
+                    {
+                        name: 'Opts',
+                        jsonmap: "ID",
+                        sortable: false,
+                        width: "250px",
+                        fixed: true,
+                        formatter: function (value, options, rowObject) {
+                            var url = "stock_out_photo.html?key=" + encodeURIComponent(value);
+                            return "<a style='color:#134da5;' href='" + url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-edit'></i>&nbsp;添加更换单图片</a>"
+                                + "&nbsp;|&nbsp;"
+                                + "<a style='color:#ed5565;' onclick='doReturn(this)'  href='javascript:void(0);' data-key='" + value + "'><i class='fa fa-trash'></i>&nbsp;出库回退</a>";
+
+                        }
+                    }
+                ],
+                url: app.serverName + 'GetStockOutInfo',
+                datatype: 'json',
+                rowNum: 10,
+                rowList: app.rowList,
+                data: [],
+                viewrecords: true,
+                pager: "#pager",
+                height: 'auto',
+                autowidth: true,
+                shrinkToFit: true,
+                multiselect: true,//复选框 
+                multiselectWidth: 40,
+                forceFit: true,
+                altRows: true,
+                altclass: 'table-alt',
+                jsonReader: {
+                    root: "data.Result",
+                    total: "data.TotalPage",
+                    records: "data.Number",
+                    page: "data.CurPage",
+                },
+                serializeGridData: function (postData) {
+                    return gridOptions.getParam(postData);
+                },
+            });
+
+            // Add responsive to jqGrid
+            app.fitGrid();
+            $(window).bind('resize', function () {
+                app.fitGrid();
+            });
+        }
+
+        function stock_out_refresh(key, action) {
+            var options = {
+                url: 'GetStockOutWithKey',
+                data: {
+                    ID: key,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var recode = {
+                            ID: res.data.ID,
+                            Type: res.data.Type,
+                            PartNum: res.data.PartNum,
+                            PartName: res.data.PartName,
+                            Number: res.data.Number,
+                            UnConnectNumber: res.data.UnConnectNumber,
+                            HasChangeTicket: res.data.HasChangeTicket,
+                            ProjectName: res.data.ProjectName,
+                            ElevatorNum: res.data.ElevatorNum,
+                            UserPerson: res.data.UserPerson,
+                            Remark: res.data.Remark,
+                            Opts: res.data.ID,
+                        };
+
+                        if (action == "add") {
+                            $("#table").jqGrid("addRowData", recode.ID, recode, "first");
+                        } else {
+                            $('#table').setRowData(recode.ID, recode, '');
+                        }
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function stock_out_list_refresh(key, action) {
+            getStockOutList();
+        }
+
+        function doChangeTickets() {
+            var rowData = jQuery('#table').jqGrid('getGridParam', 'selarrrow');
+            if (rowData.length) {
+                var nameList = [];
+                for (var i = 0; i < rowData.length; i++) {
+                    var name = jQuery('#table').jqGrid('getCell', rowData[i], 'my_id');//name是colModel中的一属性
+                    nameList.push(name);
+                }
+                localStorage.setItem("list", nameList);
+            } else {
+                app.warning("请选择出库单");
+                localStorage.setItem("list", []);
+                return
+            }
+        }
+
+        function exportManufacturerFile() {
+            var options = {
+                url: 'ExportManufacturerFile',
+                filename: '品牌导出结果.xlsx',
+            };
+            app.execGetRequest(options);
+        }
+
+        function templateDownload() {
+            var options = {
+                url: 'Manufacturer.xlsx',
+                filename: '品牌模板.xlsx',
+            };
+            app.templateFileDownload(options);
+        }
+
+
+        function doDeleteBrand(obj) {
+            var key = $(obj).data("key");
+            app.deleteByKey(key, app.deleteBrand);
+        }
+
+        function doReturn(obj) {
+            var key = $(obj).data("key");
+            var options = {
+                url: 'StockOutReturn',
+                data: {
+                    ID: parseInt(key),
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        getStockOutList();
+                    } else {
+                        app.error(res.msg);
+                    }
+                },
+                callback_params: {
+                }
+            };
+
+            app.execPostRequest(options);
+        }
+
+    </script>
+</body>
+
+</html>

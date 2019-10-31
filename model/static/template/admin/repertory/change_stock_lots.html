@@ -1,0 +1,370 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">批量调拨</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>商品选择</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-inline" style="margin-bottom: 10px;">
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_part_repertory" class="sr-only">所有(仓库)</label>
+                                    <select class="combobox form-control" id="w_part_repertory">
+                                        <option value="" selected="selected">所有(仓库)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_part_name" class="sr-only">商品名称</label>
+                                    <select class="combobox form-control" id="w_part_name">
+                                        <option value="" selected="selected">商品名称</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <label for="w_part_num" class="sr-only">商品编号</label>
+                                    <select class="combobox form-control" id="w_part_num">
+                                        <option value="" selected="selected">商品编号</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="getPartList()">查询</button>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="jqGrid_wrapper" id="w_wrapper">
+                                <table id="w_table"></table>
+                                <div id="w_pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>调拨单</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal" id="w_part_list">
+
+
+                    </div>
+                </div>
+
+                <div class="ibox-title">
+                    <h5>调拨信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>调拨到
+                            </label>
+
+                            <div class="col-sm-10">
+                                <label for="w_repertory" class="sr-only">调拨到</label>
+                                <select class="combobox form-control" id="w_repertory">
+                                    <option value="" selected="selected">调拨到</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                调拨原因
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_remark" class="form-control">
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="saveInfo()">确认</button>
+</div>
+<script>
+
+    var idMap = new Map();
+
+    var idIndex = 0;
+
+    var gridOptions = {
+        getParam: function () {
+            var partNum = $("#w_part_num").val();
+
+            if (partNum.trim() == "") {
+                partNum = 0;
+            } else {
+                partNum = parseInt(partNum);
+            }
+
+            var partName = $("#w_part_name").val();
+            var repertory = $("#w_part_repertory").val();
+            if (repertory.trim() == "") {
+                repertory = 0;
+            } else {
+                repertory = parseInt(repertory.trim());
+            }
+
+            var postData = $("#w_table").jqGrid('getGridParam', 'postData');
+            var rowNum = 3;
+            var page = 1;
+            if (postData) {
+                rowNum = postData.rows;
+                page = postData.page;
+            }
+
+            var url = $("#w_table").jqGrid('getGridParam', 'url');
+            var data = {
+                PartID: partNum,
+                PartName: partName,
+                RepertoryID: repertory,
+                Start: (page - 1) * rowNum,
+                Num: parseInt(rowNum),
+            }
+
+            data = JSON.stringify(data);
+            var syn = md5(data + app.key)
+            return {
+                data: data,
+                syn: syn,
+            };
+        }
+    }
+
+    $(function () {
+        app.initCombobox({
+            url: 'GetRepertoryInfo',
+            callback_params: {
+                id: 'w_part_repertory',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetPartNameList',
+            callback_params: {
+                id: 'w_part_name',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetPartNumList',
+            callback_params: {
+                id: 'w_part_num',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetRepertoryInfo',
+            callback_params: {
+                id: 'w_repertory',
+            }
+        });
+
+        initGrid();
+
+    });
+
+    function initGrid() {
+        $("#w_table").jqGrid({
+            colNames: ['', '商品编号', '名称', '规格/型号', '供应商名称', '单位', '数量', '所属仓库', '入库单号', '操作'],
+            colModel: [
+                {
+                    name: 'id',
+                    hidden: true,
+                    jsonmap: "ID",
+                },
+                { name: 'PartNum' },
+                { name: 'PartName' },
+                { name: 'Size' },
+                { name: 'SupportName' },
+                { name: 'Measurement' },
+                { name: 'Number' },
+                { name: 'RepertoryName' },
+                {
+                    name: 'StockInID',
+                    fixed: true,
+                },
+                {
+                    name: 'Opts',
+                    sortable: false,
+                    jsonmap: "ID",
+                    fixed: true,
+                    formatter: function (value, options, rowObject) {
+                        return "<a style='color:#134da5;' onclick='initPartItemHtml(" + value + ")'><i class='fa fa-edit'></i>&nbsp;选取</a>";
+                    }
+                }
+            ],
+            url: app.serverName + 'GetStockInfo',
+            datatype: 'json',
+            rowNum: 3,
+            rowList: [3],
+            data: [],
+            viewrecords: true,
+            pager: "#w_pager",
+            height: 'auto',
+            autowidth: true,
+            shrinkToFit: true,
+            forceFit: true,
+            altRows: true,
+            altclass: 'table-alt',
+            jsonReader: {
+                root: "data.Result",
+                total: "data.TotalPage",
+                records: "data.Number",
+                page: "data.CurPage",
+            },
+            serializeGridData: function (postData) {
+                return gridOptions.getParam(postData);
+            },
+        });
+
+        // Add responsive to jqGrid
+        app.fitGrid();
+        $(window).bind('resize', function () {
+            app.fitGrid();
+        });
+    }
+
+    function getPartList() {
+        $("#w_table").jqGrid('setGridParam', {  // 重新加载数据
+            page: 1,
+            url: app.serverName + 'GetStockInfo',
+        }).trigger("reloadGrid");
+    }
+
+    function initPartItemHtml(id) {
+        var text = "";
+        var options = {
+            url: 'GetStockWithKey',
+            data: {
+                ID: parseInt(id),
+            },
+            callback: function (res, params) {
+                res = eval("(" + res + ")");
+                if (res.code == 10000) {
+                    idIndex++;
+                    idMap.set(idIndex, id);
+                    text += res.data.PartNum + "&nbsp;&nbsp;&nbsp;" + res.data.PartName + "&nbsp;&nbsp;&nbsp;进货单号：" + res.data.ID;
+                    var html = getPartHtml(idIndex, text);
+                    $("#w_part_list").append(html);
+
+                    $("#w_num_" + idIndex).TouchSpin({
+                        max: 1000000,
+                        min: 0,
+                        buttondown_class: 'btn btn-white',
+                        buttonup_class: 'btn btn-white'
+                    });
+                }
+            },
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+
+    }
+
+    function initPartItemHtmlWithItem(res) {
+        var text = "<div class='form-group'>";
+        text += res.PartNum +
+            "&nbsp;&nbsp;&nbsp;" + res.PartName +
+            "&nbsp;&nbsp;&nbsp;进货单号：" + res.StockInID;
+        text += "</div>";
+        $("#w_part_label").append(text);
+    }
+
+    function getPartHtml(id, text) {
+        return "<div class='form-inline' style='margin-bottom: 10px;' id = 'part_item_" + id + "'>"
+            + "<div class='form-group'>"
+            + "<div class='col-sm-5'>"
+            + "<label class='control-label'>" + text + "</label></div>"
+            + "<div class='col-sm-2'>"
+            + "<label class='control-label'>调拨数量：</label>"
+            + "</div>"
+            + "<div class='col-sm-3'>"
+            + "<input type='text' id='w_num_" + id + "' class='form-control' >"
+            + "</div>"
+            + "<div class='col-sm-2'>"
+            + "<label class='control-label'>"
+            + "     <a style='color:#134da5;' onclick='doDeletePart(" + id + ")'>"
+            + "<i class='fa fa-info'></i>&nbsp;删除</a>"
+            + "</label>"
+            + "</div>"
+            + "</div>"
+
+            + "</div>";
+    }
+
+    function doDeletePart(id) {
+        idMap.delete(parseInt(id));
+        // console.log($("#part_item_"+id));
+        $("#part_item_" + id).remove();
+    }
+
+    function saveInfo() {
+        var repertory = $("#w_repertory").val();
+        if (repertory.trim() == "") {
+            app.warning("请选择调拨仓库");
+            return;
+        } else {
+            repertory = parseInt(repertory.trim());
+        }
+
+        var changeReason = $("#w_remark").val();
+
+        var list = [];
+
+        var checkSuccess = true;
+
+        idMap.forEach(function (v, key, map) {
+            var numItem = $("#w_num_" + key).val();
+            if (numItem.trim() == "") {
+                checkSuccess = false;
+            }
+            list.push({
+                ID: parseInt(v),
+                Number: parseInt(numItem),
+            });
+        });
+
+        if (!checkSuccess) {
+            app.warning("有调拨数量未填写");
+            return;
+        }
+
+        var options = {
+            url: 'LotsChangeStock',
+            data: {
+                IDList: list,
+                ToRepertoryID: parseInt(repertory),
+                ChangeReason: changeReason,
+            },
+            callback: app.saveCallbackWindow,
+            callback_params: {
+                action: "edit",
+                refresh: stock_list_refresh,
+                key: "",
+            }
+        };
+
+
+        app.execPostRequest(options);
+    }
+
+</script>

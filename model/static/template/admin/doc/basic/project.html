@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>项目管理</title>
+    <link href="../../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <link href="../../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../../res/admin/css/style.css" rel="stylesheet">
+
+    <!-- Data picker -->
+    <link href="../../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+    <!-- TouchSpin -->
+    <link href="../../../res/admin/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <!--<link href="../../../res/admin/css/plugins/iCheck/custom.css" rel="stylesheet">-->
+    <!--<link href="../../../res/admin/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">-->
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox" style="border: none;">
+                        <div class="ibox-content">
+                            <div id="search-form" class="form-inline" style="margin-bottom: 10px;">
+                                <div class="form-group">
+                                    <label for="project" class="sr-only">项目名称</label>
+                                    <input class="form-control" id="project" placeholder="项目名称" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="property" class="sr-only">物业名称</label>
+                                    <select class="combobox form-control" id="property">
+                                        <option value="" selected="selected">物业名称</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="is_stop" class="sr-only">是否停保</label>
+                                    <select class="combobox form-control" id="is_stop">
+                                        <option value="" selected="selected">是否停保</option>
+                                        <option value="是">是</option>
+                                        <option value="否">否</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-daterange input-group" id="datepicker">
+                                        <span class="input-group-addon">合同结束时间前</span>
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" class="form-control" name="end" value="" />
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" onclick="getProjectList()">查询</button>
+
+                                <div class="form-group" style="float: right;">
+                                    <a onclick="javascript:app.setWinUrl(this)" class="btn btn-default" data-toggle="modal" href="project_info.html" data-target="#win">
+                                        <i class="fa fa-plus"></i>&nbsp;新增</a>
+                                    <a class="btn btn-default" data-toggle="modal" href="project_import.html" data-target="#win">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;导入</a>
+                                    <a onclick="exportProjectFile()" class="btn btn-default">
+                                        <i class="fa fa-reply"></i>&nbsp;导出</a>
+                                    <a onclick="templateDownload()" class="btn btn-default">
+                                        <i class="fa fa-download"></i>&nbsp;模板下载</a>
+                                </div>
+                            </div>
+                            <div class="jqGrid_wrapper">
+                                <table id="table"></table>
+                                <div id="pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../../res/admin/js/app.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <!-- TouchSpin -->
+    <script src="../../../res/admin/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
+
+    <!-- iCheck -->
+    <!--<script src="../../../res/admin/js/plugins/iCheck/icheck.min.js"></script>-->
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >档案管理 >基础管理 >项目管理");
+
+            app.initCombobox({
+                url: 'GetPropertyName',
+                callback_params: {
+                    id: 'property',
+                }
+            });
+
+            $("#datepicker").datepicker({
+                language: 'zh-CN',
+                keyboardNavigation: false,
+                todayBtn: "linked",
+                forceParse: true,
+                autoclose: true,
+            });
+
+            $("#is_stop").combobox();
+
+            initGrid();
+            getProjectList();
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        function getProjectList() {
+            var ProjectName = $("#project").val();
+            var PropertyName = $("#property").val();
+
+            var end = $("input[name='end']").val();
+            if (end == "") {
+                end = 0;
+            } else {
+                end = new Date(end).getTime() / 1000;
+            }
+            var IsStop = $("#is_stop").val();
+
+            var options = {
+                url: 'GetProjectInfo',
+                data: {
+                    PropertyName: PropertyName,
+                    ProjectName: ProjectName,
+                    EndTime: end,
+                    IsStop:IsStop.trim(),
+                },
+                callback: setProjectGrid,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function setProjectGrid(res, params) {
+            res = eval("(" + res + ")");
+            if (res.code == 10000) {
+                var dataSource = [];
+                if (res.data && res.data.length > 0) {
+                    res.data.forEach(function (value, index, arr) {
+                        var start = app.formatDateFromUnix(value.ContractStartTime);
+                        var end = app.formatDateFromUnix(value.ContractEndTime);
+                        dataSource.push({
+                            id: value.Name,
+                            Name: value.Name,
+                            PropertyName: value.PropertyName,
+                            ContractTime: start + " -- " + end,
+                            ContractType: value.ContractType,
+                            ElevatorCount: value.TotalElevatorNum + "/" + value.RealElevatorNum,
+                            IsStop:value.IsStop,
+                            Opts: value.Name,
+                        });
+                    });
+                }
+                $("#table").jqGrid('clearGridData');  //清空表格
+                $("#table").jqGrid('setGridParam', {  // 重新加载数据
+                    datatype: 'local',
+                    data: dataSource,
+                    page: 1
+                }).trigger("reloadGrid");
+            }
+        }
+
+        function initGrid() {
+            $("#table").jqGrid({
+                colNames: ['项目(合同)编号', '所属物业(甲方)', '合同期限', '合同类型', '电梯数量/实际已录入',"是否停保", "操作"],
+                colModel: [
+                    { name: 'Name', },
+                    { name: 'PropertyName' },
+                    { name: 'ContractTime' },
+                    { name: 'ContractType' },
+                    { name: 'ElevatorCount' },
+                    {
+                        name: 'IsStop',
+                        sortable: false,
+                        fixed: true,
+                        formatter: function (value, options, rowObject) {
+                            return value ? "是":"否";
+                        }
+                    },
+                    {
+                        name: 'Opts',
+                        sortable: false,
+                        width: "250px",
+                        fixed: true,
+                        formatter: function (value, options, rowObject) {
+                            var url = "project_info.html?key=" + encodeURIComponent(value);
+                            var flex_url = "project_flex.html?key=" + encodeURIComponent(value);
+                            return "<a style='color:#134da5;' href='" + url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-edit'></i>&nbsp;编辑</a>"
+                                + "&nbsp;|&nbsp;"
+                                + "<a style='color:#ed5565;' onclick='doDeleteProject(this)'  href='javascript:void(0);' data-key='" + value + "'><i class='fa fa-trash'></i>&nbsp;删除</a>"
+                                + "&nbsp;|&nbsp;"
+                                + "<a style='color:#134da5;' onclick='doStopProject(this)'  href='javascript:void(0);' data-key='" + value + "'><i class='fa fa-trash'></i>&nbsp;停保</a>"
+                                + "&nbsp;|&nbsp;"
+                                + "<a style='color:#134da5;' href='" + flex_url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-trash'></i>&nbsp;弹性时间</a>";
+
+                        }
+                    }
+                ],
+                rowNum: 10,
+                rowList: app.rowList,
+                data: [],
+                datatype: "local",
+                viewrecords: true,
+                pager: "#pager",
+                height: 'auto',
+                autowidth: true,
+                shrinkToFit: true,
+                forceFit: true,
+                altRows: true,
+                altclass: 'table-alt',
+            });
+
+            // Add responsive to jqGrid
+            app.fitGrid();
+            $(window).bind('resize', function () {
+                app.fitGrid();
+            });
+        }
+
+        function project_refresh(key, action) {
+            var options = {
+                url: 'FindProjectWithKey',
+                data: {
+                    ProjectName: key,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    var start = app.formatDateFromUnix(res.data.ContractStartTime);
+                    var end = app.formatDateFromUnix(res.data.ContractEndTime);
+                    if (res.code == 10000) {
+                        var recode = {
+                            id: res.data.Name,
+                            Name: res.data.Name,
+                            PropertyName: res.data.PropertyName,
+                            ContractTime: start + " -- " + end,
+                            ContractType: res.data.ContractType,
+                            ElevatorCount: res.data.TotalElevatorNum + "/" + res.data.RealElevatorNum,
+                            IsStop:res.data.IsStop,
+                            Opts: res.data.Name,
+                        };
+
+                        if (action == "add") {
+                            $("#table").jqGrid("addRowData", recode.id, recode, "first");
+                        } else {
+                            $('#table').setRowData(recode.id, recode, '');
+                        }
+                    }
+                },
+                callback_params: {}
+            };
+            app.execPostRequest(options);
+        }
+
+
+        function exportProjectFile() {
+            var options = {
+                url: 'ExportProjectFile',
+                filename: '项目导出结果.xlsx',
+            };
+            app.execGetRequest(options);
+        }
+
+        function templateDownload() {
+            var options = {
+                url: 'Project.xlsx',
+                filename: '项目模板.xlsx',
+            };
+            app.templateFileDownload(options);
+        }
+
+        function doDeleteProject(obj) {
+            var key = $(obj).data("key");
+            app.deleteByKey(key, app.deleteProject);
+        }
+
+        function doStopProject(obj) {
+            var key = $(obj).data("key");
+            app.stopProject(key, function (key) {
+                var options = {
+                    url: 'StopProject',
+                    data: {
+                        ProjectName: key,
+                    },
+                    callback: app.delCallback,
+                    callback_params: {
+                        key: key,
+                    }
+                };
+                app.execPostRequest(options);
+            });
+        }
+
+    </script>
+</body>
+
+</html>

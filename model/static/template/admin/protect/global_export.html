@@ -1,0 +1,53 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">导出全局管理</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>请选择导出时间</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="radio-inline i-checks"> <input type="radio" name="w_type" value="0" checked="checked">全部</label>
+                            <label class="radio-inline i-checks"> <input type="radio" name="w_type" value="1">已分配电梯</label>
+                            <label class="radio-inline i-checks"> <input type="radio" name="w_type" value="2">未分配电梯</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="exportCheckAndFixTicketFile()">导出</button>
+</div>
+<script>
+    $(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
+    function exportCheckAndFixTicketFile() {
+        var Type = $("input[name='w_type']:checked").val();
+
+        var options = {
+            url: 'ExportElevatorManagerFile',
+            filename: '全局管理导出结果.xlsx',
+            data: {
+                Type: parseInt(Type),
+            },
+            method: 'post',
+        };
+        app.execGetRequest(options);
+    }
+
+</script>

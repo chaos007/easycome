@@ -1,0 +1,135 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title" >新增物业</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>物业基础</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>物业名称
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_property" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">公司电话</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="w_phone" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">办公地址</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="w_address">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="savePropertyInfo()">确认</button>
+</div>
+<script>
+    $(function () {
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = decodeURIComponent(app.win_url.split("?key=")[1]);
+        }
+
+        if (app.win_action == 'edit') {
+            //编辑页面
+            $(".modal-title").html("编辑物业")
+            //获取info
+            var options = {
+                url: 'FindPropertyWithKey',
+                data: {
+                    PropertyName: app.win_key,
+                },
+                callback: initPropertyInfo,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+        }
+    });
+
+    function initPropertyInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+            var info = res.data;
+            $("#w_property").val(info.Name);
+            $("#w_property").attr("disabled", "disabled");
+            $("#w_phone").val(info.Phone);
+            $("#w_address").val(info.Address);
+        }
+    }
+
+    function savePropertyInfo() {
+        var name = $("#w_property").val();
+        var tel = $("#w_phone").val();
+        var addr = $("#w_address").val();
+
+        if (name == "") {
+            app.warning("请输入物业名称");
+            return;
+        }
+
+        if (app.win_action == 'add') {
+            var options = {
+                url: 'AddNewProperty',
+                data: {
+                    Name: name.trim(),
+                    Phone: tel.trim(),
+                    Address: addr.trim(),
+                    ContactsName: [],
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: 'window',
+                    href: 'property_contacts.html?key=' + name.trim() + "&add"
+                }
+            };
+
+            app.execPostRequest(options);
+        } else {
+            var options = {
+                url: 'ChangePropertyInfo',
+                data: {
+                    Name: name.trim(),
+                    Phone: tel.trim(),
+                    Address: addr.trim(),
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: property_refresh,
+                    key: name.trim(),
+                }
+            };
+
+            app.execPostRequest(options);
+        }
+    }
+</script>

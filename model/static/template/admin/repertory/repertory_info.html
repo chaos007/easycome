@@ -1,0 +1,136 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">新增仓库</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>仓库</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>仓库名称
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_name" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="w_remark" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">地址</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="w_address" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="saveInfo()">确认</button>
+</div>
+<script>
+    var brand_type_members = [];
+    $(function () {
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = decodeURIComponent(app.win_url.split("?key=")[1]);
+        }
+
+        if (app.win_action == 'edit') {
+            //编辑页面
+            $(".modal-title").html("编辑仓库")
+            //获取info
+            var options = {
+                url: 'GetRepertoryWithKey',
+                data: {
+                    ID: parseInt(app.win_key),
+                },
+                callback: initRepertoryInfo,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+
+        } 
+    });
+
+    function initRepertoryInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+            var info = res.data;
+            $("#w_name").val(info.Name);
+            $("#w_address").val(info.Address);
+            $("#w_remark").val(info.Remark);
+        }
+    }
+
+    function saveInfo() {
+        var name = $("#w_name").val();
+        var address = $("#w_address").val();
+        var remark = $("#w_remark").val();
+
+        if (name.trim() == "") {
+            app.warning("请输入仓库名称");
+            return;
+        }
+
+        if (app.win_action == 'add') {
+            var options = {
+                url: 'AddNewRepertory',
+                data: {
+                    Name: name.trim(),
+                    Remark: remark.trim(),
+                    Address: address.trim(),
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "add",
+                    refresh: repertory_refresh,
+                    key: 'new_key',
+                }
+            };
+
+            app.execPostRequest(options);
+        } else {
+            var options = {
+                url: 'ChangeRepertory',
+                data: {
+                    ID:parseInt(app.win_key),
+                    Name: name.trim(),
+                    Remark: remark.trim(),
+                    Address: address.trim(),
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: repertory_refresh,
+                    key: parseInt(app.win_key),
+                }
+            };
+
+            app.execPostRequest(options);
+        }
+    }
+
+</script>

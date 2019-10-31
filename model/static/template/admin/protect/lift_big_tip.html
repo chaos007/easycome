@@ -1,0 +1,214 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">大修整改工单工单详情</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>工单号：<span id="w_lift_maintain_TicketID"></span></h5>
+                </div>
+                <div class="ibox-title">
+                    <h5>电梯</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                电梯编号
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_elevatorNum"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                地址
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_address"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                联系人及电话
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_info"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">物业</label>
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_property"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">楼号</label>
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_build"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">项目</label>
+
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_project"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">厂家</label>
+
+                            <div class="col-sm-10">
+                                <span id="w_lift_maintain_brand"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>工作描述</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                任务事宜
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_desc"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                工单类型
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_type"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                要求完成时间
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_time"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>申请信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                申请人
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_BackName"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                发起时间
+                            </label>
+
+                            <div class="col-sm-10">
+                                <span id="w_BackTime"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+</div>
+<script>
+    $(function () {
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = parseInt(decodeURIComponent(app.win_url.split("?key=")[1]));
+            $("#w_lift_maintain_TicketID").html(app.win_key);
+        }
+
+        if (app.win_action == 'edit') {
+
+            var options = {
+                url: 'GetBigCheckAndFixTicketWithKey',
+                data: {
+                    TicketID: parseInt(app.win_key),
+                },
+                callback: initLiftMaintainInfo,
+                callback_params: {}
+            };
+
+
+            app.execPostRequest(options);
+
+        }
+    });
+
+    function initLiftMaintainInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+
+            var info = res.data;
+            var html = ""
+            if (info.ElevatorNum && info.ElevatorNum.trim() != "") {
+                var url = "../doc/elevator_tip.html?key=" + encodeURIComponent(info.ElevatorNum);
+                html = info.ElevatorNum + "&nbsp;&nbsp;<a style='color:#134da5;' data-href='" + url + "' onclick='javascript:app.openWinFromWin(this)'><i class='fa fa-info'></i>&nbsp;详情</a>";
+            }
+            $("#w_lift_maintain_elevatorNum").html(html);
+            $("#w_lift_maintain_address").html(info.Address);
+
+            var Contracts = "";
+            if (info.BuildingInfo) {
+                info.BuildingInfo.forEach(function (value, index, arr) {
+                    Contracts += value.Remark + " " + value.PersonName + " " + value.Phone + ";<br/>";
+                });
+            }
+            $("#w_lift_maintain_info").html(Contracts);
+
+            $("#w_lift_maintain_property").html(info.PropertyName);
+            $("#w_lift_maintain_build").html(info.BuildingName);
+            $("#w_lift_maintain_project").html(info.ProjectName);
+            $("#w_lift_maintain_brand").html(info.ManufacturerName);
+
+            $("#w_desc").html(info.ProblemDesc);
+            var type="";
+            if(info.IsBigFix){
+                type="大修";
+            }else if(info.IsBigCheck){
+                type="整改";
+            }
+            $("#w_type").html(type);
+            $("#w_time").html(app.formatDateFromUnix(info.ShouldDealTime));
+
+            $("#w_BackName").html(info.CreatePersonName+" "+info.CreatePersonRole+" "+info.CreatePersonPhone);
+            $("#w_BackTime").html(app.formatDateFromUnix(info.CreateTime));
+        } else {
+            app.error(res.msg);
+        }
+    }
+</script>

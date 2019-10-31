@@ -1,0 +1,91 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">仓库导入</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>选择按模板编写的仓库信息的excel文件：</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                仓库Excel文件
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="file" id="w_file" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="file_upload()">导入</button>
+</div>
+<script>
+    function file_upload() {
+        if (!$("#w_file")[0].files[0]) {
+            app.warning("请先选择文件");
+            return;
+        }
+
+
+        var xmlHttpReg = null;
+        if (window.ActiveXObject) {//如果是IE
+            xmlHttpReg = new ActiveXObject("Microsoft.XMLHTTP");
+
+        } else if (window.XMLHttpRequest) {
+            xmlHttpReg = new XMLHttpRequest(); //实例化一个xmlHttpReg
+        }
+
+        //如果实例化成功,就调用open()方法,就开始准备向服务器发送请求
+        if (xmlHttpReg != null) {
+            var formdata = new FormData();
+            formdata.append("uploadfile", $("#w_file")[0].files[0]);
+            var url = "{{.WebDomain}}AddNewRepertoryFile?fileName=uploadfile";//接口
+
+            xmlHttpReg.open("post", url, true);
+            xmlHttpReg.responseType = "blob";
+            var filename = '仓库导入结果.xlsx';
+            xmlHttpReg.onreadystatechange = function () {
+                if (xmlHttpReg.readyState === 4 && xmlHttpReg.status === 200) {
+                    if (xmlHttpReg.response.size == 0) {
+                        app.success("导入成功", function () {
+                            app.openRightFrameFromWin('repertory.html');
+                        })
+                    } else {
+                        if (typeof window.chrome !== 'undefined') {
+                            // Chrome version
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(xmlHttpReg.response);
+                            link.download = filename;
+                            link.click();
+                        } else if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                            // IE version
+                            var blob = new Blob([xmlHttpReg.response], {type: 'application/force-download'});
+                            window.navigator.msSaveBlob(blob, filename);
+                        } else {
+                            // Firefox version
+                            var file = new File([xmlHttpReg.response], filename, {type: 'application/force-download'});
+                            window.open(URL.createObjectURL(file));
+                        }
+                        app.error("导入失败，详情请查看文件：‘" + filename + "'");
+                    }
+
+                }
+            };
+            xmlHttpReg.send(formdata);
+        }
+    }
+</script>

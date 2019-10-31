@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>仓库管理</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox gray-bg" style="border: none;">
+                        <div class="ibox-content gray-bg">
+                            <div id="search-form" class="form-inline" style="margin-bottom: 34px;">
+                                <div class="form-group" style="float: right;">
+                                    <a onclick="javascript:app.setWinUrl(this)" class="btn btn-default" data-toggle="modal" href="repertory_info.html" data-target="#win">
+                                        <i class="fa fa-plus"></i>&nbsp;新增</a>
+                                    <a class="btn btn-default" data-toggle="modal" href="repertory_import.html" data-target="#win">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;导入</a>
+                                    <a onclick="templateDownload()" class="btn btn-default">
+                                        <i class="fa fa-download"></i>&nbsp;模板下载</a>
+                                </div>
+                            </div>
+                            <div class="jqGrid_wrapper">
+                                <table id="table"></table>
+                                <div id="pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >仓库存管理 >仓库管理");
+
+            initGrid();
+            getRepertoryList();
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        function getRepertoryList() {
+            var options = {
+                url: 'GetRepertoryInfo',
+                data: {
+                },
+                callback: setRepertoryGrid,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function setRepertoryGrid(res, params) {
+            res = eval("(" + res + ")");
+            if (res.code == 10000) {
+                var dataSource = [];
+                if (res.data && res.data.length > 0) {
+                    res.data.forEach(function (value, index, arr) {
+                        dataSource.push({
+                            id: value.ID,
+                            Name: value.Name,
+                            Remark: value.Remark,
+                            Address: value.Address,
+                            Opts: value.ID,
+                        });
+                    });
+                }
+                $("#table").jqGrid('clearGridData');  //清空表格
+                $("#table").jqGrid('setGridParam', {  // 重新加载数据
+                    datatype: 'local',
+                    data: dataSource,
+                    page: 1
+                }).trigger("reloadGrid");
+            } else {
+                app.error(res.msg);
+            }
+        }
+
+        function initGrid() {
+            $("#table").jqGrid({
+                colNames: ['', '仓库名称', '备注', '地址', '操作'],
+                colModel: [
+                    {
+                        name: 'id',
+                        key: true,
+                        hidden: true,
+                    },
+                    { name: 'Name' },
+                    { name: 'Remark' },
+                    { name: 'Address' },
+                    {
+                        name: 'Opts',
+                        sortable: false,
+                        width: "250px",
+                        fixed: true,
+                        formatter: function (value, options, rowObject) {
+                            var url = "repertory_info.html?key=" + encodeURIComponent(value);
+                            return "<a style='color:#134da5;' href='" + url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-edit'></i>&nbsp;编辑</a>"
+                                + "&nbsp;|&nbsp;"
+                                + "<a style='color:#ed5565;' onclick='doDeleteRepertory(this)'  href='javascript:void(0);' data-key='" + value + "'><i class='fa fa-trash'></i>&nbsp;删除</a>";
+
+                        }
+                    }
+                ],
+                rowNum: 10,
+                rowList: app.rowList,
+                data: [],
+                datatype: "local",
+                viewrecords: true,
+                pager: "#pager",
+                height: 'auto',
+                autowidth: true,
+                shrinkToFit: true,
+                forceFit: true,
+                altRows: true,
+                altclass: 'table-alt',
+            });
+
+            // Add responsive to jqGrid
+            app.fitGrid();
+            $(window).bind('resize', function () {
+                app.fitGrid();
+            });
+        }
+
+        function repertory_refresh(key, action) {
+            var options = {
+                url: 'GetRepertoryWithKey',
+                data: {
+                    ID: parseInt(key),
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var recode = {
+                            id: res.data.ID,
+                            Name: res.data.Name,
+                            Reamrk: res.data.Reamrk,
+                            Address: res.data.Address,
+                            Opts: res.data.ID,
+                        };
+
+                        if (action == "add") {
+                            $("#table").jqGrid("addRowData", recode.id, recode, "first");
+                        } else {
+                            $('#table').setRowData(recode.id, recode, '');
+                        }
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function exportManufacturerFile() {
+            var options = {
+                url: 'ExportManufacturerFile',
+                filename: '品牌导出结果.xlsx',
+            };
+            app.execGetRequest(options);
+        }
+
+        function templateDownload() {
+            var options = {
+                url: 'Repertory.xlsx',
+                filename: '仓库模板.xlsx',
+            };
+            app.templateFileDownload(options);
+        }
+
+
+        function doDeleteRepertory(obj) {
+            var key = $(obj).data("key");
+            app.deleteByKey(key, app.deleteRepertory);
+        }
+
+    </script>
+</body>
+
+</html>

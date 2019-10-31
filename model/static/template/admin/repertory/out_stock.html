@@ -1,0 +1,354 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">出库</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>库存信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                商品编号
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_part_num_label"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                规格/型号
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_size_label"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                单位
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_measurement_label"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                入库单号
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_stock_in_id_label"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                所属仓库
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_repertory_label"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                数量
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_num_label"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-title">
+                    <h5>出库信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>出库数量
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_num" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="radio-inline i-checks">
+                                <input type="radio" name="w_operation" value="1">使用出库
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>使用电梯
+                            </label>
+
+                            <div class="form-inline" style="margin-bottom: 10px;">
+                                <div class="form-group" style="margin: 0">
+                                    <div class="col-sm-10">
+                                        <label for="w_project" class="sr-only">项目</label>
+                                        <select class="combobox form-control" id="w_project" onchange="doProjectChange()">
+                                            <option value="" selected="selected">项目</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin: 0">
+                                    <div class="col-sm-10">
+                                        <label for="w_elevator" class="sr-only">电梯号</label>
+                                        <select class="combobox form-control" id="w_elevator">
+                                            <option value="" selected="selected">电梯号</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>使用说明
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_use_remark" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                使用人
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_use_person" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="radio-inline i-checks">
+                                <input type="radio" name="w_operation" value="2">其他出库
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>出库原因
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_other_remark" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                使用人
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_other_use_person" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+    <button type="button" class="btn btn-primary" onclick="saveInfo()">确认</button>
+</div>
+<script>
+
+    var partNum = "";
+    $(function () {
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_key = decodeURIComponent(app.win_url.split("?key=")[1]);
+        }
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+
+        $("#w_num").TouchSpin({
+            max: 1000000,
+            min: 0,
+            buttondown_class: 'btn btn-white',
+            buttonup_class: 'btn btn-white'
+        });
+
+        app.initCombobox({
+            url: 'GetRepertoryInfo',
+            callback_params: {
+                id: 'w_repertory',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetProjectName',
+            callback_params: {
+                id: 'w_project',
+            }
+        });
+
+        app.initCombobox({
+            url: 'GetElevatorNumByProject',
+            callback_params: {
+                id: 'w_elevator',
+            }
+        });
+
+        var options = {
+            url: 'GetStockWithKey',
+            data: {
+                ID: parseInt(app.win_key),
+            },
+            callback: initStockInfo,
+            callback_params: {}
+        };
+
+        app.execPostRequest(options);
+
+
+    });
+
+    function doProjectChange() {
+        var project = $("#w_project").val();
+        if (project.trim() == "") {
+            return
+        }
+        $("#w_elevator").html('<option value="" selected="selected">电梯号</option>');
+        app.initCombobox({
+            url: 'GetElevatorNumByProject',
+            data: {
+                ProjectName: project.trim(),
+            },
+            callback_params: {
+                id: 'w_elevator',
+                refresh: true,
+            }
+        });
+    }
+
+    function initStockInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            if (res.data == null) {
+                return;
+            }
+            var info = res.data;
+            partNum = info.PartNum;
+            $("#w_part_num_label").html(info.PartNum);
+            $("#w_size_label").html(info.Size);
+            $("#w_measurement_label").html(info.Measurement);
+            $("#w_stock_in_id_label").html(info.StockInID);
+            $("#w_repertory_label").html(info.RepertoryName);
+            $("#w_num_label").html(info.Number);
+        }
+    }
+
+    function saveInfo() {
+        var type = $("input[name='w_operation']:checked").val();
+        if (type == null) {
+            app.warning("请选择要处理的选项");
+            return;
+        } else if (type == "1") {
+            type = "使用出库";
+            var elevatorNum = $("#w_elevator").val();
+            if (elevatorNum.trim() == "") {
+                app.warning("请选择使用电梯");
+                return;
+            }
+
+            var number = $("#w_num").val();
+            if (number.trim() == "") {
+                app.warning("请输入出库数量");
+                return;
+            } else {
+                number = parseInt(number.trim());
+            }
+
+            var remark = $("#w_use_remark").val();
+            if (remark.trim() == "") {
+                app.warning("请输入使用说明");
+                return;
+            }
+
+            var usePerson = $("#w_use_person").val();
+
+            var options = {
+                url: 'OutStock',
+                data: {
+                    ID: parseInt(app.win_key),
+                    PartNum: partNum,
+                    Type: type,
+                    Remark: remark,
+                    ElevatorNum: elevatorNum,
+                    UsePerson: usePerson,
+                    Number: number,
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: out_stock_refresh,
+                    key: parseInt(app.win_key),
+                }
+            };
+
+            app.execPostRequest(options);
+
+        } else if (type == "2") {
+            type = "其他出库";
+            var remark = $("#w_other_remark").val();
+            if (remark.trim() == "") {
+                app.warning("请输入出库原因");
+                return;
+            }
+
+            var usePerson = $("#w_other_use_person").val();
+
+            var number = $("#w_num").val();
+            if (number.trim() == "") {
+                app.warning("请输入出库数量");
+                return;
+            } else {
+                number = parseInt(number.trim());
+            }
+
+            var options = {
+                url: 'OutStock',
+                data: {
+                    ID: parseInt(app.win_key),
+                    PartNum: partNum,
+                    Type: type,
+                    Remark: remark,
+                    UsePerson: usePerson,
+                    Number: number,
+                },
+                callback: app.saveCallbackWindow,
+                callback_params: {
+                    action: "edit",
+                    refresh: stock_list_refresh,
+                    key: parseInt(app.win_key),
+                }
+            };
+
+            app.execPostRequest(options);
+        }
+
+    }
+
+</script>

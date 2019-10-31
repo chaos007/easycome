@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package pb;
+
+// TestStruct mergepb工具
+message TestStruct
+{
+	string FieldA = 1;				// FieldA ---------------1
+	bool FieldB = 2;				// FieldB comment
+}
+
+

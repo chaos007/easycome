@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package pb;
+
+// BackendLogin BackendLogin
+message BackendLogin {
+    string UserName = 1;
+    string Password = 2;
+}
+
+// UpGetBackendLoginInfo UpGetBackendLoginInfo
+message UpGetBackendLoginInfo{
+
+}
+
+// DownGetBackendLoginInfo DownGetBackendLoginInfo
+message DownGetBackendLoginInfo{
+    string UserName = 1;
+    string Name = 2;
+}

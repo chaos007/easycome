@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>电梯维保</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <link href="../../res/admin/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox " style="border: none;">
+                        <div class="ibox-content ">
+                            <div id="search-form" style="margin-bottom: 10px;">
+                                <div class="form-inline">
+                                    <div class="form-group" style="float: right;">
+                                        <a onclick="doChangeTickets(this)" class="btn btn-default" data-toggle="modal" href="lift_maintain_lots.html" data-target="#win"
+                                            id="losts">
+                                            <i class="fa fa-file-excel-o"></i>&nbsp;批量修改</a>
+                                        <a onclick="javascript:app.setWinUrl(this)" class="btn btn-default" data-toggle="modal" href="lift_maintain_export.html" data-target="#win">
+                                            <i class="fa fa-plus"></i>&nbsp;导出</a>
+                                    </div>
+                                </div>
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <label for="expire" class="sr-only">是否超期</label>
+                                        <select class="combobox form-control" id="expire">
+                                            <option value="" selected="selected">是否超期</option>
+                                            <option value="超时">已超期</option>
+                                            <option value="不超时">未超期</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="unusual_address" class="sr-only">地址是否异常</label>
+                                        <select class="combobox form-control" id="unusual_address">
+                                            <option value="" selected="selected">地址是否异常</option>
+                                            <option value="异常">异常</option>
+                                            <option value="不异常">不异常</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="fix_deal" class="sr-only">是否补录</label>
+                                        <select class="combobox form-control" id="fix_deal">
+                                            <option value="" selected="selected">是否补录</option>
+                                            <option value="补录">补录</option>
+                                            <option value="非补录">非补录</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="work_state" class="sr-only">工单执行状态</label>
+                                        <select class="combobox form-control" id="work_state">
+                                            <option value="" selected="selected">工单执行状态</option>
+                                            <option value="未执行">未执行</option>
+                                            <option value="待处理">待处理</option>
+                                            <option value="已完成">已完成</option>
+                                            <option value="异常关闭">异常关闭</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="status" class="sr-only">工单状态</label>
+                                        <select class="combobox form-control" id="status">
+                                            <option value="" selected="selected">工单状态</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="property" class="sr-only">物业名称</label>
+                                        <select class="combobox form-control" id="property" onchange="doListPropertyChange()">
+                                            <option value="" selected="selected">物业名称</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="building" class="sr-only">楼号名称</label>
+                                        <select class="combobox form-control" id="building">
+                                            <option value="" selected="selected">楼号名称</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="project" class="sr-only">项目</label>
+                                        <select class="combobox form-control" id="project">
+                                            <option value="" selected="selected">项目</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="elevator" class="sr-only">电梯编号</label>
+                                        <input class="form-control" id="elevator" placeholder="电梯编号" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-daterange input-group" id="datepicker">
+                                            <span class="input-group-addon">计划维保时间:从</span>
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" class="form-control" name="start" value="" />
+                                            <span class="input-group-addon">到</span>
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" class="form-control" name="end" value="" />
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="getLiftMaintainList(1)">所有工单查询</button>
+                                    <button class="btn btn-primary" onclick="getLiftMaintainList(2)">责任工单查询</button>
+                                </div>
+                            </div>
+                            <div class="jqGrid_wrapper">
+                                <table id="table"></table>
+                                <div id="pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <!-- iCheck -->
+    <script src="../../res/admin/js/plugins/iCheck/icheck.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <script src="../../res/js/layer/layer-min.js"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp"></script>
+
+
+    <script src="../../res/admin/js/jspdf.debug.js"></script>
+    <script src="../../res/admin/js/html2canvas.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >维保管理 >电梯维保");
+
+            app.initCombobox({
+                url: 'GetMaintainTicketStateList',
+                callback_params: {
+                    id: 'status',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetPropertyName',
+                callback_params: {
+                    id: 'property',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetBuildingName',
+                callback_params: {
+                    id: 'building',
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetProjectName',
+                callback_params: {
+                    id: 'project',
+                }
+            });
+
+            $("#work_state").combobox();
+            $("#expire").combobox();
+            $("#unusual_address").combobox();
+            $("#fix_deal").combobox();
+            
+            $("#datepicker").datepicker({
+                language: 'zh-CN',
+                keyboardNavigation: false,
+                todayBtn: "linked",
+                forceParse: true,
+                autoclose: true,
+            });
+
+            initGrid();
+
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        function doListPropertyChange() {
+            var property = $("#property").val();
+            $("#building").html('<option value="" selected="selected">楼号名称</option>');
+            $("#project").html('<option value="" selected="selected">项目</option>');
+            app.initCombobox({
+                url: 'GetBuildingName',
+                data: {
+                    PropertyName: property,
+                },
+                callback_params: {
+                    id: 'building',
+                    refresh: true,
+                }
+            });
+
+            app.initCombobox({
+                url: 'GetProjectName',
+                data: {
+                    PropertyName: property,
+                },
+                callback_params: {
+                    id: 'project',
+                    refresh: true,
+                }
+            });
+        }
+
+        var gridOptions = {
+            getParam: function () {
+                var start = $("input[name='start']").val();
+                if (start == "") {
+                    start = 0;
+                } else {
+                    start = new Date(start).getTime() / 1000;
+                }
+                var end = $("input[name='end']").val();
+                if (end == "") {
+                    end = 0;
+                } else {
+                    end = new Date(end).getTime() / 1000;
+                }
+                var State = $("#status").val();
+                if (State.trim() == "") {
+                    State = -1;
+                }
+                var postData = $("#table").jqGrid('getGridParam', 'postData');
+                var rowNum = 10;
+                var page = 1;
+                if (postData) {
+                    rowNum = postData.rows;
+                    page = postData.page;
+                }
+                var DealState = $("#work_state").val();
+                var url = $("#table").jqGrid('getGridParam', 'url');
+                if (url == "/GetElevatorDutyMaintainTicketInfo") {
+                    var data = {
+                        UserName: app.getLoginUserName(),
+                        State: parseInt(State),
+                        DealState: DealState,
+                        PropertyName: $("#property").val(),
+                        BuildingName: $("#building").val(),
+                        ProjectName: $("#project").val(),
+                        ElevatorNum: $("#elevator").val(),
+                        TicketStartTime: start,
+                        TicketEndTime: end,
+                        IsWeb: true,
+                        IsExpire: $("#expire").val(),
+                        IsUnusualAddress: $("#unusual_address").val(),
+                        IsFixDeal: $("#fix_deal").val(),
+                        Start: (page - 1) * rowNum,
+                        Num: parseInt(rowNum),
+                    }
+                } else {
+                    var data = {
+                        State: parseInt(State),
+                        DealState: DealState,
+                        PropertyName: $("#property").val(),
+                        BuildingName: $("#building").val(),
+                        ProjectName: $("#project").val(),
+                        ElevatorNum: $("#elevator").val(),
+                        TicketStartTime: start,
+                        TicketEndTime: end,
+                        IsExpire: $("#expire").val(),
+                        IsUnusualAddress: $("#unusual_address").val(),
+                        IsFixDeal: $("#fix_deal").val(),
+                        Start: (page - 1) * rowNum,
+                        Num: parseInt(rowNum),
+                    }
+                }
+                data = JSON.stringify(data);
+                var syn = md5(data + app.key)
+                return {
+                    data: data,
+                    syn: syn,
+                };
+            }
+        }
+
+        function getLiftMaintainList(index) {
+            if (index == 1) {
+                $("#table").setGridParam({
+                    page: 1,
+                    url: app.serverName + 'GetElevatorMaintainTicketInfo'
+                }).trigger("reloadGrid");
+            } else {
+                $("#table").setGridParam({
+                    page: 1,
+                    url: app.serverName + 'GetElevatorDutyMaintainTicketInfo'
+                }).trigger("reloadGrid");
+            }
+        };
+
+        function initGrid() {
+            $("#table").jqGrid({
+                url: app.serverName + 'GetElevatorMaintainTicketInfo',
+                datatype: 'json',
+                colNames: ['', '工单', '工作类型', '电梯编号', '工单状态', '当前处理人', '计划维保时间', '实际完成时间', '是否超期', '操作'],
+                colModel: [
+                    {
+                        name: 'my_id',
+                        index: 'my_id',
+                        sortable: false,
+                        hidden: true,
+                        fixed: true,
+                        jsonmap: "TicketID",
+                        align: "left",
+                    },
+                    {
+                        name: 'TicketID',
+                        key: true,
+                        sortable: false,
+                    },
+                    {
+                        name: 'MaintainProjectName',
+                        sortable: false,
+                    },
+                    {
+                        name: 'ElevatorNum',
+                        sortable: false,
+                        formatter: function (value, options, rowObject) {
+                            if (value && value.trim() != "") {
+                                var url = "../doc/elevator_tip.html?key=" + encodeURIComponent(value);
+                                return value + "&nbsp;<a style='color:#134da5;' href='" + url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-info'></i>&nbsp;详情</a>";
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
+                    {
+                        name: 'State',
+                        sortable: false,
+                        fixed: true,
+                        width: "80px",
+                    },
+                    {
+                        name: 'DutyPersonName',
+                        sortable: false,
+                        formatter: function (value, options, rowObject) {
+                            var result = ""
+                            value.forEach(function (v, i, a) {
+                                if (v.trim() != "") {
+                                    result += v + "、";
+                                }
+                            });
+                            if (result.length > 0) {
+                                result = result.substr(0, result.length - 1);
+                            }
+                            return result;
+                        }
+                    },
+                    {
+                        name: 'ShouldDealTime',
+                        sortable: false,
+                        fixed: true,
+                        width: "100px",
+                        formatter: function (value, options, rowObject) {
+                            return app.formatDateFromUnix(value);
+                        }
+                    },
+                    {
+                        name: 'ActualTime',
+                        sortable: false,
+                        fixed: true,
+                        width: "100px",
+                        formatter: function (value, options, rowObject) {
+                            return app.formatDateFromUnix(value);
+                        }
+                    },
+                    {
+                        name: 'IsExpire',
+                        sortable: false,
+                        fixed: true,
+                        width: "60px",
+                        formatter: function (value, options, rowObject) {
+                            if (value) {
+                                return "已超期";
+                            } else {
+                                return "未超期";
+                            }
+                        }
+                    },
+                    {
+                        name: 'Opts',
+                        sortable: false,
+                        width: "100px",
+                        fixed: true,
+                        jsonmap: "TicketID",
+                        formatter: function (value, options, rowObject) {
+                            var url_tip = "lift_maintain_tip.html?key=" + encodeURIComponent(value);
+                            var url_operation = "lift_maintain_operation.html?key=" + encodeURIComponent(value);
+                            var url_history = "lift_maintain_history.html?key=" + encodeURIComponent(value);
+                            var url_electronic = "lift_maintain_electronic.html?key=" + encodeURIComponent(value);
+                            return "<a style='color:#134da5;' href='" + url_tip + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-info'></i>&nbsp;更多信息</a>"
+                                + "<br/>"
+                                + "<a style='color:#134da5;' href='" + url_operation + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-edit'></i>&nbsp;流程管理</a>"
+                                + "<br/>"
+                                + "<a style='color:#134da5;' href='" + url_history + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-history'></i>&nbsp;处理历史</a>"
+                                + "<br/>"
+                                + "<a style='color:#134da5;' href='" + url_electronic + "' target='_blank' ><i class='fa fa-book'></i>&nbsp;电子工单</a>";
+                        }
+                    }
+                ],
+                rowNum: 10,
+                rowList: app.rowList,
+                viewrecords: true,
+                pager: "#pager",
+                height: 'auto',
+                autowidth: false,
+                shrinkToFit: true,
+                forceFit: true,
+                altRows: true,
+                multiselect: true,//复选框 
+                multiselectWidth: 40,
+                altclass: 'table-alt',
+                repeatitems: false,
+                jsonReader: {
+                    root: "data.Result",
+                    total: "data.TotalPage",
+                    records: "data.Number",
+                    page: "data.CurPage",
+                },
+                serializeGridData: function (postData) {
+                    return gridOptions.getParam(postData);
+                },
+            });
+
+            // Add responsive to jqGrid
+            app.fitGrid();
+            $(window).bind('resize', function () {
+                app.fitGrid();
+            });
+        }
+
+        function lift_maintain_refresh(key, action) {
+            var options = {
+                url: 'GetMaintainTicketWithKey',
+                data: {
+                    TicketID: parseInt(key),
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var DutyPersonName = [];
+                        if (res.data.SmallTeamLeader && res.data.SmallTeamLeader != "") {
+                            DutyPersonName.push(res.data.SmallTeamLeader);
+                        }
+                        if (res.data.SmallTeamMember && res.data.SmallTeamMember != "") {
+                            DutyPersonName.push(res.data.SmallTeamMember);
+                        }
+                        if (res.data.SmallTeamMember2 && res.data.SmallTeamMember2 != "") {
+                            DutyPersonName.push(res.data.SmallTeamMember2);
+                        }
+
+                        $("#table").setCell(key, 'DutyPersonName', DutyPersonName, "", "");
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function doChangeTickets(obj) {
+            var rowData = jQuery('#table').jqGrid('getGridParam', 'selarrrow');
+            if (rowData.length) {
+                var nameList = [];
+                for (var i = 0; i < rowData.length; i++) {
+                    var name = jQuery('#table').jqGrid('getCell', rowData[i], 'my_id');//name是colModel中的一属性
+                    nameList.push(name);
+                }
+                localStorage.setItem("list", nameList);
+
+            } else {
+                app.warning("请选择电梯");
+                return
+            }
+        }
+
+        function list_maintain_refresh(key, action) {
+            key.forEach(function (v, i, arr) {
+                var options = {
+                    url: 'GetMaintainTicketWithKey',
+                    data: {
+                        TicketID: parseInt(v),
+                    },
+                    callback: function (res, params) {
+                        res = eval("(" + res + ")");
+                        if (res.code == 10000) {
+                            var DutyPersonName = [];
+                            if (res.data.SmallTeamLeader && res.data.SmallTeamLeader != "") {
+                                DutyPersonName.push(res.data.SmallTeamLeader);
+                            }
+                            if (res.data.SmallTeamMember && res.data.SmallTeamMember != "") {
+                                DutyPersonName.push(res.data.SmallTeamMember);
+                            }
+                            if (res.data.SmallTeamMember2 && res.data.SmallTeamMember2 != "") {
+                                DutyPersonName.push(res.data.SmallTeamMember2);
+                            }
+
+                            $("#table").setCell(v, 'DutyPersonName', DutyPersonName, "", "");
+                            $("#table").setCell(v, 'State', res.data.State, "", "");
+                        }
+                    },
+                    callback_params: {}
+                };
+
+                app.execPostRequest(options);
+            })
+
+        }
+    </script>
+</body>
+
+</html>

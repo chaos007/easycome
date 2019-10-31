@@ -1,0 +1,770 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">大修整改工单处理历史</h6>
+</div>
+<div class="modal-body">
+    <link rel="stylesheet" href="../../res/css/weui.css" />
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>工单号：<span id="w_lift_maintain_TicketID"></span></h5>
+                </div>
+                <div class="ibox-content" id="history_list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+</div>
+<script>
+    $(function () {
+        app.win_action = 'add';
+        if (app.win_url.indexOf("?key=") > 0) {
+            app.win_action = 'edit';
+            app.win_key = parseInt(decodeURIComponent(app.win_url.split("?key=")[1]));
+            $("#w_lift_maintain_TicketID").html(app.win_key);
+        }
+
+        if (app.win_action == 'edit') {
+            var options = {
+                url: 'GetBigCheckAndFixTicketHistory',
+                data: {
+                    TicketID: app.win_key,
+                },
+                callback: initLiftMaintainHistoryInfo,
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+    });
+
+    function initLiftMaintainHistoryInfo(res, param) {
+        res = eval("(" + res + ")");
+        if (res.code == 10000) {
+            $("#history_list").html("");
+            if (res.data) {
+                res.data.forEach(function (value, index, arr) {
+                    var html = "";
+                    if (value.Type == "工单生成") {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">工作事宜</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.ProblemDesc + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">要求完成时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateFromUnix(value.ShouldDealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">类型</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.CreateType + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">申请人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.CreatePersonName + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">申请角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.CreateRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "工作派单") {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">主负责人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.ChangeAfterLeader + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">配合人员</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.ChangeAfterMember + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">维修时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateFromUnix(value.ShouldDealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "反馈说明") {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">反馈人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.ResultPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">反馈事项</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.ResultMessage + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "异常关闭") {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">关闭原因</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.CloseReason + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "短信通知" || value.Type == "超期短信提醒") {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">通知内容</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.TextMessage + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if ( value.Type == "终端签到") {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">签到距离</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.Distance + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "电话联系") {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">联系目标</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.PhoneTarget + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "后台流程管理") {
+                        var _html = "";
+                        if (value.BackType == "工作派单") {
+                            _html += '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">主负责人</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + value.ChangeAfterLeader + '</span>'
+                                + '</div>'
+                                + '</div>'
+
+                                + '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">配合人员</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + value.ChangeAfterMember + '</span>'
+                                + '</div>'
+                                + '</div>'
+
+                                + '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">维修时间</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + app.formatDateFromUnix(value.ShouldDealTime) + '</span>'
+                                + '</div>'
+                                + '</div>';
+                        }
+
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.BackType + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">报备类型</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.Remark + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + _html
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "结果录入") {
+                        var _html = "";
+                        if (value.ResultType == '问题已解决') {
+                            html += '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">修理总结</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + value.Remark + '</span>'
+                                + '</div>'
+                                + '</div>';
+                        } else if (value.ResultType == '协调技术支持') {
+                            html += '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">反馈结果</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>现场支持</span>'
+                                + '</div>'
+                                + '</div>';
+                        } else if (value.ResultType == '维修一半，记录进度') {
+                            html += '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">今日进展</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + value.ResultTodayProgress + '</span>'
+                                + '</div>'
+                                + '</div>'
+
+                                + '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">明日计划</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + value.ResultTodayPlan + '</span>'
+                                + '</div>'
+                                + '</div>';
+                        }
+
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">反馈结果</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.ResultType + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">签到距离</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.Distance + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + _html
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">停梯与复梯</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.IsStop + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "结果补录") {
+                        var _html = "";
+                        if (value.ResultType == '问题已解决') {
+                            html += '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">修理总结</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + value.Remark + '</span>'
+                                + '</div>'
+                                + '</div>';
+                        } else if (value.ResultType == '协调技术支持') {
+                            html += '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">反馈结果</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>现场支持</span>'
+                                + '</div>'
+                                + '</div>';
+                        } else if (value.ResultType == '维修一半，记录进度') {
+                            html += '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">今日进展</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + value.ResultTodayProgress + '</span>'
+                                + '</div>'
+                                + '</div>'
+
+                                + '<div class="form-group">'
+                                + '<label class="col-sm-2" style="text-align: right">明日计划</label>'
+                                + '<div class="col-sm-10">'
+                                + '<span>' + value.ResultTodayPlan + '</span>'
+                                + '</div>'
+                                + '</div>';
+                        }
+
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">补录原因</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.LateReason + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">签到时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.LateStartTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">结束时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.LateEndTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">反馈结果</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.ResultType + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + _html
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">停梯与复梯</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.IsStop + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</dvi>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type == "审核") {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">主修人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.VerifyNewLeader + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">协助维修人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.VerifyNewMember + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">现场支持时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateFromUnix(value.VerifyStartTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    else if (value.Type.indexOf("停复梯") != -1) {
+                        html += '<div class="ibox">'
+                            + '<div class="ibox-title">'
+                            + '<h5>' + value.Type + '</h5>'
+                            + '</div>'
+                            + '<div class="ibox-content" >'
+                            + '<div class="form-horizontal">'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理人</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealPerson + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理角色</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.DealRole + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">处理时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.DealTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">当前电梯状态</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + value.IsStop + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">停梯时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.StartStopTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="form-group">'
+                            + '<label class="col-sm-2" style="text-align: right">复梯时间</label>'
+                            + '<div class="col-sm-10">'
+                            + '<span>' + app.formatDateTimeFromUnix(value.EndStopTime) + '</span>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+                    }
+
+                    $("#history_list").append(html);
+                });
+            }
+        }
+    }
+
+</script>
