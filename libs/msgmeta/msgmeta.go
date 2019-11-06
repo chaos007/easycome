@@ -1,9 +1,10 @@
 package msgmeta
 
 import (
-	"github.com/chaos007/easycome/enum"
 	"os"
 	"strings"
+
+	"github.com/chaos007/easycome/enum"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -36,8 +37,8 @@ func RegisterMessageMeta(name string, id int32) bool {
 		msgToServerType[id] = enum.ServerTypeAll
 	} else if strings.HasSuffix(name, enum.ToCenterString) {
 		msgToServerType[id] = enum.ServerTypeCenter
-	} else if strings.HasSuffix(name, enum.ToLoginString) {
-		msgToServerType[id] = enum.ServerTypeLogin
+	} else if strings.HasSuffix(name, enum.ToUniqueString) {
+		msgToServerType[id] = enum.ServerTypeUnique
 	}
 	return true
 }

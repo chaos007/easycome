@@ -4,19 +4,19 @@ import "sync"
 
 // UserMap rpcstream列表
 type UserMap struct {
-	listUserID    map[int64]int64
+	listUserID    map[string]int64
 	listSessionID map[int64]*Session
 	lock          *sync.RWMutex
 }
 
 var userMap = &UserMap{
-	listUserID:    map[int64]int64{},
+	listUserID:    map[string]int64{},
 	listSessionID: map[int64]*Session{},
 	lock:          &sync.RWMutex{},
 }
 
 // GetUserSession 获得用户的会话
-func GetUserSession(userid int64) *Session {
+func GetUserSession(userid string) *Session {
 	userMap.lock.RLock()
 	defer userMap.lock.RUnlock()
 	if v, ok := userMap.listUserID[userid]; ok {

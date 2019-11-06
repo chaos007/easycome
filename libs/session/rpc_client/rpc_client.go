@@ -4,13 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/chaos007/easycome/data/pb"
 	"math/rand"
 	"path/filepath"
 	"sync"
 
-	"github.com/chaos007/easycome/libs/etcdservices"
+	"github.com/chaos007/easycome/data/pb"
+
 	"io"
+
+	"github.com/chaos007/easycome/libs/etcdservices"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/metadata"
@@ -54,7 +56,7 @@ func (r *RPCStreamMap) Close() {
 }
 
 // GetRandomRPCStream 随机获得一个rpc连接
-func (r *RPCStreamMap) GetRandomRPCStream(serverType, myServerKey string, userid int64, fr chan pb.Frame, mqClose chan struct{}) *RPCStream {
+func (r *RPCStreamMap) GetRandomRPCStream(serverType, myServerKey string, userid string, fr chan pb.Frame, mqClose chan struct{}) *RPCStream {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -65,7 +67,7 @@ func (r *RPCStreamMap) GetRandomRPCStream(serverType, myServerKey string, userid
 	}
 
 	if v, ok := r.list[serverType]; ok {
-		if c, cok := v[key]; cok&& !c.IsClose {
+		if c, cok := v[key]; cok && !c.IsClose {
 			return c
 		}
 	}
@@ -101,7 +103,7 @@ func (r *RPCStreamMap) GetRandomRPCStream(serverType, myServerKey string, userid
 }
 
 // TryGetRPCStream 尝试获得一个rpc连接
-func (r *RPCStreamMap) TryGetRPCStream(serverType, myServerKey string, userid int64, fr chan pb.Frame, mqClose chan struct{}) *RPCStream {
+func (r *RPCStreamMap) TryGetRPCStream(serverType, myServerKey string, userid string, fr chan pb.Frame, mqClose chan struct{}) *RPCStream {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 	if v, ok := r.list[serverType]; ok && len(v) > 0 {
@@ -152,7 +154,7 @@ func (r *RPCStreamMap) TryGetRPCStream(serverType, myServerKey string, userid in
 }
 
 // TryGetRPCStreamWithID 尝试获得一个rpc连接
-func (r *RPCStreamMap) TryGetRPCStreamWithID(key, myServerKey string, userid int64, fr chan pb.Frame, mqClose chan struct{}) *RPCStream {
+func (r *RPCStreamMap) TryGetRPCStreamWithID(key, myServerKey string, userid string, fr chan pb.Frame, mqClose chan struct{}) *RPCStream {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

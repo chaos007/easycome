@@ -1,18 +1,18 @@
 package grpc
 
 import (
+	"path/filepath"
+
 	"github.com/chaos007/easycome/data/pb"
 	"github.com/chaos007/easycome/enum"
 	"github.com/chaos007/easycome/libs/msgmeta"
 	"github.com/chaos007/easycome/libs/packet"
-	"github.com/chaos007/easycome/libs/session/rpc_client"
+	streamclient "github.com/chaos007/easycome/libs/session/rpc_client"
 	"github.com/chaos007/easycome/libs/utils"
 	"github.com/chaos007/easycome/model/player"
-	"path/filepath"
-	"strconv"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/golang/protobuf/proto"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -21,7 +21,7 @@ import (
 // 根据业务自行扩展上下文
 type Session struct {
 	Flag       int32 // 会话标记
-	UserID     int64
+	UserID     string
 	serverType string
 	serverKey  string
 
@@ -49,7 +49,7 @@ func (s *Session) SessionClose() {
 }
 
 // RegisterSessionDead 注册session关闭的回调函数
-func (s *Session) RegisterSessionDead(callback func(int64) error) {
+func (s *Session) RegisterSessionDead(callback func(string) error) {
 	if s.Flag&enum.SessKickedOut != 0 {
 		return
 	}
@@ -188,15 +188,9 @@ func (s *server) Stream(stream pb.Service_StreamServer) error {
 		log.Errorln("cannot read key:server_key from metadata")
 		return ErrorIncorrectFrameType
 	}
-	// 解析userid
-	userid, err := strconv.Atoi(md["userid"][0])
-	if err != nil {
-		log.Errorln("user id conv err", err)
-		return err
-	}
 
 	// 注册 user
-	sess.UserID = int64(userid)
+	sess.UserID = md["userid"][0]
 	sess.clientServerType = filepath.Base(filepath.Dir(md["server_key"][0]))
 	sess.ServerStream = stream
 	// sess.Player, err = player.NewPlayer(sess.UserID)
@@ -204,7 +198,7 @@ func (s *server) Stream(stream pb.Service_StreamServer) error {
 	// 	log.Errorln("user login err:", err)
 	// 	return err
 	// }
-	if sess.UserID != 0 { //用户的连接
+	if sess.UserID != "" { //用户的连接
 		SetUserSession(sess)
 	} else { //服务器的连接
 		setServerSession(sess)

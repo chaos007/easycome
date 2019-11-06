@@ -4,17 +4,17 @@ import "sync"
 
 // UserMap rpcstream列表
 type UserMap struct {
-	list map[int64]*Session
+	list map[string]*Session
 	lock *sync.RWMutex
 }
 
 var userMap = &UserMap{
-	list: map[int64]*Session{},
+	list: map[string]*Session{},
 	lock: &sync.RWMutex{},
 }
 
 // GetUserSession 获得用户的会话
-func GetUserSession(userid int64) *Session {
+func GetUserSession(userid string) *Session {
 	userMap.lock.RLock()
 	defer userMap.lock.RUnlock()
 	return userMap.list[userid]
@@ -28,7 +28,7 @@ func SetUserSession(s *Session) {
 }
 
 // DelUserSession 删除
-func DelUserSession(userid int64) {
+func DelUserSession(userid string) {
 	userMap.lock.Lock()
 	defer userMap.lock.Unlock()
 	delete(userMap.list, userid)

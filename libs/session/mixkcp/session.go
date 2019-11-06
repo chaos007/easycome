@@ -11,7 +11,7 @@ import (
 	"github.com/chaos007/easycome/libs/msgmeta"
 	"github.com/chaos007/easycome/libs/packet"
 	"github.com/chaos007/easycome/libs/session/grpc"
-	"github.com/chaos007/easycome/libs/session/rpc_client"
+	streamclient "github.com/chaos007/easycome/libs/session/rpc_client"
 	"github.com/chaos007/easycome/libs/utils"
 	"github.com/chaos007/easycome/model/player"
 
@@ -27,7 +27,7 @@ type Session struct {
 	MQ         chan pb.Frame // 返回给客户端的异步消息
 	Encoder    *rc4.Cipher   // 加密器
 	Decoder    *rc4.Cipher   // 解密器
-	UserID     int64         // sessID
+	UserID     string        // sessID
 	InDie      chan struct{} // 入口Buff会话关闭信号
 	outSideDie chan struct{} // 外部通知会话关闭信号
 	mqClose    chan struct{} // 防止多个stream读引起错误
@@ -118,7 +118,7 @@ func (s *Session) SendToServer(serverType string, m proto.Message) error {
 }
 
 // SessionLogin 登录到服务器，外部的链接未登录，取不到id
-func (s *Session) SessionLogin(userid int64) {
+func (s *Session) SessionLogin(userid string) {
 	if old := GetUserSession(userid); old != nil && s.SessionID != old.SessionID {
 		old.SessionClose()
 	}
@@ -226,7 +226,7 @@ func (s *Session) SessionClose() {
 }
 
 // RegisterSessionDead 注册session关闭的回调函数
-func (s *Session) RegisterSessionDead(callback func(int64) error) {
+func (s *Session) RegisterSessionDead(callback func(string) error) {
 	if s.Flag&enum.SessKickedOut != 0 {
 		return
 	}

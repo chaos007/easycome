@@ -7,8 +7,8 @@ import (
 	"github.com/chaos007/easycome/model/configdata"
 	"github.com/chaos007/easycome/model/player"
 
-	"github.com/sirupsen/logrus"
 	"github.com/golang/protobuf/proto"
+	"github.com/sirupsen/logrus"
 )
 
 // TestToGame test

@@ -1,5 +1,4 @@
 /.vscode
-*.exe
 *.exe~
 *.log
 log/
