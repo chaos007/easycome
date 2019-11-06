@@ -3,6 +3,3 @@
 *.exe~
 *.log
 log/
-build.sh
-start.sh
-stop.sh
