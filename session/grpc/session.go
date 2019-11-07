@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/interfacer"
 	"github.com/chaos007/easycome/msgmeta"
 	"github.com/chaos007/easycome/packet"
 	"github.com/chaos007/easycome/pb"
@@ -38,7 +39,7 @@ type Session struct {
 	MQ      chan pb.Frame // 返回给其他服务器的异步消息
 	mqClose chan struct{} // 防止多个stream读引起错误
 
-	// Player *player.Player
+	Player interfacer.Player
 }
 
 // SessionClose 需要外部的关闭
@@ -194,11 +195,11 @@ func (s *server) Stream(stream pb.Service_StreamServer) error {
 	sess.UserID = md["userid"][0]
 	sess.clientServerType = filepath.Base(filepath.Dir(md["server_key"][0]))
 	sess.ServerStream = stream
-	// sess.Player, err = player.NewPlayer(sess.UserID)
-	// if err != nil {
-	// 	log.Errorln("user login err:", err)
-	// 	return err
-	// }
+	err := sess.Player.NewPlayer(sess.UserID)
+	if err != nil {
+		log.Errorln("user login err:", err)
+		return err
+	}
 	if sess.UserID != "" { //用户的连接
 		SetUserSession(sess)
 	} else { //服务器的连接

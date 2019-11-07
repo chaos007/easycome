@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/interfacer"
 	"github.com/chaos007/easycome/msgmeta"
 	"github.com/chaos007/easycome/packet"
 	"github.com/chaos007/easycome/pb"
@@ -63,7 +64,7 @@ type Session struct {
 
 	grpcSession *grpc.Session
 
-	// Player *player.Player
+	Player interfacer.Player
 
 	rpcClients *streamclient.RPCStreamMap
 }
@@ -238,9 +239,7 @@ func (s *Session) RegisterSessionDead(callback func(string) error) {
 func (s *Session) close() {
 	log.Debugf("client close ip:%s,port:%s", s.IP, s.port)
 	delSession(s.SessionID)
-	// if s.Player != nil {
-	// 	s.Player.Save()
-	// }
+	s.Player.Save()
 	close(s.outPending)
 	// close(s.OutDie)
 	s.conn.Close()
