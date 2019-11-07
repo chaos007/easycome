@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"github.com/chaos007/easycome/data/pb"
-	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/libs/enum"
 )
 
 var serverClient *Session

@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/libs/enum"
 
 	log "github.com/sirupsen/logrus"
 )

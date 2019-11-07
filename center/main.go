@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/chaos007/easycome/center/handle"
-	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/libs/enum"
 	"github.com/chaos007/easycome/libs/config"
 	"github.com/chaos007/easycome/libs/etcdservices"
 	"github.com/chaos007/easycome/libs/session/grpc"

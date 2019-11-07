@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/chaos007/easycome/agent/handle"
-	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/libs/enum"
 	"github.com/chaos007/easycome/libs/etcdservices"
 	"github.com/chaos007/easycome/libs/session/grpc"
 	"github.com/chaos007/easycome/libs/session/mixkcp"

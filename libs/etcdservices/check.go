@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/libs/enum"
 	"github.com/chaos007/easycome/libs/config"
 
 	"github.com/sirupsen/logrus"
