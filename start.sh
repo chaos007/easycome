@@ -11,7 +11,7 @@ sh ./stop.sh
 
 
 echo "process list:"
-ps aux|grep hanzi|grep -v grep
+ps aux|grep _test|grep -v grep
 
 
 #   ll /tmp/lol_*.log|awk '{print $9}'|xargs rm -rf
