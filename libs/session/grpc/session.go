@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/chaos007/easycome/data/pb"
-	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/libs/enum"
 	"github.com/chaos007/easycome/libs/msgmeta"
 	"github.com/chaos007/easycome/libs/packet"
 	streamclient "github.com/chaos007/easycome/libs/session/rpc_client"

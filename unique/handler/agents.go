@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/chaos007/easycome/data/pb"
-	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/libs/enum"
 	"github.com/chaos007/easycome/libs/config"
 	"github.com/chaos007/easycome/libs/etcdservices"
 	"github.com/chaos007/easycome/libs/hashs"

@@ -39,9 +39,8 @@ func main() {
 			},
 		},
 		Action: func(c *cli.Context) error {
-
+			
 			startup(c)
-
 			// wait forever
 			select {}
 		},
