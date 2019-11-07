@@ -1,0 +1,325 @@
+<div class="modal-header" style="padding: 15px">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true" style="font-size: 30px;">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title">新增文章</h6>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>文章</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>标题
+                            </label>
+
+                            <div class="col-sm-10">
+                                <input type="text" id="w_title" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>作者</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="w_author" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>时间</label>
+                            <div class="col-sm-10">
+                                <div class="input-group date">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input id="w_date" type="text" class="form-control" value="" placeholder="选择日期">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <span class="input-required">*</span>链接地址
+                            </label>
+                            <div class="col-sm-10">
+                                <input type="text" id="w_link" class="form-control">
+                            </div>
+                        </div>
+                        <!-- <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                图片地址
+                            </label>
+
+                            <div class="col-sm-10 control-label" style="text-align: left">
+                                <span id="w_photo_address"></span>
+                            </div>
+                        </div> -->
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right">
+                                <span class="input-required">*</span>图片详情</label>
+                            <div class="col-sm-10">
+                                <div class="weui-form-preview__bd">
+                                    <div class="weui-gallery" id="gallery">
+                                        <span class="weui-gallery__img" id="galleryImg"></span>
+                                        <div class="weui-gallery__opr">
+                                        </div>
+                                    </div>
+                                    <div class="weui-uploader__bd">
+                                        <ul class="weui-uploader__files" id="uploaderFiles" style="margin:0px">
+                                            <div class="weui-uploader__file-content">
+                                                <i class="weui-icon-warn"></i>
+                                            </div>
+                                        </ul>
+                                        <div class="weui-uploader__input-box">
+                                            <input id="uploaderInput" class="weui-uploader__input" type="file"
+                                                accept="image/*">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">返回</button>
+        <button type="button" class="btn btn-primary" onclick="saveInfo()">确认</button>
+    </div>
+    <script>
+
+        var photoIndex = 0;
+        $('.input-group.date').datepicker({
+            language: 'zh-CN',
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true,
+        });
+        var photoPlace = "";
+
+        $(function () {
+            app.win_action = 'add';
+            if (app.win_url.indexOf("?key=") > 0) {
+                app.win_action = 'edit';
+                app.win_key = decodeURIComponent(app.win_url.split("?key=")[1]);
+            }
+
+            if (app.win_action == 'edit') {
+                //编辑页面
+                $(".modal-title").html("编辑文章")
+                //获取info
+                var options = {
+                    url: 'GetArticleWithID',
+                    data: {
+                        ID: parseInt(app.win_key),
+                    },
+                    callback: initPartInfo,
+                    callback_params: {}
+                };
+
+                app.execPostRequest(options);
+            }
+
+            photoInit();
+        });
+
+        function photoInit() {
+            var $gallery = $("#gallery"), $galleryImg = $("#galleryImg"),
+                $uploaderInput = $("#uploaderInput"),
+                $uploaderFiles = $("#uploaderFiles");
+
+            $uploaderInput.on("change", function (e) {
+                if (photoIndex >= 1) {
+                    app.warning("只能添加一个照片");
+                    return;
+                }
+                var src, url = window.URL || window.webkitURL || window.mozURL, files = e.target.files;
+                for (var i = 0, len = files.length; i < len; ++i) {
+                    var file = files[i];
+
+                    //创建formdata对象
+                    var formdata = new FormData();
+                    formdata.append(file.name, file);
+                    //创建xhr，使用ajax进行文件上传
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("post", "/UploadFile?fileName=" + file.name);
+                    //回调
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            // var source_url = result.data.source_url;
+                            var res = xhr.response;
+                            res = eval("(" + res + ")");
+                            if (res.code != 10000) {
+                                app.error(res.msg);
+                                return;
+                            }
+
+                            src = url.createObjectURL(file);
+
+                            var tmpl = '<li class="weui-uploader__file" style="background-image:url(\'#url#\')" data-value="' + photoIndex + '">' +
+                                '<a style="color: #ed5565;"  href="javascript:;" onclick="doRemovePhoto(this)">删除</a>' +
+                                '</li>';
+                            var newTmpl = $(tmpl.replace('#url#', src));
+                            $uploaderFiles.append(newTmpl);
+
+                            photoIndex++;
+
+                            $uploaderFiles.on("click", "li", function () {
+                                $galleryImg.attr("style", this.getAttribute("style"));
+                                $gallery.fadeIn(100);
+                            });
+                            $gallery.on("click", function () {
+                                $gallery.fadeOut(100);
+                            });
+                            // $("#w_photo_address").html(res.data);
+                            photoPlace = res.data;
+                        }
+                    }
+                    //获取上传的进度
+                    xhr.upload.onprogress = function (event) {
+                        if (event.lengthComputable) {
+                            var percent = event.loaded / event.total * 100;
+                            $("#upload_progress").html(percent + "%");
+                        }
+                    }
+                    //将formdata上传
+                    xhr.send(formdata);
+                }
+
+
+            });
+        }
+
+        function doRemovePhoto(obj) {
+            app.delete(function () {
+                var li = $(obj).parents("li");
+                var value = $(li).data("value");
+
+                // $("#w_photo_address").html("");
+                photoPlace = "";
+                photoIndex--;
+                $(li).remove();
+            });
+        }
+
+        function initPartInfo(res, param) {
+            res = eval("(" + res + ")");
+            if (res.code == 10000) {
+                if (res.data == null) {
+                    return;
+                }
+                var info = res.data;
+                $("#w_title").val(info.Title);
+                $("#w_author").val(info.Author);
+                $("#w_link").val(info.Link);
+
+                if (info.TimeUnix != 0) {
+                    $("#w_date").val(app.formatDateFromUnix(info.TimeUnix));
+                }
+
+                if (info.PhotoAddress == "") {
+                    return;
+                }
+                photoPlace = info.PhotoAddress;
+
+                var list = [];
+                list.push(photoPlace);
+                var $gallery = $("#gallery"), $galleryImg = $("#galleryImg"),
+                    $uploaderInput = $("#uploaderInput"),
+                    $uploaderFiles = $("#uploaderFiles");
+                list.forEach(function (v, i, a) {
+                    var tmpl = '<li class="weui-uploader__file" style="background-image:url(\'#url#\')" data-value="' + i + '">' +
+                        '<a style="color: #ed5565;"  href="javascript:;" onclick="doRemovePhoto(this)">删除</a>' +
+                        '</li>';
+                    var newTmpl = $(tmpl.replace('#url#', "https://"+v));
+                    $uploaderFiles.append(newTmpl);
+
+                    photoIndex++;
+
+                    $uploaderFiles.on("click", "li", function () {
+                        $galleryImg.attr("style", this.getAttribute("style"));
+                        $gallery.fadeIn(100);
+                    });
+                    $gallery.on("click", function () {
+                        $gallery.fadeOut(100);
+                    });
+                });
+            }
+        }
+
+        function saveInfo() {
+            var title = $("#w_title").val();
+            var author = $("#w_author").val();
+            var link = $("#w_link").val();
+            var wdata = $("#w_date").val();
+            var TimeUnix = new Date(wdata).getTime() / 1000;
+
+            if (title.trim() == "") {
+                app.warning("请输入标题");
+                return;
+            }
+
+            if (author.trim() == "") {
+                app.warning("请输入作者");
+                return;
+            }
+
+            if (link.trim() == "") {
+                app.warning("请输入链接地址");
+                return;
+            }
+            if (photoPlace == "") {
+                app.warning("请上传图片");
+                return;
+            }
+
+            if (app.win_action == 'add') {
+                var options = {
+                    url: 'AddArticle',
+                    data: {
+                        Title: title,
+                        Author: author,
+                        TimeUnix: TimeUnix,
+                        PhotoAddress: photoPlace,
+                        Link: link,
+                    },
+                    callback: app.saveCallbackWindow,
+                    callback_params: {
+                        action: "add",
+                        refresh: part_refresh,
+                        key: 'new_key',
+                    }
+                };
+
+                app.execPostRequest(options);
+            } else {
+                var options = {
+                    url: 'ChangeArticle',
+                    data: {
+                        ID: parseInt(app.win_key),
+                        Title: title,
+                        Author: author,
+                        TimeUnix: TimeUnix,
+                        PhotoAddress: photoPlace,
+                        Link: link,
+                    },
+                    callback: app.saveCallbackWindow,
+                    callback_params: {
+                        action: "edit",
+                        refresh: part_refresh,
+                        key: parseInt(app.win_key),
+                    }
+                };
+
+                app.execPostRequest(options);
+            }
+        }
+
+    </script>

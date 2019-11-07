@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>后台管理系统</title>
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+</head>
+
+<body style="overflow-y: hidden">
+    <div id="wrapper">
+        <nav id="nav-bar" class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav metismenu" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                    <span class="block m-t-xs">
+                                        <strong id="login-username" class="font-bold">Admin</strong>
+                                        <!--<b class="caret"></b>-->
+                                    </span>
+                                </span>
+                            </a>
+                            <!--<ul class="dropdown-menu animated fadeInRight m-t-xs">-->
+                            <!--<li><a href="login.html">退出</a></li>-->
+                            <!--</ul>-->
+                        </div>
+                        <div class="logo-element">
+                            菜单
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-file"></i>
+                            <span class="nav-label">服务器</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level collapse">
+                            <li>
+                                <a href="javascript:;">
+                                    <i class="fa fa-file-text"></i>
+                                    信息
+                                    <span class="fa arrow"></span>
+                                </a>
+                                <ul class="nav nav-third-level">
+                                    <li>
+                                        <a href="../info/article.html" target='rightContent'>文章管理</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row border-bottom" id="header">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#" style="margin-right: 0">
+                            <i class="fa fa-bars"></i>
+                        </a>
+
+                        <span id="location" class="minimalize-styl-2" href="#" style="margin-left: 0">后台管理 >欢迎页面</span>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <span class="m-r-sm text-muted welcome-message">欢迎登录后台管理系统</span>
+                        </li>
+                        <li>
+                            <a href="javascript:;" onclick="app.doLogout()">
+                                <i class="fa fa-sign-out"></i> 退出
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="row  gray-bg dashboard-header" id="riframe" style="padding: 0;margin-right: -30px;">
+                <div class="col-lg-12">
+                    <iframe id='rightContent' name='rightContent' src="welcome.html" width='100%' frameborder="0">
+
+                    </iframe>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../res/admin/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../res/admin/js/inspinia.js"></script>
+    <script src="../../res/admin/js/plugins/pace/pace.min.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script src="../../res/admin/js/app.js"></script>
+    <script>
+        $(document).ready(function () {
+            if (!app.isLogin()) {
+                window.location.href = "login.html";
+            } else {
+                $("#login-username").html(app.getLoginName());
+            }
+
+            fitWindowHeight();
+
+            $("#side-menu").click(function () {
+                setTimeout(function () {
+                    var win_height = $(window).height();
+
+                    var nav_height = $(".sidebar-collapse").height();
+                    //菜单出现滚动条
+                    if (win_height < nav_height) {
+                        $("#nav-bar").attr("style", "overflow-y:scroll;")
+                    } else {
+                        $("#nav-bar").removeAttr("style");
+                    }
+                    $("#nav-bar").height(win_height);
+                }, 300)
+            });
+        });
+
+        $(window).resize(function () {
+            fitWindowHeight();
+        })
+
+        function fitWindowHeight() {
+            var win_height = $(window).height();
+            $("#wrapper").height(win_height);
+            $("#nav-bar").height(win_height);
+            $("#page-wrapper").height(win_height);
+            var header_height = $("#header").outerHeight(true);
+            var footer_height = $(".footer").outerHeight(true);
+            $("#riframe").height(win_height - header_height - footer_height - 5);
+            $("#rightContent").height(win_height - header_height - footer_height - 5);
+        }
+    </script>
+</body>
+
+</html>

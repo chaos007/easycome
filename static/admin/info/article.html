@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>文章管理</title>
+    <link href="../../res/admin/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/bootstrap-combobox.css" rel="stylesheet">
+
+    <link href="../../res/admin/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../res/admin/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="../../res/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="../../res/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <!-- <link href="../../res/admin/css/plugins/iCheck/custom.css" rel="stylesheet"> -->
+    <!-- <link href="../../res/admin/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet"> -->
+
+    <!-- Data picker -->
+    <link href="../../res/admin/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+
+    <!-- TouchSpin -->
+    <!-- <link href="../../res/admin/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet"> -->
+
+    <link rel="stylesheet" href="../../res/css/weui.css" />
+
+
+    <link href="../../res/admin/css/animate.css" rel="stylesheet">
+    <link href="../../res/admin/css/style.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div id="inner-wrapper">
+        <div class="wrapper wrapper-content  animated fadeInRight" style="padding: 0; ">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox gray-bg" style="border: none;">
+                        <div class="ibox-content gray-bg">
+                            <div id="search-form" class="form-inline" style="margin-bottom: 34px;">
+                                <div class="form-group" style="float: right;">
+                                    <a onclick="javascript:app.setWinUrl(this)" class="btn btn-default"
+                                        data-toggle="modal" href="article_info.html" data-target="#win">
+                                        <i class="fa fa-plus"></i>&nbsp;新增</a>
+                                </div>
+                                <div class="form-inline">
+                                    <button class="btn btn-primary" onclick="getArticleList()">查询</button>
+                                </div>
+                            </div>
+
+
+                            <div class="jqGrid_wrapper">
+                                <table id="table"></table>
+                                <div id="pager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="win" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" style="width: 90%;">
+            <div class="modal-content animated fadeIn">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../res/admin/js/jquery-2.1.1.js"></script>
+    <script src="../../res/admin/js/bootstrap.min.js"></script>
+    <script src="../../res/admin/js/bootstrap-combobox.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../../res/admin/js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="../../res/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../res/admin/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../res/admin/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <!-- Data picker -->
+    <script src="../../res/admin/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../res/admin/js/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+    <!-- iCheck -->
+    <!-- <script src="../../res/admin/js/plugins/iCheck/icheck.min.js"></script> -->
+
+    <!-- TouchSpin -->
+    <!-- <script src="../../res/admin/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script> -->
+
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.js"></script>
+    <script type="text/javascript" src="../../res/js/cos-js-sdk-v4.js"></script>
+
+    <script src="../../res/admin/js/app.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#location", window.parent.document).html("后台管理 >信息管理 >文章管理");
+
+            initGrid();
+            getArticleList();
+
+            $("#win").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+
+        var gridOptions = {
+            getParam: function () {
+                var postData = $("#table").jqGrid('getGridParam', 'postData');
+                var rowNum = 10;
+                var page = 1;
+                if (postData) {
+                    rowNum = postData.rows;
+                    page = postData.page;
+                }
+                var url = $("#table").jqGrid('getGridParam', 'url');
+
+                var data = {
+                    Start: (page - 1) * rowNum,
+                    Num: parseInt(rowNum),
+                }
+
+                data = JSON.stringify(data);
+                var syn = md5(data + app.key)
+                return {
+                    data: data,
+                    syn: syn,
+                };
+            }
+        }
+
+        function getArticleList() {
+            $("#table").jqGrid('setGridParam', {  // 重新加载数据
+                // datatype: 'local',
+                // data: dataSource,
+                page: 1,
+                url: app.serverName + 'UpGetArticleList',
+            }).trigger("reloadGrid");
+        }
+
+        function setPartGrid(res, params) {
+            res = eval("(" + res + ")");
+            if (res.code == 10000) {
+                var dataSource = [];
+                if (res.data && res.data.length > 0) {
+                    res.data.forEach(function (value, index, arr) {
+                        dataSource.push({
+                            ID: value.ID,
+                            Title: value.Title,
+                            Author: value.Author,
+                            TimeUnix: value.TimeUnix,
+                            PhotoAddress: value.PhotoAddress,
+                            Link: value.Link,
+                            Opts: value.ID,
+                        });
+                    });
+                }
+                $("#table").jqGrid('clearGridData');  //清空表格
+                $("#table").jqGrid('setGridParam', {  // 重新加载数据
+                    datatype: 'local',
+                    data: dataSource,
+                    page: 1
+                }).trigger("reloadGrid");
+            } else {
+                app.error(res.msg);
+            }
+        }
+
+        function initGrid() {
+            $("#table").jqGrid({
+                colNames: ['', '标题', '作者', '时间', '图片地址', '链接地址', '操作'],
+                colModel: [
+                    {
+                        name: 'ID',
+                        index: 'ID',
+                        sortable: false,
+                        hidden: true,
+                        key: true,
+                        fixed: true,
+                        jsonmap: "ID",
+                        align: "left",
+                    },
+                    { name: 'Title' },
+                    { name: 'Author' },
+                    {
+                        name: 'TimeUnix',
+                        formatter: function (value, options, rowObject) {
+                            return app.formatDateFromUnix(value);
+                        }
+                    },
+
+                    { name: 'PhotoAddress' },
+                    { name: 'Link' },
+                    {
+                        name: 'Opts',
+                        sortable: false,
+                        width: "250px",
+                        jsonmap: "ID",
+                        fixed: true,
+                        formatter: function (value, options, rowObject) {
+                            var url = "article_info.html?key=" + encodeURIComponent(value);
+                            return "<a style='color:#134da5;' href='" + url + "' onclick='javascript:app.setWinUrl(this)' data-toggle='modal' data-target='#win'><i class='fa fa-edit'></i>&nbsp;编辑</a>"
+                                + "&nbsp;|&nbsp;"
+                                + "<a style='color:#ed5565;' onclick='doStop(this)'  href='javascript:void(0);' data-key='" + value + "'><i class='fa fa-trash'></i>&nbsp;停用</a>";
+
+                        }
+                    }
+                ],
+                url: app.serverName + 'UpGetArticleList',
+                rowNum: 10,
+                rowList: app.rowList,
+                data: [],
+                datatype: "json",
+                viewrecords: true,
+                pager: "#pager",
+                height: 'auto',
+                autowidth: true,
+                shrinkToFit: true,
+                forceFit: true,
+                altRows: true,
+                altclass: 'table-alt',
+                jsonReader: {
+                    root: "data.Result",
+                    total: "data.TotalPage",
+                    records: "data.Number",
+                    page: "data.CurPage",
+                },
+                serializeGridData: function (postData) {
+                    return gridOptions.getParam(postData);
+                },
+            });
+
+            // Add responsive to jqGrid
+            app.fitGrid();
+            $(window).bind('resize', function () {
+                app.fitGrid();
+            });
+        }
+
+        function part_refresh(key, action) {
+            var options = {
+                url: 'GetArticleWithID',
+                data: {
+                    ID: key,
+                },
+                callback: function (res, params) {
+                    res = eval("(" + res + ")");
+                    if (res.code == 10000) {
+                        var recode = {
+                            ID: res.data.ID,
+                            Title: res.data.Title,
+                            Author: res.data.Author,
+                            TimeUnix: res.data.TimeUnix,
+                            PhotoAddress: res.data.PhotoAddress,
+                            Link: res.data.Link,
+                            Opts: res.data.ID,
+                        };
+
+                        if (action == "add") {
+                            $("#table").jqGrid("addRowData", recode.ID, recode, "first");
+                        } else {
+                            var r = $("#table").jqGrid("setRowData", recode.ID, recode, "");
+                        }
+                    }
+                },
+                callback_params: {}
+            };
+
+            app.execPostRequest(options);
+        }
+
+        function doStop(obj) {
+            var key = $(obj).data("key");
+            app.deleteByKey(String(key), function (key) {
+                var options = {
+                    url: 'DeleteArticleWithID',
+                    data: {
+                        ID: parseInt(key),
+                    },
+                    callback: app.delCallback,
+                    callback_params: {
+                        key: key,
+                    }
+                };
+                app.execPostRequest(options);
+            });
+        }
+
+    </script>
+</body>
+
+</html>
