@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/chaos007/easycome/enum"
-	"github.com/chaos007/easycome/interfacer"
 	"github.com/chaos007/easycome/msgmeta"
 	"github.com/chaos007/easycome/packet"
 	"github.com/chaos007/easycome/pb"
@@ -63,8 +62,6 @@ type Session struct {
 	closeCallBackList *methodList
 
 	grpcSession *grpc.Session
-
-	Player interfacer.Player
 
 	rpcClients *streamclient.RPCStreamMap
 }
@@ -239,7 +236,6 @@ func (s *Session) RegisterSessionDead(callback func(string) error) {
 func (s *Session) close() {
 	log.Debugf("client close ip:%s,port:%s", s.IP, s.port)
 	delSession(s.SessionID)
-	s.Player.Save()
 	close(s.outPending)
 	// close(s.OutDie)
 	s.conn.Close()
@@ -262,7 +258,7 @@ func (s *Session) Handle() {
 	// >> the main message loop <<
 	// 处理4种消息
 	//  1. 来自客户端的消息
-	//  2. 来自游戏服的消息
+	//  2. 来自其他服的消息
 	//  3. timer
 	//  4. 关闭服务信号
 	for {
@@ -324,7 +320,6 @@ func (s *Session) route(p []byte) proto.Message {
 	reader := packet.Reader(p)
 	// 读客户端数据包序列号(1,2,3...)
 	// 客户端发送的数据包必须包含一个自增的序号，必须严格递增
-	// 加密后，可避免重放攻击-REPLAY-ATTACK
 	seqID, err := reader.ReadS8()
 	if err != nil || seqID != s.PacketCount {
 		log.Error("read client timestamp failed:", err)
