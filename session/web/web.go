@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -53,6 +54,21 @@ func RegularCheck(w http.ResponseWriter, r *http.Request) (string, bool) {
 		return "", false
 	}
 	return data, true
+}
+
+// HTTPPost 发送请求
+func HTTPPost(path string, value map[string][]string) (string, error) {
+	var err error
+	resp, err := http.PostForm(path, value)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	result, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(result), nil
 }
 
 // Parse 解析
