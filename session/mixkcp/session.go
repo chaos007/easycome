@@ -341,7 +341,7 @@ func (s *Session) route(p []byte) proto.Message {
 
 	if serverType != s.serverType && serverType != "" { //不是本服的消息
 		if err := s.sessionSendToServerSteam(serverType, p[1:]); err != nil {
-			log.Errorf("service id:%v execute failed, error:%v", b, err)
+			log.Errorf("message id:%v execute failed, error:%v", b, err)
 			return nil
 		}
 	} else { //本服消息协议，进行解析
@@ -392,7 +392,7 @@ func (s *Session) routeRPC(p []byte) proto.Message {
 		s.sendToClient(p)
 	} else if serverType != s.serverType && serverType != enum.ServerTypeAll { //不是本服的消息
 		if err := s.sessionSendToServerSteam(serverType, p); err != nil {
-			log.Errorf("service id:%v execute failed, error:%v", b, err)
+			log.Errorf("message id:%v execute failed, error:%v", b, err)
 			return nil
 		}
 	} else { //本服消息协议，进行解析
@@ -434,7 +434,7 @@ func (s *Session) sessionSendToServerUseProto(data proto.Message) error {
 		s.sendToClient(ret)
 	} else if serverType != s.serverType && serverType != enum.ServerTypeAll { //不是本服的消息
 		if err := s.sessionSendToServerSteam(serverType, ret); err != nil {
-			log.Errorf("service id:%v execute failed, error:%v", id, err)
+			log.Errorf("message id:%v execute failed, error:%v", id, err)
 			return err
 		}
 	} else { //本服消息协议，不进行发送

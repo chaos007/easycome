@@ -330,13 +330,13 @@ func GetService(path string) *grpc.ClientConn {
 
 // GetService2 GetService2
 func GetService2(path string) (*grpc.ClientConn, string) {
-	conn, key := _defaultPool.getService(_defaultPool.root + "/" + path)
+	conn, key := _defaultPool.getService(path)
 	return conn, key
 }
 
 // GetServiceWithID GetServiceWithID
 func GetServiceWithID(path string, id string) *grpc.ClientConn {
-	return _defaultPool.getServiceWithID(_defaultPool.root+"/"+path, id)
+	return _defaultPool.getServiceWithID(path, id)
 }
 
 // GetServiceDirRPCClient 获得目录的服务器
