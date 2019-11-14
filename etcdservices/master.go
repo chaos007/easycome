@@ -102,6 +102,7 @@ func (p *ServicePool) getServerOnce(path string) {
 				continue
 			}
 			p.addService(string(item.Key), info.IP)
+			InvokeWatchCallBacks(int32(clientv3.EventTypePut), string(item.Key), info.IP)
 		}
 	}
 }
@@ -124,12 +125,12 @@ func (p *ServicePool) WatchNodes(except, path string) {
 					}
 					switch ev.Type {
 					case clientv3.EventTypePut:
-						log.Printf("[%s] %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
+						log.Debugf("[%s] %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
 						info := GetServiceInfo(ev)
 						p.addService(string(ev.Kv.Key), info.IP)
 						InvokeWatchCallBacks(int32(clientv3.EventTypePut), string(ev.Kv.Key), info.IP)
 					case clientv3.EventTypeDelete:
-						log.Printf("[%s] %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
+						log.Debugf("[%s] %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
 						p.removeService(string(ev.Kv.Key))
 						InvokeWatchCallBacks(int32(clientv3.EventTypeDelete), string(ev.Kv.Key), "")
 					}
