@@ -23,7 +23,7 @@ type RPCClient struct {
 
 // a kind of service
 type service struct {
-	clients []RPCClient
+	clients map[string]RPCClient
 	idx     uint32 // for round-robin purpose
 }
 
@@ -130,10 +130,7 @@ func (p *ServicePool) WatchNodes(except, path string) {
 						InvokeWatchCallBacks(int32(clientv3.EventTypePut), string(ev.Kv.Key), info.IP)
 					case clientv3.EventTypeDelete:
 						log.Printf("[%s] %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
-						removeService := p.removeService(string(ev.Kv.Key))
-						if removeService == nil {
-							log.Debugln("EventTypeDelete error")
-						}
+						p.removeService(string(ev.Kv.Key))
 						InvokeWatchCallBacks(int32(clientv3.EventTypeDelete), string(ev.Kv.Key), "")
 					}
 				}
@@ -151,61 +148,55 @@ func (p *ServicePool) addService(key, value string) {
 	}
 
 	// name check
-	// log.Debugln("master addService key value", key, value)
-	serviceName := filepath.Dir(key)
-	serviceName = strings.Replace(serviceName, "\\", "/", -1) //防止不同平台文件地址字符出现问题
-	// log.Debugln("master addService serviceName", serviceName)
+	serviceName := strings.Replace(key, "\\", "/", -1) //防止不同平台文件地址字符出现问题
+	serviceType := filepath.Base(filepath.Dir(serviceName))
 
 	// try new service kind init
-	if p.services[serviceName] == nil {
-		p.services[serviceName] = &service{
-			clients: []RPCClient{},
+	if p.services[serviceType] == nil {
+		p.services[serviceType] = &service{
+			clients: map[string]RPCClient{},
 		}
 	}
 
 	// create service connection
-	service := p.services[serviceName]
-	for _, item := range service.clients {
-		if item.key == key {
-			log.Debugln("master has already has service")
-			return
-		}
+	service := p.services[serviceType]
+	if _, ok := service.clients[key]; ok {
+		log.Debugln("master has already has service")
+		return
 	}
 	log.Debugln("master addService begin key value", key, value)
 	if conn, err := grpc.Dial(value, grpc.WithBlock(), grpc.WithInsecure()); err == nil {
-		service.clients = append(service.clients, RPCClient{key, conn, value})
-		log.Println("service added:", key, "-->", value)
+		service.clients[key] = RPCClient{key, conn, value}
+		log.Println("service :", serviceType, " added:", key, "-->", value)
 	} else {
 		log.Errorln("did not connect:", key, "-->", value, "error:", err)
 	}
 }
 
 // remove a service TODO
-func (p *ServicePool) removeService(key string) *RPCClient {
+func (p *ServicePool) removeService(key string) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	// name check
 	log.Debugln("master removeService key value", key)
-	serviceName := filepath.Dir(key)
-	serviceName = strings.Replace(serviceName, "\\", "/", -1) //防止不同平台文件地址字符出现问题
+	serviceName := strings.Replace(key, "\\", "/", -1) //防止不同平台文件地址字符出现问题
+	serviceType := filepath.Base(filepath.Dir(serviceName))
 	// check service kind
-	service := p.services[serviceName]
+	service := p.services[serviceType]
 	if service == nil {
 		log.Debugln("no such service:", serviceName)
-		return nil
+		return
 	}
 
 	// remove a service
-	for k := range service.clients {
-		if service.clients[k].key == key { // deletion
-			removeServce := service.clients[k]
-			service.clients[k].conn.Close()
-			service.clients = append(service.clients[:k], service.clients[k+1:]...)
-			log.Println("service removed:", key)
-			return &removeServce
-		}
+	v, ok := service.clients[key]
+	if !ok {
+		log.Debugln("master did not have service")
+		return
 	}
-	return nil
+	v.conn.Close()
+	delete(service.clients, serviceName)
+	return
 }
 
 // provide a specific key for a service, eg:
@@ -252,9 +243,15 @@ func (p *ServicePool) getService(path string) (conn *grpc.ClientConn, key string
 		return nil, ""
 	}
 
+	list := []RPCClient{}
+
+	for _, v := range service.clients {
+		list = append(list, v)
+	}
+
 	// get a service in round-robind style,
-	idx := int(atomic.AddUint32(&service.idx, 1)) % len(service.clients)
-	return service.clients[idx].conn, service.clients[idx].key
+	idx := int(atomic.AddUint32(&service.idx, 1)) % len(list)
+	return service.clients[list[idx].key].conn, service.clients[list[idx].key].key
 }
 
 // GetServiceDir get all service conn in the dir
@@ -270,10 +267,6 @@ func (p *ServicePool) GetServiceDir(path string) (map[string]*grpc.ClientConn, b
 	}
 	result := map[string]*grpc.ClientConn{}
 	for _, c := range clients.clients {
-		_, ok := result[c.key]
-		if ok {
-			return nil, false
-		}
 		result[c.key] = c.conn
 	}
 	if len(result) <= 0 {
