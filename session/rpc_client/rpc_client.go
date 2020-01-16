@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/chaos007/easycome/pb"
+	"gitlab.dianchu.cc/2020008/libs/pb"
 
 	"io"
 
-	"github.com/chaos007/easycome/etcdservices"
+	"gitlab.dianchu.cc/2020008/libs/services"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/metadata"
@@ -40,10 +40,11 @@ func (r *RPCStreamMap) GetRPCStream(serverType string) *RPCStream {
 	if v == nil {
 		return nil
 	}
+	list := []*RPCStream{}
 	for _, item := range v {
-		return item
+		list = append(list, item)
 	}
-	return nil
+	return list[rand.Intn(len(list))]
 }
 
 // Close Close
@@ -60,7 +61,7 @@ func (r *RPCStreamMap) GetRandomRPCStream(serverType, myServerKey string, userid
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	gameConn, key := etcdservices.GetService2(serverType)
+	gameConn, key := services.GetService2(serverType)
 	if gameConn == nil {
 		log.Debugln("none gprc conn")
 		return nil
@@ -114,11 +115,11 @@ func (r *RPCStreamMap) TryGetRPCStream(serverType, myServerKey string, userid st
 			}
 		}
 		if len(list) > 0 {
-			idx := rand.Int() % len(list)
+			idx := rand.Intn(len(list))
 			return list[idx]
 		}
 	}
-	gameConn, key := etcdservices.GetService2(serverType)
+	gameConn, key := services.GetService2(serverType)
 	if gameConn == nil {
 		log.Debugln("none gprc conn")
 		return nil
@@ -166,7 +167,7 @@ func (r *RPCStreamMap) TryGetRPCStreamWithID(key, myServerKey string, userid str
 		}
 	}
 
-	gameConn := etcdservices.GetServiceWithID(path, filepath.Base(key))
+	gameConn := services.GetServiceWithID(path, filepath.Base(key))
 	if gameConn == nil {
 		log.Debugln("none gprc conn")
 		return nil
@@ -204,7 +205,7 @@ func (r *RPCStreamMap) TryGetRPCStreamWithID(key, myServerKey string, userid str
 func (r *RPCStreamMap) RPCStreamInit(serverType string, userid int64, fr chan pb.Frame, mqClose chan struct{}) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
-	gameConn, key := etcdservices.GetService2(serverType)
+	gameConn, key := services.GetService2(serverType)
 	if gameConn == nil {
 		log.Debugln("none gprc conn:", serverType)
 		return errors.New("none gprc conn")
@@ -245,7 +246,10 @@ type RPCStream struct {
 
 func (s *RPCStream) close() {
 	if s.Stream != nil {
-		s.Stream.CloseSend()
+		err := s.Stream.CloseSend()
+		if err != nil {
+			log.Debugln("stream close err:", err)
+		}
 	}
 }
 

@@ -6,8 +6,8 @@ import (
 	"errors"
 	"reflect"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/golang/protobuf/proto"
+	log "github.com/sirupsen/logrus"
 )
 
 // BuildPacket 建包
@@ -25,9 +25,18 @@ func BuildPacket(data proto.Message) ([]byte, error) {
 
 	code := bytes.NewBuffer([]byte{})
 
-	binary.Write(code, binary.BigEndian, id)
-	binary.Write(code, binary.BigEndian, rawdata)
+	if code == nil {
+		return nil, errors.New("new buffer error")
+	}
 
+	err = binary.Write(code, binary.BigEndian, id)
+	if err != nil {
+		return nil, err
+	}
+	err = binary.Write(code, binary.BigEndian, rawdata)
+	if err != nil {
+		return nil, err
+	}
 	return code.Bytes(), nil
 }
 

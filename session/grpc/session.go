@@ -3,14 +3,11 @@ package grpc
 import (
 	"path/filepath"
 
-	"github.com/chaos007/easycome/enum"
+	"github.com/chaos007/easycome/utils"
 	"github.com/chaos007/easycome/msgmeta"
 	"github.com/chaos007/easycome/packet"
 	"github.com/chaos007/easycome/pb"
 	streamclient "github.com/chaos007/easycome/session/rpc_client"
-	"github.com/chaos007/easycome/utils"
-
-	// "github.com/chaos007/easycome/model/player"
 
 	"github.com/golang/protobuf/proto"
 	log "github.com/sirupsen/logrus"
@@ -38,12 +35,14 @@ type Session struct {
 	MQ      chan pb.Frame // 返回给其他服务器的异步消息
 	mqClose chan struct{} // 防止多个stream读引起错误
 
+	Data interface{}
+
 	// Player interfacer.Player
 }
 
 // SessionClose 需要外部的关闭
 func (s *Session) SessionClose() {
-	if s.Flag&enum.SessKickedOut != 0 {
+	if s.Flag&SessKickedOut != 0 {
 		return
 	}
 	close(s.outSideDie)
@@ -51,7 +50,7 @@ func (s *Session) SessionClose() {
 
 // RegisterSessionDead 注册session关闭的回调函数
 func (s *Session) RegisterSessionDead(callback func(string) error) {
-	if s.Flag&enum.SessKickedOut != 0 {
+	if s.Flag&SessKickedOut != 0 {
 		return
 	}
 	s.closeCallBackList.addMethod(callback)
@@ -60,8 +59,8 @@ func (s *Session) RegisterSessionDead(callback func(string) error) {
 // SendToStreamWithServerKey 使用服务器id发送到服务器上
 func (s *Session) SendToStreamWithServerKey(key string, m proto.Message) error {
 	// 屏蔽空包
-	if m == nil || s.Flag&enum.SessKickedOut != 0 {
-		log.Errorln("SendToSteamServer close or empty proto message")
+	if m == nil || s.Flag&SessKickedOut != 0 {
+		log.Errorln("SendToStreamWithServerKey close or empty proto message")
 		return nil
 	}
 
@@ -87,11 +86,34 @@ func (s *Session) SendToStreamWithServerKey(key string, m proto.Message) error {
 	return nil
 }
 
-// SendToSteamServer 作为客户端发送到其他服务器
-func (s *Session) SendToSteamServer(serverType string, m proto.Message) error {
+// SendToClientAsServer 发向当前连接的客户端
+func (s *Session) SendToClientAsServer(m proto.Message) error {
 	// 屏蔽空包
-	if m == nil || s.Flag&enum.SessKickedOut != 0 {
-		log.Errorln("SendToSteamServer close or empty proto message")
+	if m == nil || s.Flag&SessKickedOut != 0 {
+		log.Errorln("SendToClientAsServer close or empty proto message")
+		return nil
+	}
+	ret, err := msgmeta.BuildPacket(m)
+	if err != nil {
+		log.Errorln("msg proto marshal exced error,msgname:", proto.MessageName(m))
+		return nil
+	}
+
+	frame := &pb.Frame{
+		Message: ret,
+	}
+	if err := s.ServerStream.Send(frame); err != nil {
+		log.Errorln("sessionSendToServerSteam stream send error as server")
+		return err
+	}
+	return nil
+}
+
+// SendToSteamServerBalance 作为客户端发送到其他服务器，随机发送
+func (s *Session) SendToSteamServerBalance(serverType string, m proto.Message, isBalance bool) error {
+	// 屏蔽空包
+	if m == nil || s.Flag&SessKickedOut != 0 {
+		log.Errorln("SendToSteamServerBalance close or empty proto message")
 		return nil
 	}
 	ret, err := msgmeta.BuildPacket(m)
@@ -106,20 +128,26 @@ func (s *Session) SendToSteamServer(serverType string, m proto.Message) error {
 	}
 	if serverType == s.clientServerType { //跟本次客户端会话一致
 		if err := s.ServerStream.Send(frame); err != nil {
-			log.Errorln("sessionSendToServerSteam stream send error as server")
+			log.Errorln("SendToSteamServerBalance stream send error as server")
 			return err
 		}
 		return nil
 	}
 
-	stream := s.getRPCStream(serverType)
+	var stream *streamclient.RPCStream
+
+	if isBalance {
+		stream = s.getRandomRPCStream(serverType)
+	} else {
+		stream = s.getRPCStream(serverType)
+	}
 	if stream == nil {
 		log.Errorln("cannot open stream: serverType:", serverType)
 		return nil
 	}
 
 	if err := stream.Stream.Send(frame); err != nil {
-		log.Errorln("sessionSendToServerSteam stream send error")
+		log.Errorln("SendToSteamServerBalance stream send error:", serverType, proto.MessageName(m))
 		return err
 	}
 	return nil
@@ -127,17 +155,11 @@ func (s *Session) SendToSteamServer(serverType string, m proto.Message) error {
 
 func (s *Session) getRandomRPCStream(serverType string) *streamclient.RPCStream {
 	path := serverType
-	if serverType == enum.ServerTypeAgent || serverType == enum.ServerTypeGame { //需要区租的服务器
-		path = serverType
-	}
 	return s.rpcClients.GetRandomRPCStream(path, s.serverKey, s.UserID, s.MQ, s.mqClose)
 }
 
 func (s *Session) getRPCStream(serverType string) *streamclient.RPCStream {
 	path := serverType
-	if serverType == enum.ServerTypeAgent || serverType == enum.ServerTypeGame { //需要区租的服务器
-		path = serverType
-	}
 	return s.rpcClients.TryGetRPCStream(path, s.serverKey, s.UserID, s.MQ, s.mqClose)
 }
 
@@ -170,7 +192,7 @@ func (s *server) Stream(stream pb.Service_StreamServer) error {
 	log.Debug("stream start")
 	//初始化session
 	sess := NewSession()
-	defer sess.close(stream)
+	defer sess.close()
 
 	// 从context中获取数据 TODO FromIncomingContext 确定使用的函数
 	md, ok := metadata.FromIncomingContext(stream.Context())
@@ -204,12 +226,17 @@ func (s *server) Stream(stream pb.Service_StreamServer) error {
 	} else { //服务器的连接
 		setServerSession(sess)
 	}
-	log.Debugln("flag:", sess.Flag&enum.SessKickedOut == 0)
+	log.Debugln("flag:", sess.Flag&SessKickedOut == 0)
 	log.Debug("userid: ", sess.UserID, " logged in")
 
 	go sess.recv(stream)
 
 	return sess.handle(stream)
+}
+
+// OutSideHandle 外部处理
+func (s *Session) OutSideHandle(stream pb.Service_StreamServer) error {
+	return s.handle(stream)
 }
 
 // handle Handle
@@ -219,7 +246,7 @@ func (s *Session) handle(stream pb.Service_StreamServer) error {
 		case msg, ok := <-s.inFrame: // frames from client as server stream
 			if !ok || msg == nil { // EOF
 				log.Debugln("frames from client as server stream EOF")
-				s.Flag |= enum.SessKickedOut
+				s.Flag |= SessKickedOut
 			} else {
 				log.Debugln("message recv inFrame", msg)
 				if result := s.route(msg.Message); result != nil {
@@ -232,7 +259,7 @@ func (s *Session) handle(stream pb.Service_StreamServer) error {
 						Message: ret,
 					}
 					if err := stream.Send(frame); err != nil {
-						log.Errorln("sessionSendToServerSteam stream send error")
+						log.Errorln("sessionSendToServerSteam stream handle send error:", proto.MessageName(msg))
 						return err
 					}
 				}
@@ -240,21 +267,21 @@ func (s *Session) handle(stream pb.Service_StreamServer) error {
 		case msg, ok := <-s.MQ: // frames from server as client stream
 			if !ok { // EOF
 				log.Debugln("frames from server as client stream EOF")
-				s.Flag |= enum.SessKickedOut
+				s.Flag |= SessKickedOut
 			} else {
 				log.Debugln("message recv MQ", msg)
 				if result := s.route(msg.Message); result != nil {
 					if err := s.sessionSendToServerUseProto(result); err != nil {
 						log.Errorln("sessionSendToServerUseProto ,err:", err)
-						s.Flag |= enum.SessKickedOut
+						s.Flag |= SessKickedOut
 					}
 				}
 			}
 		case <-s.outSideDie: // server is shuting down...
 			log.Debugln("receive from OutSide shuting down")
-			s.Flag |= enum.SessKickedOut
+			s.Flag |= SessKickedOut
 		}
-		if s.Flag&enum.SessKickedOut != 0 {
+		if s.Flag&SessKickedOut != 0 {
 			log.Debugln("handle over")
 			return nil
 		}
@@ -287,7 +314,7 @@ func (s *Session) recv(stream pb.Service_StreamServer) {
 	}
 }
 
-func (s *Session) close(stream pb.Service_StreamServer) {
+func (s *Session) close() {
 	log.Debugln("all session close")
 	close(s.mqClose)
 	s.rpcClients.Close()
@@ -322,8 +349,8 @@ func (s *Session) route(p []byte) proto.Message {
 	if serverType == "" { //返回客户端的消息，rpc的消息不能直接返回客户端
 		log.Debugln("rpc recv from client error")
 		return nil
-	} else if serverType != s.serverType && serverType != enum.ServerTypeAll { //不是本服的消息
-		if err := s.SendToSteamServer(serverType, data); err != nil {
+	} else if serverType != s.serverType && serverType != "ToAll" { //不是本服的消息
+		if err := s.SendToSteamServerBalance(serverType, data, false); err != nil {
 			log.Errorf("message id:%v execute failed, error:%v", b, err)
 			return nil
 		}
@@ -354,10 +381,9 @@ func (s *Session) sessionSendToServerUseProto(data proto.Message) error {
 	}
 	serverType := msgmeta.GetMsgServerType(id)
 	if serverType == "" { //返回客户端的消息
-		log.Errorln("rpc message can not send to client")
-		return nil
-	} else if serverType != s.serverType && serverType != enum.ServerTypeAll { //不是本服的消息
-		if err := s.SendToSteamServer(serverType, data); err != nil {
+		return s.SendToClientAsServer(data)
+	} else if serverType != s.serverType && serverType != "ToAll" { //不是本服的消息
+		if err := s.SendToSteamServerBalance(serverType, data, false); err != nil {
 			log.Errorf("message id:%v execute failed, error:%v", id, err)
 			return err
 		}

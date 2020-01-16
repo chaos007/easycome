@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -27,6 +28,8 @@ func (m methodList) exce(userid string) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 	for _, item := range m.List {
-		item(userid)
+		if item != nil {
+			fmt.Println(item(userid))
+		}
 	}
 }

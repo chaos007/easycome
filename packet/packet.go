@@ -251,8 +251,8 @@ func (p *Packet) WriteString(v string) {
 }
 
 // WriteS8 WriteS8
-func (p *Packet) WriteS8(v int8) {
-	p.WriteByte(byte(v))
+func (p *Packet) WriteS8(v int8) error {
+	return p.WriteByte(byte(v))
 }
 
 // WriteU16 WriteU16

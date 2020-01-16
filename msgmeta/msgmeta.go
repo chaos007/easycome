@@ -4,8 +4,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/chaos007/easycome/enum"
-
 	log "github.com/sirupsen/logrus"
 )
 
@@ -13,12 +11,21 @@ var (
 	msgNameToID     = make(map[string]int32)
 	msgIDToName     = make(map[int32]string)
 	msgToServerType = make(map[int32]string)
+	serverTypeList  = map[string]string{} //[ToAgent]=Agent
 )
+
+// RegisterServerType 添加整个服务器类型
+func RegisterServerType(list map[string]string) {
+	serverTypeList = map[string]string{} //每次初始化清空原有
+	for k, v := range list {
+		serverTypeList[v] = k
+	}
+}
 
 // RegisterMessageMeta 注册消息元信息(代码生成专用)
 func RegisterMessageMeta(name string, id int32) bool {
 	if _, ok := msgNameToID[name]; ok {
-		log.Error("msg name repeated!")
+		log.Errorln("msg name repeated!", name)
 		os.Exit(-1)
 		return false
 	}
@@ -29,16 +36,10 @@ func RegisterMessageMeta(name string, id int32) bool {
 		return false
 	}
 	msgIDToName[id] = name
-	if strings.HasSuffix(name, enum.ToAgentString) {
-		msgToServerType[id] = enum.ServerTypeAgent
-	} else if strings.HasSuffix(name, enum.ToGameString) {
-		msgToServerType[id] = enum.ServerTypeGame
-	} else if strings.HasSuffix(name, enum.ToAllString) {
-		msgToServerType[id] = enum.ServerTypeAll
-	} else if strings.HasSuffix(name, enum.ToCenterString) {
-		msgToServerType[id] = enum.ServerTypeCenter
-	} else if strings.HasSuffix(name, enum.ToUniqueString) {
-		msgToServerType[id] = enum.ServerTypeUnique
+	for key, value := range serverTypeList {
+		if strings.HasSuffix(name, key) {
+			msgToServerType[id] = value
+		}
 	}
 	return true
 }

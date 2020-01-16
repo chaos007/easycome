@@ -2,15 +2,13 @@ package grpc
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"os"
 	"sync"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-
-	// "game/client_handler"
 
 	"github.com/chaos007/easycome/pb"
 )
@@ -51,19 +49,21 @@ func SetConfig(c *Config) {
 // StartServer 开启gprc 服务
 func StartServer() {
 	if serverConfig == nil {
-		log.Errorln("serverConfig do not init")
+		fmt.Println("serverConfig do not init")
 		os.Exit(-1)
 		return
 	}
 	lis, err := net.Listen("tcp", serverConfig.Listen)
 	if err != nil {
-		log.Errorln("listen tcp error", err)
+		fmt.Println("listen tcp error", err)
 		os.Exit(-1)
 		return
 	}
-	log.Info("listening on ", lis.Addr())
+	fmt.Println("listening on ", lis.Addr())
 	s := grpc.NewServer()
 	ins := new(server)
 	pb.RegisterServiceServer(s, ins)
-	s.Serve(lis)
+	if s != nil {
+		fmt.Println("server error", s.Serve(lis))
+	}
 }
